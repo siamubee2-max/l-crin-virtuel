@@ -89,6 +89,7 @@ export default function Gallery() {
                     <p className="font-medium text-neutral-900 capitalize">
                       {creation.jewelry_type === 'necklace' ? 'Collier' : 
                        creation.jewelry_type === 'earrings' ? "Boucles d'oreilles" : 
+                       creation.jewelry_type === 'set' ? "Parure Complète" :
                        creation.jewelry_type}
                     </p>
                     <p className="text-xs text-neutral-400 mt-1">
