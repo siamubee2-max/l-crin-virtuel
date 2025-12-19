@@ -82,15 +82,15 @@ export default function Wardrobe() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-white mb-2">{t.wardrobe.title}</h1>
-          <p className="text-stone-400 max-w-lg">
+          <h1 className="text-3xl font-serif text-neutral-900 mb-2">{t.wardrobe.title}</h1>
+          <p className="text-neutral-500 max-w-lg">
             {t.wardrobe.subtitle}
           </p>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-amber-500 hover:bg-amber-400 text-black rounded-sm px-6 font-medium transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)] border-none">
+            <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
               <Plus className="w-4 h-4 mr-2" /> {t.wardrobe.addPhoto}
             </Button>
           </DialogTrigger>
@@ -164,7 +164,7 @@ export default function Wardrobe() {
 
               <Button 
                 onClick={handleSubmit} 
-                className="w-full bg-amber-500 hover:bg-amber-400 text-black font-medium"
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white"
                 disabled={!newPart.name || !newPart.image_url || createMutation.isPending}
               >
                 {createMutation.isPending ? t.common.saving : t.common.save}
@@ -181,12 +181,12 @@ export default function Wardrobe() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {bodyParts?.length === 0 ? (
-            <div className="col-span-full py-16 text-center bg-neutral-900 rounded-2xl border border-dashed border-white/10">
-              <div className="w-16 h-16 bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4 text-stone-500">
+            <div className="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-neutral-200">
+              <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4 text-neutral-400">
                 <UserIcon className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-medium text-white">{t.wardrobe.emptyTitle}</h3>
-              <p className="text-stone-400 mt-2">{t.wardrobe.emptyText}</p>
+              <h3 className="text-lg font-medium text-neutral-900">{t.wardrobe.emptyTitle}</h3>
+              <p className="text-neutral-500 mt-2">{t.wardrobe.emptyText}</p>
             </div>
           ) : (
             bodyParts?.map((part) => (
@@ -195,27 +195,27 @@ export default function Wardrobe() {
                 layout
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="group relative bg-neutral-900 rounded-xl overflow-hidden shadow-lg border border-white/5"
+                className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-neutral-100"
               >
-                <div className="aspect-[4/5] bg-neutral-800 relative overflow-hidden">
+                <div className="aspect-[4/5] bg-neutral-100 relative overflow-hidden">
                   <img 
                     src={part.image_url} 
                     alt={part.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute top-3 right-3">
                     <Button
                       variant="destructive"
                       size="icon"
-                      className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-red-900/80 hover:bg-red-700"
+                      className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={() => deleteMutation.mutate(part.id)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent pt-16">
-                    <p className="text-white font-serif tracking-wide">{part.name}</p>
-                    <p className="text-amber-400/80 text-xs uppercase tracking-widest mt-1">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent pt-12">
+                    <p className="text-white font-medium">{part.name}</p>
+                    <p className="text-white/80 text-xs uppercase tracking-wider">
                       {BODY_TYPES.find(t => t.value === part.type)?.label || part.type}
                     </p>
                   </div>
