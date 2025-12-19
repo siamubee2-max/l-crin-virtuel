@@ -51,6 +51,7 @@ const translations = {
     studio: {
       title: "L'Atelier de Création",
       subtitle: "Essayez virtuellement n'importe quel bijou en quelques secondes grâce à l'IA.",
+      arMode: "Mode Miroir AR",
       steps: {
         upload: "Le Bijou",
         selectBody: "Le Modèle",
@@ -78,8 +79,22 @@ const translations = {
         goToWardrobe: "Aller à la bibliothèque",
         notesLabel: "Instructions spéciales (Optionnel)",
         notesPlaceholder: "Ex: Le bijou est très petit, gardez les proportions...",
-        generateBtn: "Générer l'Essayage"
-      },
+        generateBtn: "Générer l'Essayage",
+        or: "OU",
+        tryLive: "Essayer en Direct (Webcam)"
+        },
+        ar: {
+        title: "Miroir Virtuel",
+        desc: "Ajustez le bijou sur votre image. Déplacez, agrandissez et pivotez pour un rendu parfait.",
+        startCamera: "Activer la Caméra",
+        stopCamera: "Arrêter",
+        flipCamera: "Changer de caméra",
+        takePhoto: "Prendre une photo",
+        size: "Taille",
+        rotation: "Rotation",
+        back: "Retour au Studio",
+        permissionDenied: "Accès caméra refusé. Vérifiez vos paramètres."
+        },
       step3: {
         title: "Création de la magie...",
         desc: "L'IA ajuste la lumière, les ombres et la perspective pour un rendu parfait."
@@ -179,6 +194,7 @@ const translations = {
     studio: {
       title: "Creative Studio",
       subtitle: "Virtually try on any jewelry in seconds using AI.",
+      arMode: "AR Mirror Mode",
       steps: {
         upload: "The Jewelry",
         selectBody: "The Model",
@@ -206,8 +222,22 @@ const translations = {
         goToWardrobe: "Go to library",
         notesLabel: "Special Instructions (Optional)",
         notesPlaceholder: "E.g.: The jewelry is very small, keep proportions...",
-        generateBtn: "Generate Try-On"
-      },
+        generateBtn: "Generate Try-On",
+        or: "OR",
+        tryLive: "Try Live (Webcam)"
+        },
+        ar: {
+        title: "Virtual Mirror",
+        desc: "Adjust the jewelry on your image. Move, resize, and rotate for the perfect look.",
+        startCamera: "Start Camera",
+        stopCamera: "Stop",
+        flipCamera: "Flip Camera",
+        takePhoto: "Take Photo",
+        size: "Size",
+        rotation: "Rotation",
+        back: "Back to Studio",
+        permissionDenied: "Camera access denied. Check your settings."
+        },
       step3: {
         title: "Creating magic...",
         desc: "AI is adjusting light, shadows, and perspective for a perfect render."
@@ -289,6 +319,7 @@ const translations = {
     studio: {
       title: "Taller Creativo",
       subtitle: "Prueba virtualmente cualquier joya en segundos usando IA.",
+      arMode: "Modo Espejo AR",
       steps: {
         upload: "La Joya",
         selectBody: "El Modelo",
@@ -316,8 +347,22 @@ const translations = {
         goToWardrobe: "Ir a la biblioteca",
         notesLabel: "Instrucciones especiales (Opcional)",
         notesPlaceholder: "Ej: La joya es muy pequeña, mantener proporciones...",
-        generateBtn: "Generar Prueba"
-      },
+        generateBtn: "Generar Prueba",
+        or: "O",
+        tryLive: "Prueba en Vivo (Webcam)"
+        },
+        ar: {
+        title: "Espejo Virtual",
+        desc: "Ajusta la joya en tu imagen. Mueve, cambia el tamaño y gira para un look perfecto.",
+        startCamera: "Iniciar Cámara",
+        stopCamera: "Detener",
+        flipCamera: "Cambiar Cámara",
+        takePhoto: "Tomar Foto",
+        size: "Tamaño",
+        rotation: "Rotación",
+        back: "Volver al Taller",
+        permissionDenied: "Acceso a la cámara denegado."
+        },
       step3: {
         title: "Creando magia...",
         desc: "La IA ajusta la luz, las sombras y la perspectiva para un renderizado perfecto."
@@ -399,6 +444,7 @@ const translations = {
     studio: {
       title: "Kreativ-Atelier",
       subtitle: "Probieren Sie jeden Schmuck virtuell in Sekunden mit KI an.",
+      arMode: "AR-Spiegelmodus",
       steps: {
         upload: "Der Schmuck",
         selectBody: "Das Model",
@@ -426,8 +472,22 @@ const translations = {
         goToWardrobe: "Zur Bibliothek gehen",
         notesLabel: "Besondere Anweisungen (Optional)",
         notesPlaceholder: "z.B.: Der Schmuck ist sehr klein, Proportionen beibehalten...",
-        generateBtn: "Anprobe Generieren"
-      },
+        generateBtn: "Anprobe Generieren",
+        or: "ODER",
+        tryLive: "Live-Anprobe (Webcam)"
+        },
+        ar: {
+        title: "Virtueller Spiegel",
+        desc: "Passen Sie den Schmuck an. Bewegen, skalieren und drehen Sie für den perfekten Look.",
+        startCamera: "Kamera Starten",
+        stopCamera: "Stopp",
+        flipCamera: "Kamera Wechseln",
+        takePhoto: "Foto Aufnehmen",
+        size: "Größe",
+        rotation: "Rotation",
+        back: "Zurück zum Atelier",
+        permissionDenied: "Kamerazugriff verweigert."
+        },
       step3: {
         title: "Magie wird erstellt...",
         desc: "Die KI passt Licht, Schatten und Perspektive für ein perfektes Rendering an."
@@ -509,6 +569,7 @@ const translations = {
     studio: {
       title: "Atelier Creativo",
       subtitle: "Prova virtualmente qualsiasi gioiello in pochi secondi usando l'IA.",
+      arMode: "Modalità Specchio AR",
       steps: {
         upload: "Il Gioiello",
         selectBody: "Il Modello",
@@ -536,8 +597,22 @@ const translations = {
         goToWardrobe: "Vai alla biblioteca",
         notesLabel: "Istruzioni speciali (Opzionale)",
         notesPlaceholder: "Es: Il gioiello è molto piccolo, mantieni le proporzioni...",
-        generateBtn: "Genera Prova"
-      },
+        generateBtn: "Genera Prova",
+        or: "OPPURE",
+        tryLive: "Prova dal Vivo (Webcam)"
+        },
+        ar: {
+        title: "Specchio Virtuale",
+        desc: "Regola il gioiello sulla tua immagine. Sposta, ridimensiona e ruota per un look perfetto.",
+        startCamera: "Avvia Fotocamera",
+        stopCamera: "Stop",
+        flipCamera: "Cambia Fotocamera",
+        takePhoto: "Scatta Foto",
+        size: "Dimensione",
+        rotation: "Rotazione",
+        back: "Torna all'Atelier",
+        permissionDenied: "Accesso alla fotocamera negato."
+        },
       step3: {
         title: "Creazione della magia...",
         desc: "L'IA regola luce, ombre e prospettiva per una resa perfetta."
@@ -619,6 +694,7 @@ const translations = {
     studio: {
       title: "Estúdio Criativo",
       subtitle: "Experimente virtualmente qualquer joia em segundos usando IA.",
+      arMode: "Modo Espelho AR",
       steps: {
         upload: "A Joia",
         selectBody: "O Modelo",
@@ -646,8 +722,22 @@ const translations = {
         goToWardrobe: "Ir para a biblioteca",
         notesLabel: "Instruções especiais (Opcional)",
         notesPlaceholder: "Ex: A joia é muito pequena, mantenha as proporções...",
-        generateBtn: "Gerar Prova"
-      },
+        generateBtn: "Gerar Prova",
+        or: "OU",
+        tryLive: "Prova ao Vivo (Webcam)"
+        },
+        ar: {
+        title: "Espelho Virtual",
+        desc: "Ajuste a joia na sua imagem. Mova, redimensione e gire para um visual perfeito.",
+        startCamera: "Iniciar Câmera",
+        stopCamera: "Parar",
+        flipCamera: "Inverter Câmera",
+        takePhoto: "Tirar Foto",
+        size: "Tamanho",
+        rotation: "Rotação",
+        back: "Voltar ao Estúdio",
+        permissionDenied: "Acesso à câmera negado."
+        },
       step3: {
         title: "Criando magia...",
         desc: "A IA ajusta luz, sombras e perspectiva para uma renderização perfeita."

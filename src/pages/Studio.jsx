@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Sparkles, Upload, ArrowRight, CheckCircle2, RefreshCw, Lightbulb, Wand2 } from "lucide-react";
+import { Loader2, Sparkles, Upload, ArrowRight, CheckCircle2, RefreshCw, Lightbulb, Wand2, Camera } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/LanguageProvider';
+import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 
 const STEPS = {
   UPLOAD: 0,
@@ -34,6 +35,7 @@ export default function Studio() {
   const [resultImage, setResultImage] = useState("");
   const [stylistData, setStylistData] = useState(null);
   const [analyzingStyle, setAnalyzingStyle] = useState(false);
+  const [isARMode, setIsARMode] = useState(false);
 
   const { data: bodyParts } = useQuery({
     queryKey: ['bodyParts'],
@@ -176,6 +178,13 @@ export default function Studio() {
 
   return (
     <div className="max-w-4xl mx-auto">
+      {isARMode ? (
+         <ARLiveTryOn 
+           jewelryImage={jewelryImage} 
+           onBack={() => setIsARMode(false)} 
+         />
+      ) : (
+        <>
       <div className="mb-12 text-center">
         <h1 className="text-4xl font-serif text-neutral-900 mb-4">{t.studio.title}</h1>
         <p className="text-neutral-500">
@@ -388,15 +397,34 @@ export default function Studio() {
                   />
                 </div>
 
-                <div className="flex justify-between pt-4">
-                  <Button variant="ghost" onClick={() => setStep(STEPS.UPLOAD)}>{t.common.back}</Button>
+                <div className="flex flex-col gap-4 pt-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-neutral-200" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-neutral-500">{t.studio.step2.or || "OU"}</span>
+                    </div>
+                  </div>
+                  
                   <Button 
-                    onClick={generateTryOn}
-                    disabled={!selectedBodyPartId}
-                    className="bg-amber-600 text-white hover:bg-amber-700"
+                    variant="outline"
+                    className="w-full border-amber-200 text-amber-700 hover:bg-amber-50"
+                    onClick={() => setIsARMode(true)}
                   >
-                    <Sparkles className="w-4 h-4 mr-2" /> {t.studio.step2.generateBtn}
+                    <Camera className="w-4 h-4 mr-2" /> {t.studio.step2.tryLive || "Essayer en Direct (Webcam)"}
                   </Button>
+
+                  <div className="flex justify-between pt-2">
+                    <Button variant="ghost" onClick={() => setStep(STEPS.UPLOAD)}>{t.common.back}</Button>
+                    <Button 
+                      onClick={generateTryOn}
+                      disabled={!selectedBodyPartId}
+                      className="bg-amber-600 text-white hover:bg-amber-700"
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" /> {t.studio.step2.generateBtn}
+                    </Button>
+                  </div>
                 </div>
 
                 {/* AI Stylist Section */}
