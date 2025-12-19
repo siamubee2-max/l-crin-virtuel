@@ -24,6 +24,7 @@ export default function Studio() {
   const [step, setStep] = useState(STEPS.UPLOAD);
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [showCatalog, setShowCatalog] = useState(false);
   
   // Creation State
   const [jewelryImage, setJewelryImage] = useState("");
@@ -37,6 +38,11 @@ export default function Studio() {
   const { data: bodyParts } = useQuery({
     queryKey: ['bodyParts'],
     queryFn: () => base44.entities.BodyPart.list(),
+  });
+
+  const { data: catalogItems } = useQuery({
+    queryKey: ['jewelryItems'],
+    queryFn: () => base44.entities.JewelryItem.list(),
   });
 
   const handleJewelryUpload = async (e) => {
@@ -258,25 +264,64 @@ export default function Studio() {
                   </div>
                 </div>
 
-                <div className="border-2 border-dashed border-neutral-200 rounded-xl flex-1 flex flex-col items-center justify-center p-6 text-center hover:bg-neutral-50 transition-colors relative min-h-[200px]">
-                  <input 
-                    type="file" 
-                    accept="image/*"
-                    onChange={handleJewelryUpload}
-                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                  />
-                  {uploading ? (
-                    <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
-                  ) : jewelryImage ? (
-                    <img src={jewelryImage} alt="Jewelry" className="h-full max-h-64 object-contain" />
-                  ) : (
-                    <>
-                      <Upload className="w-10 h-10 text-neutral-300 mb-4" />
-                      <p className="text-neutral-900 font-medium">{t.common.clickToUpload}</p>
-                      <p className="text-neutral-400 text-sm mt-1">JPG, PNG</p>
-                    </>
-                  )}
+                <div className="flex gap-4 mb-4 justify-center">
+                  <Button 
+                    variant={!showCatalog ? "default" : "outline"}
+                    onClick={() => setShowCatalog(false)}
+                    className={!showCatalog ? "bg-neutral-900 text-white" : ""}
+                  >
+                    <Upload className="w-4 h-4 mr-2" /> Upload
+                  </Button>
+                  <Button 
+                    variant={showCatalog ? "default" : "outline"}
+                    onClick={() => setShowCatalog(true)}
+                    className={showCatalog ? "bg-neutral-900 text-white" : ""}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" /> {t.jewelryBox?.title || "Catalogue"}
+                  </Button>
                 </div>
+
+                {!showCatalog ? (
+                  <div className="border-2 border-dashed border-neutral-200 rounded-xl flex-1 flex flex-col items-center justify-center p-6 text-center hover:bg-neutral-50 transition-colors relative min-h-[200px]">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleJewelryUpload}
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                    />
+                    {uploading ? (
+                      <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
+                    ) : jewelryImage ? (
+                      <img src={jewelryImage} alt="Jewelry" className="h-full max-h-64 object-contain" />
+                    ) : (
+                      <>
+                        <Upload className="w-10 h-10 text-neutral-300 mb-4" />
+                        <p className="text-neutral-900 font-medium">{t.common.clickToUpload}</p>
+                        <p className="text-neutral-400 text-sm mt-1">JPG, PNG</p>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex-1 overflow-y-auto max-h-[300px] border rounded-xl p-2 bg-neutral-50">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {catalogItems?.filter(i => i.type === jewelryType).map(item => (
+                        <div 
+                          key={item.id} 
+                          className={`bg-white p-2 rounded-lg border cursor-pointer transition-all ${jewelryImage === item.image_url ? 'ring-2 ring-amber-500 border-transparent' : 'hover:border-amber-300'}`}
+                          onClick={() => setJewelryImage(item.image_url)}
+                        >
+                          <div className="aspect-square rounded-md overflow-hidden bg-neutral-100 mb-2">
+                            <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                          </div>
+                          <p className="text-xs font-medium truncate">{item.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                    {catalogItems?.filter(i => i.type === jewelryType).length === 0 && (
+                      <p className="text-center text-neutral-400 py-10">Aucun bijou de ce type dans votre écrin.</p>
+                    )}
+                  </div>
+                )}
 
                 <div className="flex justify-end">
                   <Button 

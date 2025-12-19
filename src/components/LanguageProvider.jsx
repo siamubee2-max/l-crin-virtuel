@@ -5,7 +5,8 @@ const translations = {
     nav: {
       gallery: "Galerie",
       studio: "L'Atelier",
-      wardrobe: "Ma Bibliothèque"
+      wardrobe: "Ma Bibliothèque",
+      jewelryBox: "Mon Écrin"
     },
     common: {
       footer: "L'Écrin Virtuel © 2024 — Luxe & Technologie",
@@ -102,19 +103,38 @@ const translations = {
       createFirst: "Créer mon premier look"
       },
       stylist: {
-      title: "Styliste IA",
-      analyzeBtn: "Demander conseil au Styliste",
-      analyzing: "Analyse de style en cours...",
-      suggestions: "Suggestions de Style",
-      advice: "Couleurs & Occasions",
-      compatible: "Compléter le Look"
+        title: "Styliste IA",
+        analyzeBtn: "Demander conseil au Styliste",
+        analyzing: "Analyse de style en cours...",
+        suggestions: "Suggestions de Style",
+        advice: "Couleurs & Occasions",
+        compatible: "Compléter le Look"
+      },
+      jewelryBox: {
+        title: "Mon Écrin",
+        subtitle: "Cataloguez vos bijoux précieux. L'IA vous aidera à les organiser et à trouver des correspondances.",
+        addBtn: "Ajouter un bijou",
+        newItem: "Nouveau Bijou",
+        searchPlaceholder: "Rechercher (or, argent, Cartier...)",
+        analyzing: "L'IA analyse votre bijou...",
+        fields: {
+          name: "Nom",
+          type: "Type",
+          brand: "Marque",
+          material: "Matière",
+          desc: "Description",
+          tags: "Tags détectés"
+        },
+        empty: "Votre écrin est vide.",
+        emptyCta: "Ajoutez votre premier trésor."
       }
       },
   en: {
     nav: {
       gallery: "Gallery",
       studio: "The Studio",
-      wardrobe: "My Wardrobe"
+      wardrobe: "My Wardrobe",
+      jewelryBox: "My Jewelry Box"
     },
     common: {
       footer: "The Virtual Jewelry Box © 2024 — Luxury & Technology",
@@ -223,7 +243,8 @@ const translations = {
     nav: {
       gallery: "Galería",
       studio: "El Taller",
-      wardrobe: "Mi Armario"
+      wardrobe: "Mi Armario",
+      jewelryBox: "Mi Joyero"
     },
     common: {
       footer: "El Joyero Virtual © 2024 — Lujo y Tecnología",
@@ -332,7 +353,8 @@ const translations = {
     nav: {
       gallery: "Galerie",
       studio: "Das Atelier",
-      wardrobe: "Meine Garderobe"
+      wardrobe: "Meine Garderobe",
+      jewelryBox: "Mein Schmuckkästchen"
     },
     common: {
       footer: "Das Virtuelle Schmuckkästchen © 2024 — Luxus & Technologie",
@@ -441,7 +463,8 @@ const translations = {
     nav: {
       gallery: "Galleria",
       studio: "L'Atelier",
-      wardrobe: "Il Mio Guardaroba"
+      wardrobe: "Il Mio Guardaroba",
+      jewelryBox: "Il Mio Scrigno"
     },
     common: {
       footer: "Lo Scrigno Virtuale © 2024 — Lusso & Tecnologia",
@@ -550,7 +573,8 @@ const translations = {
     nav: {
       gallery: "Galeria",
       studio: "O Estúdio",
-      wardrobe: "Meu Guarda-Roupa"
+      wardrobe: "Meu Guarda-Roupa",
+      jewelryBox: "Meu Porta-Joias"
     },
     common: {
       footer: "O Porta-Joias Virtual © 2024 — Luxo & Tecnologia",
