@@ -184,366 +184,366 @@ export default function Studio() {
            onBack={() => setIsARMode(false)} 
          />
       ) : (
-        <>
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl font-serif text-neutral-900 mb-4">{t.studio.title}</h1>
-        <p className="text-neutral-500">
-          {t.studio.subtitle}
-        </p>
-      </div>
-
-      <div className="bg-white rounded-3xl shadow-xl border border-neutral-100 overflow-hidden min-h-[500px] flex flex-col md:flex-row">
-        
-        {/* Left Side - Progress & Steps */}
-        <div className="w-full md:w-1/3 bg-neutral-50 p-8 border-r border-neutral-100 flex flex-col">
-          <div className="space-y-6">
-            {[
-              { id: STEPS.UPLOAD, label: t.studio.steps.upload, icon: "💎" },
-              { id: STEPS.SELECT_BODY, label: t.studio.steps.selectBody, icon: "👤" },
-              { id: STEPS.GENERATE, label: t.studio.steps.generate, icon: "✨" },
-              { id: STEPS.RESULT, label: t.studio.steps.result, icon: "🖼️" },
-            ].map((s) => (
-              <div 
-                key={s.id}
-                className={`flex items-center gap-4 transition-colors ${
-                  step === s.id ? "text-amber-600 font-medium" : 
-                  step > s.id ? "text-green-600" : "text-neutral-400"
-                }`}
-              >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${
-                  step === s.id ? "border-amber-600 bg-amber-50" : 
-                  step > s.id ? "border-green-600 bg-green-50" : "border-neutral-200"
-                }`}>
-                  {step > s.id ? <CheckCircle2 className="w-4 h-4" /> : <span>{s.id + 1}</span>}
-                </div>
-                <span>{s.label}</span>
-              </div>
-            ))}
+        <div>
+          <div className="mb-12 text-center">
+            <h1 className="text-4xl font-serif text-neutral-900 mb-4">{t.studio.title}</h1>
+            <p className="text-neutral-500">
+              {t.studio.subtitle}
+            </p>
           </div>
 
-          {step === STEPS.RESULT && (
-             <Button 
-                onClick={() => {
-                  setStep(STEPS.UPLOAD);
-                  setJewelryImage("");
-                  setResultImage("");
-                }}
-                variant="outline"
-                className="mt-auto"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" /> {t.studio.newTry}
-             </Button>
-          )}
-        </div>
-
-        {/* Right Side - Content Area */}
-        <div className="w-full md:w-2/3 p-8 md:p-12 relative">
-          <AnimatePresence mode="wait">
+          <div className="bg-white rounded-3xl shadow-xl border border-neutral-100 overflow-hidden min-h-[500px] flex flex-col md:flex-row">
             
-            {/* STEP 1: UPLOAD JEWELRY */}
-            {step === STEPS.UPLOAD && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-6 h-full flex flex-col"
-              >
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-serif">{t.studio.step1.title}</h2>
-                  <p className="text-neutral-500 text-sm">{t.studio.step1.desc}</p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>{t.studio.step1.typeLabel}</Label>
-                    <Select value={jewelryType} onValueChange={setJewelryType}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="earrings">{t.studio.step1.types.earrings}</SelectItem>
-                        <SelectItem value="necklace">{t.studio.step1.types.necklace}</SelectItem>
-                        <SelectItem value="ring">{t.studio.step1.types.ring}</SelectItem>
-                        <SelectItem value="bracelet">{t.studio.step1.types.bracelet}</SelectItem>
-                        <SelectItem value="anklet">{t.studio.step1.types.anklet}</SelectItem>
-                        <SelectItem value="set">{t.studio.step1.types.set}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 mb-4 justify-center">
-                  <Button 
-                    variant={!showCatalog ? "default" : "outline"}
-                    onClick={() => setShowCatalog(false)}
-                    className={!showCatalog ? "bg-neutral-900 text-white" : ""}
+            {/* Left Side - Progress & Steps */}
+            <div className="w-full md:w-1/3 bg-neutral-50 p-8 border-r border-neutral-100 flex flex-col">
+              <div className="space-y-6">
+                {[
+                  { id: STEPS.UPLOAD, label: t.studio.steps.upload, icon: "💎" },
+                  { id: STEPS.SELECT_BODY, label: t.studio.steps.selectBody, icon: "👤" },
+                  { id: STEPS.GENERATE, label: t.studio.steps.generate, icon: "✨" },
+                  { id: STEPS.RESULT, label: t.studio.steps.result, icon: "🖼️" },
+                ].map((s) => (
+                  <div 
+                    key={s.id}
+                    className={`flex items-center gap-4 transition-colors ${
+                      step === s.id ? "text-amber-600 font-medium" : 
+                      step > s.id ? "text-green-600" : "text-neutral-400"
+                    }`}
                   >
-                    <Upload className="w-4 h-4 mr-2" /> Upload
-                  </Button>
-                  <Button 
-                    variant={showCatalog ? "default" : "outline"}
-                    onClick={() => setShowCatalog(true)}
-                    className={showCatalog ? "bg-neutral-900 text-white" : ""}
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" /> {t.jewelryBox?.title || "Catalogue"}
-                  </Button>
-                </div>
-
-                {!showCatalog ? (
-                  <div className="border-2 border-dashed border-neutral-200 rounded-xl flex-1 flex flex-col items-center justify-center p-6 text-center hover:bg-neutral-50 transition-colors relative min-h-[200px]">
-                    <input 
-                      type="file" 
-                      accept="image/*"
-                      onChange={handleJewelryUpload}
-                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                    />
-                    {uploading ? (
-                      <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
-                    ) : jewelryImage ? (
-                      <img src={jewelryImage} alt="Jewelry" className="h-full max-h-64 object-contain" />
-                    ) : (
-                      <>
-                        <Upload className="w-10 h-10 text-neutral-300 mb-4" />
-                        <p className="text-neutral-900 font-medium">{t.common.clickToUpload}</p>
-                        <p className="text-neutral-400 text-sm mt-1">JPG, PNG</p>
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex-1 overflow-y-auto max-h-[300px] border rounded-xl p-2 bg-neutral-50">
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {catalogItems?.filter(i => i.type === jewelryType).map(item => (
-                        <div 
-                          key={item.id} 
-                          className={`bg-white p-2 rounded-lg border cursor-pointer transition-all ${jewelryImage === item.image_url ? 'ring-2 ring-amber-500 border-transparent' : 'hover:border-amber-300'}`}
-                          onClick={() => setJewelryImage(item.image_url)}
-                        >
-                          <div className="aspect-square rounded-md overflow-hidden bg-neutral-100 mb-2">
-                            <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
-                          </div>
-                          <p className="text-xs font-medium truncate">{item.name}</p>
-                        </div>
-                      ))}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${
+                      step === s.id ? "border-amber-600 bg-amber-50" : 
+                      step > s.id ? "border-green-600 bg-green-50" : "border-neutral-200"
+                    }`}>
+                      {step > s.id ? <CheckCircle2 className="w-4 h-4" /> : <span>{s.id + 1}</span>}
                     </div>
-                    {catalogItems?.filter(i => i.type === jewelryType).length === 0 && (
-                      <p className="text-center text-neutral-400 py-10">Aucun bijou de ce type dans votre écrin.</p>
-                    )}
+                    <span>{s.label}</span>
                   </div>
-                )}
+                ))}
+              </div>
 
-                <div className="flex justify-end">
-                  <Button 
-                    onClick={() => setStep(STEPS.SELECT_BODY)}
-                    disabled={!jewelryImage}
-                    className="bg-neutral-900 text-white hover:bg-neutral-800"
+              {step === STEPS.RESULT && (
+                 <Button 
+                    onClick={() => {
+                      setStep(STEPS.UPLOAD);
+                      setJewelryImage("");
+                      setResultImage("");
+                    }}
+                    variant="outline"
+                    className="mt-auto"
                   >
-                    {t.common.next} <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
-              </motion.div>
-            )}
+                    <RefreshCw className="w-4 h-4 mr-2" /> {t.studio.newTry}
+                 </Button>
+              )}
+            </div>
 
-            {/* STEP 2: SELECT BODY PART */}
-            {step === STEPS.SELECT_BODY && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-6 h-full flex flex-col"
-              >
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-serif">{t.studio.step2.title}</h2>
-                  <p className="text-neutral-500 text-sm">{t.studio.step2.desc}</p>
-                </div>
+            {/* Right Side - Content Area */}
+            <div className="w-full md:w-2/3 p-8 md:p-12 relative">
+              <AnimatePresence mode="wait">
+                
+                {/* STEP 1: UPLOAD JEWELRY */}
+                {step === STEPS.UPLOAD && (
+                  <motion.div
+                    key="step1"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="space-y-6 h-full flex flex-col"
+                  >
+                    <div className="space-y-2">
+                      <h2 className="text-2xl font-serif">{t.studio.step1.title}</h2>
+                      <p className="text-neutral-500 text-sm">{t.studio.step1.desc}</p>
+                    </div>
 
-                <div className="flex-1 overflow-y-auto max-h-[400px] pr-2">
-                  {filteredBodyParts?.length === 0 ? (
-                    <div className="text-center py-10">
-                      <p className="text-neutral-500 mb-4">{t.studio.step2.empty}</p>
-                      <Button variant="outline" onClick={() => navigate(createPageUrl('Wardrobe'))}>
-                        {t.studio.step2.goToWardrobe}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>{t.studio.step1.typeLabel}</Label>
+                        <Select value={jewelryType} onValueChange={setJewelryType}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="earrings">{t.studio.step1.types.earrings}</SelectItem>
+                            <SelectItem value="necklace">{t.studio.step1.types.necklace}</SelectItem>
+                            <SelectItem value="ring">{t.studio.step1.types.ring}</SelectItem>
+                            <SelectItem value="bracelet">{t.studio.step1.types.bracelet}</SelectItem>
+                            <SelectItem value="anklet">{t.studio.step1.types.anklet}</SelectItem>
+                            <SelectItem value="set">{t.studio.step1.types.set}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-4 mb-4 justify-center">
+                      <Button 
+                        variant={!showCatalog ? "default" : "outline"}
+                        onClick={() => setShowCatalog(false)}
+                        className={!showCatalog ? "bg-neutral-900 text-white" : ""}
+                      >
+                        <Upload className="w-4 h-4 mr-2" /> Upload
+                      </Button>
+                      <Button 
+                        variant={showCatalog ? "default" : "outline"}
+                        onClick={() => setShowCatalog(true)}
+                        className={showCatalog ? "bg-neutral-900 text-white" : ""}
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" /> {t.jewelryBox?.title || "Catalogue"}
                       </Button>
                     </div>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-4">
-                      {filteredBodyParts?.map((part) => (
-                        <div 
-                          key={part.id}
-                          onClick={() => setSelectedBodyPartId(part.id)}
-                          className={`cursor-pointer rounded-xl border-2 overflow-hidden relative aspect-[3/4] transition-all ${
-                            selectedBodyPartId === part.id 
-                              ? "border-amber-600 ring-2 ring-amber-100" 
-                              : "border-transparent hover:border-neutral-200"
-                          }`}
-                        >
-                          <img src={part.image_url} alt={part.name} className="w-full h-full object-cover" />
-                          <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90 text-xs font-medium truncate">
-                            {part.name}
-                          </div>
+
+                    {!showCatalog ? (
+                      <div className="border-2 border-dashed border-neutral-200 rounded-xl flex-1 flex flex-col items-center justify-center p-6 text-center hover:bg-neutral-50 transition-colors relative min-h-[200px]">
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={handleJewelryUpload}
+                          className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                        />
+                        {uploading ? (
+                          <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
+                        ) : jewelryImage ? (
+                          <img src={jewelryImage} alt="Jewelry" className="h-full max-h-64 object-contain" />
+                        ) : (
+                          <>
+                            <Upload className="w-10 h-10 text-neutral-300 mb-4" />
+                            <p className="text-neutral-900 font-medium">{t.common.clickToUpload}</p>
+                            <p className="text-neutral-400 text-sm mt-1">JPG, PNG</p>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex-1 overflow-y-auto max-h-[300px] border rounded-xl p-2 bg-neutral-50">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {catalogItems?.filter(i => i.type === jewelryType).map(item => (
+                            <div 
+                              key={item.id} 
+                              className={`bg-white p-2 rounded-lg border cursor-pointer transition-all ${jewelryImage === item.image_url ? 'ring-2 ring-amber-500 border-transparent' : 'hover:border-amber-300'}`}
+                              onClick={() => setJewelryImage(item.image_url)}
+                            >
+                              <div className="aspect-square rounded-md overflow-hidden bg-neutral-100 mb-2">
+                                <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                              </div>
+                              <p className="text-xs font-medium truncate">{item.name}</p>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{t.studio.step2.notesLabel}</Label>
-                  <Input 
-                    placeholder={t.studio.step2.notesPlaceholder}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-4 pt-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t border-neutral-200" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-2 text-neutral-500">{t.studio.step2.or || "OU"}</span>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    variant="outline"
-                    className="w-full border-amber-200 text-amber-700 hover:bg-amber-50"
-                    onClick={() => setIsARMode(true)}
-                  >
-                    <Camera className="w-4 h-4 mr-2" /> {t.studio.step2.tryLive || "Essayer en Direct (Webcam)"}
-                  </Button>
-
-                  <div className="flex justify-between pt-2">
-                    <Button variant="ghost" onClick={() => setStep(STEPS.UPLOAD)}>{t.common.back}</Button>
-                    <Button 
-                      onClick={generateTryOn}
-                      disabled={!selectedBodyPartId}
-                      className="bg-amber-600 text-white hover:bg-amber-700"
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" /> {t.studio.step2.generateBtn}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* AI Stylist Section */}
-                <div className="mt-8 border-t border-neutral-100 pt-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-serif flex items-center gap-2 text-neutral-800">
-                      <Wand2 className="w-5 h-5 text-amber-500" />
-                      {t.stylist.title}
-                    </h3>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleStylistAnalysis}
-                      disabled={analyzingStyle || !selectedBodyPartId}
-                      className="border-amber-200 text-amber-700 hover:bg-amber-50"
-                    >
-                      {analyzingStyle ? (
-                        <><Loader2 className="w-3 h-3 mr-2 animate-spin" /> {t.stylist.analyzing}</>
-                      ) : (
-                        <><Lightbulb className="w-3 h-3 mr-2" /> {t.stylist.analyzeBtn}</>
-                      )}
-                    </Button>
-                  </div>
-
-                  <AnimatePresence>
-                    {stylistData && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="bg-neutral-50 rounded-xl p-5 space-y-4 border border-neutral-100 text-sm"
-                      >
-                        <div>
-                          <p className="font-medium text-amber-700 mb-1">{t.stylist.suggestions}</p>
-                          <p className="text-neutral-600 leading-relaxed">{stylistData.suggestions}</p>
-                        </div>
-                        <div>
-                          <p className="font-medium text-amber-700 mb-1">{t.stylist.advice}</p>
-                          <p className="text-neutral-600 leading-relaxed">{stylistData.advice}</p>
-                        </div>
-                        <div>
-                          <p className="font-medium text-amber-700 mb-2">{t.stylist.compatible}</p>
-                          <div className="flex flex-wrap gap-2">
-                            {stylistData.compatible_items?.map((item, idx) => (
-                              <span key={idx} className="bg-white border border-neutral-200 px-3 py-1 rounded-full text-neutral-600 text-xs shadow-sm">
-                                {item}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </motion.div>
+                        {catalogItems?.filter(i => i.type === jewelryType).length === 0 && (
+                          <p className="text-center text-neutral-400 py-10">Aucun bijou de ce type dans votre écrin.</p>
+                        )}
+                      </div>
                     )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-            )}
 
-            {/* STEP 3: GENERATING */}
-            {step === STEPS.GENERATE && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="h-full flex flex-col items-center justify-center text-center space-y-6"
-              >
-                <div className="relative w-24 h-24">
-                  <div className="absolute inset-0 rounded-full border-4 border-amber-100"></div>
-                  <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
-                  <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-amber-500 animate-pulse" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-serif font-medium">{t.studio.step3.title}</h3>
-                  <p className="text-neutral-500 mt-2 max-w-xs mx-auto">
-                    {t.studio.step3.desc}
-                  </p>
-                </div>
-              </motion.div>
-            )}
+                    <div className="flex justify-end">
+                      <Button 
+                        onClick={() => setStep(STEPS.SELECT_BODY)}
+                        disabled={!jewelryImage}
+                        className="bg-neutral-900 text-white hover:bg-neutral-800"
+                      >
+                        {t.common.next} <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
 
-            {/* STEP 4: RESULT */}
-            {step === STEPS.RESULT && (
-              <motion.div
-                key="step4"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="h-full flex flex-col space-y-6"
-              >
-                 <div className="space-y-2 text-center">
-                  <h2 className="text-2xl font-serif">{t.studio.step4.title}</h2>
-                  <p className="text-neutral-500 text-sm">{t.studio.step4.desc}</p>
-                </div>
-
-                <div className="flex-1 bg-neutral-900 rounded-xl overflow-hidden relative group">
-                  <img src={resultImage} alt="Result" className="w-full h-full object-contain" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => window.open(resultImage, '_blank')}
+                {/* STEP 2: SELECT BODY PART */}
+                {step === STEPS.SELECT_BODY && (
+                  <motion.div
+                    key="step2"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="space-y-6 h-full flex flex-col"
                   >
-                    {t.common.download}
-                  </Button>
-                  <Button 
-                    className="w-full bg-neutral-900 text-white"
-                    onClick={() => navigate(createPageUrl("Gallery"))}
-                  >
-                    {t.studio.step4.goToGallery}
-                  </Button>
-                </div>
-              </motion.div>
-            )}
+                    <div className="space-y-2">
+                      <h2 className="text-2xl font-serif">{t.studio.step2.title}</h2>
+                      <p className="text-neutral-500 text-sm">{t.studio.step2.desc}</p>
+                    </div>
 
-          </AnimatePresence>
+                    <div className="flex-1 overflow-y-auto max-h-[400px] pr-2">
+                      {filteredBodyParts?.length === 0 ? (
+                        <div className="text-center py-10">
+                          <p className="text-neutral-500 mb-4">{t.studio.step2.empty}</p>
+                          <Button variant="outline" onClick={() => navigate(createPageUrl('Wardrobe'))}>
+                            {t.studio.step2.goToWardrobe}
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-4">
+                          {filteredBodyParts?.map((part) => (
+                            <div 
+                              key={part.id}
+                              onClick={() => setSelectedBodyPartId(part.id)}
+                              className={`cursor-pointer rounded-xl border-2 overflow-hidden relative aspect-[3/4] transition-all ${
+                                selectedBodyPartId === part.id 
+                                  ? "border-amber-600 ring-2 ring-amber-100" 
+                                  : "border-transparent hover:border-neutral-200"
+                              }`}
+                            >
+                              <img src={part.image_url} alt={part.name} className="w-full h-full object-cover" />
+                              <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90 text-xs font-medium truncate">
+                                {part.name}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>{t.studio.step2.notesLabel}</Label>
+                      <Input 
+                        placeholder={t.studio.step2.notesPlaceholder}
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-4 pt-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t border-neutral-200" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-white px-2 text-neutral-500">{t.studio.step2.or || "OU"}</span>
+                        </div>
+                      </div>
+                      
+                      <Button 
+                        variant="outline"
+                        className="w-full border-amber-200 text-amber-700 hover:bg-amber-50"
+                        onClick={() => setIsARMode(true)}
+                      >
+                        <Camera className="w-4 h-4 mr-2" /> {t.studio.step2.tryLive || "Essayer en Direct (Webcam)"}
+                      </Button>
+
+                      <div className="flex justify-between pt-2">
+                        <Button variant="ghost" onClick={() => setStep(STEPS.UPLOAD)}>{t.common.back}</Button>
+                        <Button 
+                          onClick={generateTryOn}
+                          disabled={!selectedBodyPartId}
+                          className="bg-amber-600 text-white hover:bg-amber-700"
+                        >
+                          <Sparkles className="w-4 h-4 mr-2" /> {t.studio.step2.generateBtn}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* AI Stylist Section */}
+                    <div className="mt-8 border-t border-neutral-100 pt-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-serif flex items-center gap-2 text-neutral-800">
+                          <Wand2 className="w-5 h-5 text-amber-500" />
+                          {t.stylist.title}
+                        </h3>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleStylistAnalysis}
+                          disabled={analyzingStyle || !selectedBodyPartId}
+                          className="border-amber-200 text-amber-700 hover:bg-amber-50"
+                        >
+                          {analyzingStyle ? (
+                            <><Loader2 className="w-3 h-3 mr-2 animate-spin" /> {t.stylist.analyzing}</>
+                          ) : (
+                            <><Lightbulb className="w-3 h-3 mr-2" /> {t.stylist.analyzeBtn}</>
+                          )}
+                        </Button>
+                      </div>
+
+                      <AnimatePresence>
+                        {stylistData && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="bg-neutral-50 rounded-xl p-5 space-y-4 border border-neutral-100 text-sm"
+                          >
+                            <div>
+                              <p className="font-medium text-amber-700 mb-1">{t.stylist.suggestions}</p>
+                              <p className="text-neutral-600 leading-relaxed">{stylistData.suggestions}</p>
+                            </div>
+                            <div>
+                              <p className="font-medium text-amber-700 mb-1">{t.stylist.advice}</p>
+                              <p className="text-neutral-600 leading-relaxed">{stylistData.advice}</p>
+                            </div>
+                            <div>
+                              <p className="font-medium text-amber-700 mb-2">{t.stylist.compatible}</p>
+                              <div className="flex flex-wrap gap-2">
+                                {stylistData.compatible_items?.map((item, idx) => (
+                                  <span key={idx} className="bg-white border border-neutral-200 px-3 py-1 rounded-full text-neutral-600 text-xs shadow-sm">
+                                    {item}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* STEP 3: GENERATING */}
+                {step === STEPS.GENERATE && (
+                  <motion.div
+                    key="step3"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-full flex flex-col items-center justify-center text-center space-y-6"
+                  >
+                    <div className="relative w-24 h-24">
+                      <div className="absolute inset-0 rounded-full border-4 border-amber-100"></div>
+                      <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
+                      <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-amber-500 animate-pulse" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-serif font-medium">{t.studio.step3.title}</h3>
+                      <p className="text-neutral-500 mt-2 max-w-xs mx-auto">
+                        {t.studio.step3.desc}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* STEP 4: RESULT */}
+                {step === STEPS.RESULT && (
+                  <motion.div
+                    key="step4"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="h-full flex flex-col space-y-6"
+                  >
+                     <div className="space-y-2 text-center">
+                      <h2 className="text-2xl font-serif">{t.studio.step4.title}</h2>
+                      <p className="text-neutral-500 text-sm">{t.studio.step4.desc}</p>
+                    </div>
+
+                    <div className="flex-1 bg-neutral-900 rounded-xl overflow-hidden relative group">
+                      <img src={resultImage} alt="Result" className="w-full h-full object-contain" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={() => window.open(resultImage, '_blank')}
+                      >
+                        {t.common.download}
+                      </Button>
+                      <Button 
+                        className="w-full bg-neutral-900 text-white"
+                        onClick={() => navigate(createPageUrl("Gallery"))}
+                      >
+                        {t.studio.step4.goToGallery}
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
+
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
-      </div>
-      </>
       )}
     </div>
   );
