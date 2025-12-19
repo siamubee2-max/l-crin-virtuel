@@ -1,0 +1,486 @@
+import React, { useState } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Search, Loader2, Camera, Shirt, Trash2, Sparkles, Link as LinkIcon, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from '@/components/LanguageProvider';
+
+export default function Closet() {
+  const { t } = useLanguage();
+  const queryClient = useQueryClient();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  
+  // AI Styling State
+  const [selectedItemForAI, setSelectedItemForAI] = useState(null);
+  const [occasionPrompt, setOccasionPrompt] = useState("");
+  const [aiSuggestion, setAiSuggestion] = useState(null);
+  const [analyzing, setAnalyzing] = useState(false);
+
+  const [newItem, setNewItem] = useState({
+    name: "",
+    type: "top",
+    brand: "",
+    color: "",
+    material: "",
+    image_url: "",
+    description: "",
+    associated_jewelry_ids: []
+  });
+
+  // Data Fetching
+  const { data: clothes, isLoading: clothesLoading } = useQuery({
+    queryKey: ['clothes'],
+    queryFn: () => base44.entities.ClothingItem.list('-created_date'),
+  });
+
+  const { data: jewelry, isLoading: jewelryLoading } = useQuery({
+    queryKey: ['jewelryItems'],
+    queryFn: () => base44.entities.JewelryItem.list(),
+  });
+
+  // Mutations
+  const createMutation = useMutation({
+    mutationFn: (data) => base44.entities.ClothingItem.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clothes'] });
+      setIsDialogOpen(false);
+      resetForm();
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.ClothingItem.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clothes'] });
+    }
+  });
+
+  const resetForm = () => {
+    setNewItem({
+      name: "",
+      type: "top",
+      brand: "",
+      color: "",
+      material: "",
+      image_url: "",
+      description: "",
+      associated_jewelry_ids: []
+    });
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const result = await base44.integrations.Core.UploadFile({ file });
+      setNewItem(prev => ({ ...prev, image_url: result.file_url }));
+      
+      // Auto-tagging could be added here similar to JewelryBox
+    } catch (error) {
+      console.error("Upload failed", error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleAiStyling = async () => {
+    if (!selectedItemForAI) return;
+    setAnalyzing(true);
+    setAiSuggestion(null);
+
+    try {
+      const prompt = `
+        As a personal stylist, suggest a jewelry combination for this clothing item.
+        
+        Clothing Item:
+        - Type: ${selectedItemForAI.type}
+        - Name: ${selectedItemForAI.name}
+        - Color: ${selectedItemForAI.color}
+        - Material: ${selectedItemForAI.material}
+        - Description: ${selectedItemForAI.description}
+        
+        Occasion/Style Context: ${occasionPrompt || "General elegant style"}
+        
+        Available Jewelry (ID: Name - Type - Material):
+        ${jewelry?.map(j => `- ${j.id}: ${j.name} - ${j.type} - ${j.material}`).join('\n')}
+        
+        Task:
+        Select 1-3 best matching jewelry items from the list above.
+        Explain why they work well together with the clothing and the occasion.
+        
+        Return JSON format:
+        {
+          "recommended_jewelry_ids": ["id1", "id2"],
+          "reasoning": "Explanation..."
+        }
+      `;
+
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: prompt,
+        file_urls: [selectedItemForAI.image_url],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            recommended_jewelry_ids: { type: "array", items: { type: "string" } },
+            reasoning: { type: "string" }
+          }
+        }
+      });
+
+      if (response) {
+        setAiSuggestion(response);
+      }
+    } catch (error) {
+      console.error("AI Styling failed", error);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const filteredClothes = clothes?.filter(item => {
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          item.color?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          item.material?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === "all" || item.type === typeFilter;
+    return matchesSearch && matchesType;
+  });
+
+  const toggleJewelryAssociation = (id) => {
+    setNewItem(prev => {
+      const ids = prev.associated_jewelry_ids || [];
+      if (ids.includes(id)) {
+        return { ...prev, associated_jewelry_ids: ids.filter(i => i !== id) };
+      } else {
+        return { ...prev, associated_jewelry_ids: [...ids, id] };
+      }
+    });
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <div>
+          <h1 className="text-3xl font-serif text-neutral-900 mb-2">{t.closet?.title || "Mon Dressing"}</h1>
+          <p className="text-neutral-500 max-w-lg">
+            {t.closet?.subtitle || "Gérez vos vêtements."}
+          </p>
+        </div>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
+              <Plus className="w-4 h-4 mr-2" /> {t.closet?.addBtn || "Ajouter"}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="font-serif text-xl">{t.closet?.newItem || "Nouveau Vêtement"}</DialogTitle>
+            </DialogHeader>
+            <div className="grid md:grid-cols-2 gap-6 py-4">
+              
+              {/* Left Col: Image */}
+              <div className="space-y-4">
+                 <div className="border-2 border-dashed border-neutral-200 rounded-xl aspect-[3/4] flex flex-col items-center justify-center relative bg-neutral-50 hover:bg-neutral-100 transition-colors overflow-hidden">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                    />
+                    {uploading ? (
+                      <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+                    ) : newItem.image_url ? (
+                      <img src={newItem.image_url} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="text-center text-neutral-400 p-4">
+                        <Camera className="w-8 h-8 mb-2 mx-auto" />
+                        <span className="text-sm">Ajouter une photo</span>
+                      </div>
+                    )}
+                 </div>
+                 
+                 <div className="space-y-2">
+                    <Label>{t.closet?.fields?.matchJewelry || "Bijoux associés"}</Label>
+                    <div className="border rounded-md p-2 h-40 overflow-y-auto space-y-2">
+                      {jewelry?.map(j => (
+                        <div 
+                          key={j.id} 
+                          className={`flex items-center gap-2 p-2 rounded-md cursor-pointer transition-colors ${
+                            newItem.associated_jewelry_ids?.includes(j.id) ? "bg-amber-50 border border-amber-200" : "hover:bg-neutral-50 border border-transparent"
+                          }`}
+                          onClick={() => toggleJewelryAssociation(j.id)}
+                        >
+                          <img src={j.image_url} className="w-8 h-8 rounded-md object-cover bg-neutral-100" />
+                          <span className="text-xs font-medium truncate flex-1">{j.name}</span>
+                          {newItem.associated_jewelry_ids?.includes(j.id) && <Sparkles className="w-3 h-3 text-amber-500" />}
+                        </div>
+                      ))}
+                      {jewelry?.length === 0 && <p className="text-xs text-neutral-400 text-center py-4">Aucun bijou disponible</p>}
+                    </div>
+                 </div>
+              </div>
+
+              {/* Right Col: Fields */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>{t.closet?.fields?.name || "Nom"}</Label>
+                  <Input value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                    <Label>{t.closet?.fields?.type || "Catégorie"}</Label>
+                    <Select value={newItem.type} onValueChange={v => setNewItem({...newItem, type: v})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {['top', 'bottom', 'dress', 'outerwear', 'shoes', 'bag', 'accessory'].map(type => (
+                           <SelectItem key={type} value={type}>
+                             {t.closet?.types?.[type] || type}
+                           </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t.closet?.fields?.brand || "Marque"}</Label>
+                    <Input value={newItem.brand} onChange={e => setNewItem({...newItem, brand: e.target.value})} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                    <Label>{t.closet?.fields?.color || "Couleur"}</Label>
+                    <Input value={newItem.color} onChange={e => setNewItem({...newItem, color: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t.closet?.fields?.material || "Matière"}</Label>
+                    <Input value={newItem.material} onChange={e => setNewItem({...newItem, material: e.target.value})} />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Description</Label>
+                  <Textarea 
+                    value={newItem.description} 
+                    onChange={e => setNewItem({...newItem, description: e.target.value})} 
+                    className="h-24"
+                  />
+                </div>
+
+                <div className="pt-4">
+                  <Button 
+                    className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                    disabled={!newItem.name || !newItem.image_url || createMutation.isPending}
+                    onClick={() => createMutation.mutate(newItem)}
+                  >
+                    {createMutation.isPending ? "..." : t.common.save}
+                  </Button>
+                </div>
+              </div>
+
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-neutral-100 shadow-sm">
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <Input 
+            placeholder={t.closet?.searchPlaceholder || "Rechercher..."}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 border-neutral-200"
+          />
+        </div>
+        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+          <Button
+             variant={typeFilter === "all" ? "default" : "outline"}
+             size="sm"
+             onClick={() => setTypeFilter("all")}
+             className={typeFilter === "all" ? "bg-neutral-900 text-white" : "border-neutral-200"}
+          >
+            Tout
+          </Button>
+          {['top', 'bottom', 'dress', 'outerwear', 'shoes', 'bag'].map(type => (
+            <Button
+              key={type}
+              variant={typeFilter === type ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTypeFilter(type)}
+              className={typeFilter === type ? "bg-neutral-900 text-white" : "border-neutral-200 text-neutral-600 capitalize"}
+            >
+              {t.closet?.types?.[type] || type}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Grid */}
+      {clothesLoading ? (
+         <div className="flex justify-center py-20"><Loader2 className="animate-spin text-neutral-300" /></div>
+      ) : filteredClothes?.length === 0 ? (
+        <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-neutral-200">
+           <Shirt className="w-12 h-12 text-neutral-200 mx-auto mb-4" />
+           <p className="text-neutral-500">Votre dressing est vide.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredClothes.map(item => (
+            <motion.div
+              key={item.id}
+              layout
+              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-neutral-100 flex flex-col"
+            >
+              <div className="aspect-[3/4] bg-neutral-50 relative overflow-hidden">
+                <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                
+                {/* Actions Overlay */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
+                   <Button 
+                      size="sm" 
+                      className="bg-white text-neutral-900 hover:bg-amber-50"
+                      onClick={() => {
+                        setSelectedItemForAI(item);
+                        setIsAIModalOpen(true);
+                        setAiSuggestion(null);
+                        setOccasionPrompt("");
+                      }}
+                   >
+                     <Sparkles className="w-3 h-3 mr-2 text-amber-500" /> {t.closet?.aiMatch || "Styliste"}
+                   </Button>
+                   <Button 
+                      size="icon" 
+                      variant="destructive"
+                      className="h-8 w-8 rounded-full"
+                      onClick={() => deleteMutation.mutate(item.id)}
+                   >
+                     <Trash2 className="w-4 h-4" />
+                   </Button>
+                </div>
+              </div>
+              
+              <div className="p-4 flex-1 flex flex-col">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="font-medium text-neutral-900">{item.name}</h3>
+                    <p className="text-xs text-neutral-500">{item.brand}</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap gap-1 mb-3">
+                   {item.type && <Badge variant="secondary" className="text-[10px] uppercase tracking-wider">{t.closet?.types?.[item.type] || item.type}</Badge>}
+                   {item.material && <Badge variant="outline" className="text-[10px]">{item.material}</Badge>}
+                </div>
+
+                {item.associated_jewelry_ids?.length > 0 && (
+                  <div className="mt-auto pt-3 border-t border-neutral-100">
+                     <p className="text-[10px] text-neutral-400 mb-1 flex items-center gap-1">
+                       <LinkIcon className="w-3 h-3" /> Associé à :
+                     </p>
+                     <div className="flex -space-x-2">
+                        {jewelry?.filter(j => item.associated_jewelry_ids.includes(j.id)).slice(0, 4).map(j => (
+                           <img key={j.id} src={j.image_url} className="w-6 h-6 rounded-full border border-white bg-white object-cover" title={j.name} />
+                        ))}
+                        {(jewelry?.filter(j => item.associated_jewelry_ids.includes(j.id)).length || 0) > 4 && (
+                          <div className="w-6 h-6 rounded-full border border-white bg-neutral-100 flex items-center justify-center text-[8px] text-neutral-500">
+                            +
+                          </div>
+                        )}
+                     </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {/* AI Stylist Modal */}
+      <Dialog open={isAIModalOpen} onOpenChange={setIsAIModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-xl flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-500" /> {t.closet?.aiMatch || "Styliste IA"}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+             <div className="flex gap-4 items-center p-3 bg-neutral-50 rounded-xl border border-neutral-100">
+                <img src={selectedItemForAI?.image_url} className="w-16 h-16 rounded-lg object-cover bg-white" />
+                <div>
+                   <p className="font-medium text-sm">{selectedItemForAI?.name}</p>
+                   <p className="text-xs text-neutral-500">{t.closet?.types?.[selectedItemForAI?.type] || selectedItemForAI?.type}</p>
+                </div>
+             </div>
+
+             <div className="space-y-2">
+                <Label>{t.closet?.ai?.promptLabel || "Quelle est l'occasion ?"}</Label>
+                <Input 
+                   placeholder={t.closet?.ai?.promptPlaceholder || "Ex: Mariage, Travail..."}
+                   value={occasionPrompt}
+                   onChange={e => setOccasionPrompt(e.target.value)}
+                />
+             </div>
+
+             <Button 
+                onClick={handleAiStyling}
+                disabled={analyzing}
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+             >
+                {analyzing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                {t.closet?.ai?.btn || "Suggérer une combinaison"}
+             </Button>
+
+             <AnimatePresence>
+                {aiSuggestion && (
+                   <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-4 pt-2"
+                   >
+                      <div className="flex items-center gap-2 text-amber-700 font-serif font-medium">
+                         <div className="h-px bg-amber-200 flex-1" />
+                         {t.closet?.ai?.resultTitle || "Suggestions"}
+                         <div className="h-px bg-amber-200 flex-1" />
+                      </div>
+                      
+                      <div className="bg-amber-50/50 p-4 rounded-xl text-sm text-neutral-700 leading-relaxed border border-amber-100">
+                         {aiSuggestion.reasoning}
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-3">
+                         {jewelry?.filter(j => aiSuggestion.recommended_jewelry_ids?.includes(j.id)).map(j => (
+                            <div key={j.id} className="bg-white p-2 rounded-lg border border-neutral-100 shadow-sm text-center">
+                               <div className="aspect-square bg-neutral-50 rounded-md overflow-hidden mb-2">
+                                  <img src={j.image_url} className="w-full h-full object-cover" />
+                               </div>
+                               <p className="text-xs font-medium truncate">{j.name}</p>
+                            </div>
+                         ))}
+                      </div>
+                   </motion.div>
+                )}
+             </AnimatePresence>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

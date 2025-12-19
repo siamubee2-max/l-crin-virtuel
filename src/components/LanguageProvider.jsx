@@ -6,8 +6,9 @@ const translations = {
       gallery: "Galerie",
       studio: "L'Atelier",
       wardrobe: "Ma Bibliothèque",
+      closet: "Mon Dressing",
       jewelryBox: "Mon Écrin"
-    },
+      },
     common: {
       footer: "L'Écrin Virtuel © 2024 — Luxe & Technologie",
       loading: "Chargement...",
@@ -148,15 +149,49 @@ const translations = {
         },
         empty: "Votre écrin est vide.",
         emptyCta: "Ajoutez votre premier trésor."
-      }
-      },
+        },
+        closet: {
+        title: "Mon Dressing",
+        subtitle: "Gérez vos vêtements et créez des looks parfaits avec vos bijoux.",
+        addBtn: "Ajouter un vêtement",
+        newItem: "Nouveau Vêtement",
+        searchPlaceholder: "Rechercher (robe rouge, chemise soie...)",
+        aiMatch: "Styliste IA",
+        aiMatchDesc: "L'IA vous suggère les meilleurs bijoux pour cette tenue.",
+        types: {
+          top: "Haut",
+          bottom: "Bas",
+          dress: "Robe",
+          outerwear: "Veste/Manteau",
+          shoes: "Chaussures",
+          bag: "Sac",
+          accessory: "Accessoire"
+        },
+        fields: {
+          name: "Nom",
+          type: "Catégorie",
+          brand: "Marque",
+          color: "Couleur",
+          material: "Matière",
+          matchJewelry: "Associer des bijoux"
+        },
+        ai: {
+          btn: "Suggérer un look",
+          promptLabel: "Pour quelle occasion ?",
+          promptPlaceholder: "Ex: Un mariage chic en été, une réunion professionnelle...",
+          resultTitle: "Suggestion du Styliste",
+          why: "Pourquoi ce choix :"
+        }
+        }
+        },
   en: {
     nav: {
       gallery: "Gallery",
       studio: "The Studio",
       wardrobe: "My Wardrobe",
+      closet: "My Closet",
       jewelryBox: "My Jewelry Box"
-    },
+      },
     common: {
       footer: "The Virtual Jewelry Box © 2024 — Luxury & Technology",
       loading: "Loading...",
@@ -286,8 +321,9 @@ const translations = {
       gallery: "Galería",
       studio: "El Taller",
       wardrobe: "Mi Armario",
+      closet: "Mi Vestidor",
       jewelryBox: "Mi Joyero"
-    },
+      },
     common: {
       footer: "El Joyero Virtual © 2024 — Lujo y Tecnología",
       loading: "Cargando...",
@@ -417,8 +453,9 @@ const translations = {
       gallery: "Galerie",
       studio: "Das Atelier",
       wardrobe: "Meine Garderobe",
+      closet: "Mein Kleiderschrank",
       jewelryBox: "Mein Schmuckkästchen"
-    },
+      },
     common: {
       footer: "Das Virtuelle Schmuckkästchen © 2024 — Luxus & Technologie",
       loading: "Laden...",
@@ -548,8 +585,9 @@ const translations = {
       gallery: "Galleria",
       studio: "L'Atelier",
       wardrobe: "Il Mio Guardaroba",
+      closet: "Il Mio Armadio",
       jewelryBox: "Il Mio Scrigno"
-    },
+      },
     common: {
       footer: "Lo Scrigno Virtuale © 2024 — Lusso & Tecnologia",
       loading: "Caricamento...",
@@ -679,8 +717,9 @@ const translations = {
       gallery: "Galeria",
       studio: "O Estúdio",
       wardrobe: "Meu Guarda-Roupa",
+      closet: "Meu Vestuário",
       jewelryBox: "Meu Porta-Joias"
-    },
+      },
     common: {
       footer: "O Porta-Joias Virtual © 2024 — Luxo & Tecnologia",
       loading: "Carregando...",
