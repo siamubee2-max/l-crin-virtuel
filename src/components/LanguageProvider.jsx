@@ -46,13 +46,18 @@ const translations = {
         left_hand: "Main Gauche",
         right_hand: "Main Droite",
         left_ankle: "Cheville Gauche",
-        right_ankle: "Cheville Droite"
-      }
-    },
+        right_ankle: "Cheville Droite",
+        full_body: "Corps Entier"
+        }
+        },
     studio: {
-      title: "L'Atelier de Création",
-      subtitle: "Essayez virtuellement n'importe quel bijou en quelques secondes grâce à l'IA.",
-      arMode: "Mode Miroir AR",
+    title: "L'Atelier de Création",
+    subtitle: "Essayez virtuellement bijoux et vêtements en quelques secondes grâce à l'IA.",
+    mode: {
+      jewelry: "Joaillerie",
+      clothing: "Mode & Vêtements"
+    },
+    arMode: "Mode Miroir AR",
       steps: {
         upload: "Le Bijou",
         selectBody: "Le Modèle",
@@ -61,9 +66,10 @@ const translations = {
       },
       newTry: "Nouvel Essai",
       step1: {
-        title: "Choisissez le bijou",
-        desc: "Importez une photo depuis une boutique en ligne ou prenez-la en photo.",
-        typeLabel: "Type de bijou",
+        title: "Choisissez la pièce",
+        desc: "Sélectionnez un article de votre collection ou importez une photo.",
+        typeLabel: "Type",
+        clothingTypeLabel: "Type de vêtement",
         types: {
           earrings: "Boucles d'oreilles",
           necklace: "Collier / Pendentif",
@@ -74,8 +80,8 @@ const translations = {
         }
       },
       step2: {
-        title: "Sur qui on essaye ?",
-        desc: "Sélectionnez une photo compatible depuis votre bibliothèque.",
+        title: "Le Modèle",
+        desc: "Sélectionnez une photo compatible (Corps entier pour les vêtements).",
         empty: "Aucune photo compatible trouvée dans votre bibliothèque.",
         goToWardrobe: "Aller à la bibliothèque",
         notesLabel: "Instructions spéciales (Optionnel)",

@@ -35,7 +35,8 @@ export default function Wardrobe() {
     { value: "right_hand", label: t.wardrobe.types.right_hand, icon: "✋" },
     { value: "left_ankle", label: t.wardrobe.types.left_ankle, icon: "🦶" },
     { value: "right_ankle", label: t.wardrobe.types.right_ankle, icon: "🦶" },
-  ];
+    { value: "full_body", label: t.wardrobe.types.full_body || "Corps Entier", icon: "🧍" },
+    ];
 
   const { data: bodyParts, isLoading } = useQuery({
     queryKey: ['bodyParts'],
