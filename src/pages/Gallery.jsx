@@ -6,6 +6,7 @@ import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, ArrowRight, Download, Calendar, Filter } from "lucide-react";
+import ShareButton from "@/components/common/ShareButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 
@@ -179,10 +180,20 @@ export default function Gallery() {
                             {new Date(creation.created_date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                           </p>
                         </div>
-                        <Button variant="ghost" size="icon" onClick={() => window.open(creation.result_image_url, '_blank')} className="text-neutral-400 hover:text-amber-600">
-                          <Download className="w-5 h-5" />
-                        </Button>
-                      </div>
+                        <div className="flex gap-1">
+                          <ShareButton 
+                            url={creation.result_image_url} 
+                            imageUrl={creation.result_image_url} 
+                            text={`Ma création sur L'Écrin Virtuel : ${getJewelryTypeLabel(creation.jewelry_type)}`}
+                            variant="ghost" 
+                            size="icon"
+                            className="text-neutral-400 hover:text-amber-600"
+                          />
+                          <Button variant="ghost" size="icon" onClick={() => window.open(creation.result_image_url, '_blank')} className="text-neutral-400 hover:text-amber-600">
+                            <Download className="w-5 h-5" />
+                          </Button>
+                        </div>
+                        </div>
                       
                       {creation.description && (
                         <p className="text-sm text-neutral-500 line-clamp-2 bg-neutral-50 p-2 rounded-lg italic">

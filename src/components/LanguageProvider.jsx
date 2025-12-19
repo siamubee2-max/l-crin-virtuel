@@ -23,8 +23,11 @@ const translations = {
       upload: "Téléchargement...",
       clickToUpload: "Cliquez pour importer",
       orTakePhoto: "ou prenez-en une maintenant",
-      change: "Changer"
-    },
+      change: "Changer",
+      share: "Partager",
+      copyLink: "Copier le lien",
+      linkCopied: "Lien copié !"
+      },
     wardrobe: {
       title: "Ma Bibliothèque",
       subtitle: "Gérez votre collection de parties du corps pour vos essayages virtuels. Prenez des photos claires et bien éclairées.",

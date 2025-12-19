@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Sparkles, Upload, ArrowRight, CheckCircle2, RefreshCw, Lightbulb, Wand2, Camera } from "lucide-react";
+import ShareButton from "@/components/common/ShareButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
@@ -530,8 +531,16 @@ export default function Studio() {
                       >
                         {t.common.download}
                       </Button>
+                      <ShareButton 
+                        url={resultImage} 
+                        imageUrl={resultImage}
+                        text="Je viens de créer un essayage virtuel incroyable !"
+                        className="w-full"
+                      >
+                         {t.common.share}
+                      </ShareButton>
                       <Button 
-                        className="w-full bg-neutral-900 text-white"
+                        className="w-full bg-neutral-900 text-white col-span-2 mt-2"
                         onClick={() => navigate(createPageUrl("Gallery"))}
                       >
                         {t.studio.step4.goToGallery}
