@@ -486,9 +486,36 @@ export default function Closet() {
         </div>
       )}
 
+      {/* Selection Bar */}
+      <AnimatePresence>
+        {selectionMode && selectedClothingIds.length > 0 && (
+           <motion.div 
+              initial={{ y: 100 }}
+              animate={{ y: 0 }}
+              exit={{ y: 100 }}
+              className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-neutral-900 text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-4 z-40"
+           >
+              <span className="font-medium text-sm whitespace-nowrap">{selectedClothingIds.length} {t.closet?.ai?.selection || "sélectionnés"}</span>
+              <div className="h-4 w-px bg-neutral-700" />
+              <Button 
+                 size="sm" 
+                 className="bg-amber-500 hover:bg-amber-600 text-white rounded-full px-4"
+                 onClick={() => {
+                   setStylistMode('outfit');
+                   setIsAIModalOpen(true);
+                   setAiSuggestion(null);
+                   setOccasionPrompt("");
+                 }}
+              >
+                <Sparkles className="w-3 h-3 mr-2" /> {t.closet?.aiMatch || "Styliste"}
+              </Button>
+           </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* AI Stylist Modal */}
       <Dialog open={isAIModalOpen} onOpenChange={setIsAIModalOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-serif text-xl flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-amber-500" /> {t.closet?.aiMatch || "Styliste IA"}
@@ -496,13 +523,73 @@ export default function Closet() {
           </DialogHeader>
           
           <div className="space-y-6 py-4">
-             <div className="flex gap-4 items-center p-3 bg-neutral-50 rounded-xl border border-neutral-100">
-                <img src={selectedItemForAI?.image_url} className="w-16 h-16 rounded-lg object-cover bg-white" />
-                <div>
-                   <p className="font-medium text-sm">{selectedItemForAI?.name}</p>
-                   <p className="text-xs text-neutral-500">{t.closet?.types?.[selectedItemForAI?.type] || selectedItemForAI?.type}</p>
-                </div>
+             {/* Mode Switcher */}
+             <div className="flex p-1 bg-neutral-100 rounded-lg">
+                <button
+                   onClick={() => { setStylistMode('outfit'); setAiSuggestion(null); }}
+                   className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${stylistMode === 'outfit' ? 'bg-white shadow-sm text-neutral-900' : 'text-neutral-500 hover:text-neutral-700'}`}
+                >
+                   {t.closet?.ai?.modeOutfit || "Compléter ma tenue"}
+                </button>
+                <button
+                   onClick={() => { setStylistMode('jewelry'); setAiSuggestion(null); }}
+                   className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${stylistMode === 'jewelry' ? 'bg-white shadow-sm text-neutral-900' : 'text-neutral-500 hover:text-neutral-700'}`}
+                >
+                   {t.closet?.ai?.modeJewelry || "Assortir un bijou"}
+                </button>
              </div>
+
+             {/* Selected Items Display */}
+             {stylistMode === 'outfit' ? (
+               <div className="space-y-3">
+                 <Label className="text-xs uppercase text-neutral-500 tracking-wider">{t.closet?.ai?.selectClothes || "Vêtements sélectionnés"}</Label>
+                 <div className="flex gap-3 overflow-x-auto pb-2">
+                    {selectedClothingIds.length > 0 ? (
+                       clothes?.filter(c => selectedClothingIds.includes(c.id)).map(c => (
+                          <div key={c.id} className="relative w-16 h-20 shrink-0 rounded-lg overflow-hidden border border-neutral-200">
+                             <img src={c.image_url} className="w-full h-full object-cover" />
+                             {selectionMode && (
+                               <button 
+                                 onClick={() => toggleSelection(c.id)}
+                                 className="absolute top-0 right-0 bg-black/50 text-white p-0.5"
+                               >
+                                 <X className="w-3 h-3" />
+                               </button>
+                             )}
+                          </div>
+                       ))
+                    ) : (
+                       <p className="text-sm text-neutral-400 italic py-2">Sélectionnez des vêtements dans votre dressing</p>
+                    )}
+                 </div>
+               </div>
+             ) : (
+               <div className="space-y-3">
+                 <Label className="text-xs uppercase text-neutral-500 tracking-wider">{t.closet?.ai?.selectJewel || "Bijou vedette"}</Label>
+                 {selectedJewelryForAI ? (
+                    <div className="flex items-center gap-3 p-3 border border-amber-200 bg-amber-50 rounded-xl relative">
+                       <img src={selectedJewelryForAI.image_url} className="w-12 h-12 rounded-lg object-cover bg-white" />
+                       <div className="flex-1">
+                          <p className="font-medium text-sm">{selectedJewelryForAI.name}</p>
+                          <p className="text-xs text-neutral-500 capitalize">{selectedJewelryForAI.type}</p>
+                       </div>
+                       <button onClick={() => setSelectedJewelryForAI(null)} className="text-neutral-400 hover:text-neutral-600"><X className="w-4 h-4" /></button>
+                    </div>
+                 ) : (
+                    <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto p-2 border rounded-xl bg-neutral-50">
+                       {jewelry?.map(j => (
+                          <div 
+                             key={j.id} 
+                             onClick={() => setSelectedJewelryForAI(j)}
+                             className="aspect-square rounded-lg overflow-hidden cursor-pointer hover:ring-2 ring-amber-400 transition-all border border-neutral-200 bg-white"
+                          >
+                             <img src={j.image_url} className="w-full h-full object-cover" />
+                          </div>
+                       ))}
+                    </div>
+                 )}
+               </div>
+             )}
 
              <div className="space-y-2">
                 <Label>{t.closet?.ai?.promptLabel || "Quelle est l'occasion ?"}</Label>
@@ -515,7 +602,7 @@ export default function Closet() {
 
              <Button 
                 onClick={handleAiStyling}
-                disabled={analyzing}
+                disabled={analyzing || (stylistMode === 'outfit' && selectedClothingIds.length === 0) || (stylistMode === 'jewelry' && !selectedJewelryForAI)}
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white"
              >
                 {analyzing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
@@ -540,14 +627,25 @@ export default function Closet() {
                       </div>
 
                       <div className="grid grid-cols-3 gap-3">
-                         {jewelry?.filter(j => aiSuggestion.recommended_jewelry_ids?.includes(j.id)).map(j => (
-                            <div key={j.id} className="bg-white p-2 rounded-lg border border-neutral-100 shadow-sm text-center">
-                               <div className="aspect-square bg-neutral-50 rounded-md overflow-hidden mb-2">
-                                  <img src={j.image_url} className="w-full h-full object-cover" />
-                               </div>
-                               <p className="text-xs font-medium truncate">{j.name}</p>
-                            </div>
-                         ))}
+                         {stylistMode === 'outfit' ? (
+                            jewelry?.filter(j => aiSuggestion.recommended_ids?.includes(j.id)).map(j => (
+                                <div key={j.id} className="bg-white p-2 rounded-lg border border-neutral-100 shadow-sm text-center">
+                                   <div className="aspect-square bg-neutral-50 rounded-md overflow-hidden mb-2">
+                                      <img src={j.image_url} className="w-full h-full object-cover" />
+                                   </div>
+                                   <p className="text-xs font-medium truncate">{j.name}</p>
+                                </div>
+                             ))
+                         ) : (
+                            clothes?.filter(c => aiSuggestion.recommended_ids?.includes(c.id)).map(c => (
+                                <div key={c.id} className="bg-white p-2 rounded-lg border border-neutral-100 shadow-sm text-center">
+                                   <div className="aspect-[3/4] bg-neutral-50 rounded-md overflow-hidden mb-2">
+                                      <img src={c.image_url} className="w-full h-full object-cover" />
+                                   </div>
+                                   <p className="text-xs font-medium truncate">{c.name}</p>
+                                </div>
+                             ))
+                         )}
                       </div>
                    </motion.div>
                 )}
