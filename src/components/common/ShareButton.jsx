@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from '@/components/LanguageProvider';
 
-export default function ShareButton({ title, text, url, imageUrl, variant = "outline", size = "default", className }) {
+export default function ShareButton({ title, text, url, imageUrl, variant = "outline", size = "default", className, children }) {
   const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
@@ -68,9 +68,6 @@ export default function ShareButton({ title, text, url, imageUrl, variant = "out
     }
     window.open(shareUrl, '_blank', 'width=600,height=400');
   };
-
-  // If native share is available (mostly mobile), we can prioritize it or show it as an option
-  // But often on desktop it's not available, so we show the dropdown.
   
   return (
     <DropdownMenu>
@@ -113,10 +110,4 @@ export default function ShareButton({ title, text, url, imageUrl, variant = "out
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
-
-// Helper component to fix the children prop issue if I used it above without defining it in props
-// Redefining proper props:
-function ShareButtonWrapper({ children, ...props }) {
-  return <ShareButton {...props}>{children}</ShareButton>;
 }
