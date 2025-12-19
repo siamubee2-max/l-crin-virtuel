@@ -2,29 +2,16 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Trash2, Camera, Loader2, Upload } from "lucide-react";
+import { Plus, Trash2, Camera, Loader2, User as UserIcon } from "lucide-react";
 import { motion } from "framer-motion";
-
-const BODY_TYPES = [
-  { value: "face", label: "Visage (Face)", icon: "👤" },
-  { value: "neck", label: "Cou & Décolleté", icon: "🧣" },
-  { value: "bust_with_hands", label: "Buste avec Mains (Parure complète)", icon: "💃" },
-  { value: "left_ear_profile", label: "Oreille Gauche", icon: "👂" },
-  { value: "right_ear_profile", label: "Oreille Droite", icon: "👂" },
-  { value: "left_wrist", label: "Poignet Gauche", icon: "⌚" },
-  { value: "right_wrist", label: "Poignet Droit", icon: "⌚" },
-  { value: "left_hand", label: "Main Gauche", icon: "✋" },
-  { value: "right_hand", label: "Main Droite", icon: "✋" },
-  { value: "left_ankle", label: "Cheville Gauche", icon: "🦶" },
-  { value: "right_ankle", label: "Cheville Droite", icon: "🦶" },
-];
+import { useLanguage } from '@/components/LanguageProvider';
 
 export default function Wardrobe() {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -35,6 +22,20 @@ export default function Wardrobe() {
     type: "face",
     image_url: ""
   });
+
+  const BODY_TYPES = [
+    { value: "face", label: t.wardrobe.types.face, icon: "👤" },
+    { value: "neck", label: t.wardrobe.types.neck, icon: "🧣" },
+    { value: "bust_with_hands", label: t.wardrobe.types.bust_with_hands, icon: "💃" },
+    { value: "left_ear_profile", label: t.wardrobe.types.left_ear_profile, icon: "👂" },
+    { value: "right_ear_profile", label: t.wardrobe.types.right_ear_profile, icon: "👂" },
+    { value: "left_wrist", label: t.wardrobe.types.left_wrist, icon: "⌚" },
+    { value: "right_wrist", label: t.wardrobe.types.right_wrist, icon: "⌚" },
+    { value: "left_hand", label: t.wardrobe.types.left_hand, icon: "✋" },
+    { value: "right_hand", label: t.wardrobe.types.right_hand, icon: "✋" },
+    { value: "left_ankle", label: t.wardrobe.types.left_ankle, icon: "🦶" },
+    { value: "right_ankle", label: t.wardrobe.types.right_ankle, icon: "🦶" },
+  ];
 
   const { data: bodyParts, isLoading } = useQuery({
     queryKey: ['bodyParts'],
@@ -81,35 +82,34 @@ export default function Wardrobe() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-serif text-neutral-900 mb-2">Ma Bibliothèque</h1>
+          <h1 className="text-3xl font-serif text-neutral-900 mb-2">{t.wardrobe.title}</h1>
           <p className="text-neutral-500 max-w-lg">
-            Gérez votre collection de parties du corps pour vos essayages virtuels. 
-            Prenez des photos claires et bien éclairées.
+            {t.wardrobe.subtitle}
           </p>
         </div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
-              <Plus className="w-4 h-4 mr-2" /> Ajouter une photo
+              <Plus className="w-4 h-4 mr-2" /> {t.wardrobe.addPhoto}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="font-serif text-xl">Nouvelle photo</DialogTitle>
+              <DialogTitle className="font-serif text-xl">{t.wardrobe.newPhoto}</DialogTitle>
             </DialogHeader>
             <div className="space-y-6 py-4">
               <div className="space-y-2">
-                <Label>Nom (ex: Mon profil droit)</Label>
+                <Label>{t.wardrobe.nameLabel}</Label>
                 <Input 
-                  placeholder="Nom de la photo..." 
+                  placeholder={t.wardrobe.namePlaceholder}
                   value={newPart.name}
                   onChange={(e) => setNewPart(prev => ({ ...prev, name: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Partie du corps</Label>
+                <Label>{t.wardrobe.typeLabel}</Label>
                 <Select 
                   value={newPart.type}
                   onValueChange={(val) => setNewPart(prev => ({ ...prev, type: val }))}
@@ -128,7 +128,7 @@ export default function Wardrobe() {
               </div>
 
               <div className="space-y-2">
-                <Label>Photo</Label>
+                <Label>{t.wardrobe.photoLabel}</Label>
                 <div className="border-2 border-dashed border-neutral-200 rounded-xl p-6 text-center hover:bg-neutral-50 transition-colors cursor-pointer relative">
                   <input 
                     type="file" 
@@ -139,7 +139,7 @@ export default function Wardrobe() {
                   {uploading ? (
                     <div className="flex flex-col items-center text-neutral-400">
                       <Loader2 className="w-8 h-8 animate-spin mb-2" />
-                      <span className="text-sm">Téléchargement...</span>
+                      <span className="text-sm">{t.common.upload}</span>
                     </div>
                   ) : newPart.image_url ? (
                     <div className="relative h-32 w-full">
@@ -149,14 +149,14 @@ export default function Wardrobe() {
                         className="h-full w-full object-contain rounded-md"
                       />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity rounded-md text-white font-medium">
-                        Changer
+                        {t.common.change}
                       </div>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center text-neutral-400">
                       <Camera className="w-8 h-8 mb-2" />
-                      <span className="text-sm font-medium">Cliquez pour ajouter une photo</span>
-                      <span className="text-xs mt-1">ou prenez-en une maintenant</span>
+                      <span className="text-sm font-medium">{t.common.clickToUpload}</span>
+                      <span className="text-xs mt-1">{t.common.orTakePhoto}</span>
                     </div>
                   )}
                 </div>
@@ -167,7 +167,7 @@ export default function Wardrobe() {
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white"
                 disabled={!newPart.name || !newPart.image_url || createMutation.isPending}
               >
-                {createMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+                {createMutation.isPending ? t.common.saving : t.common.save}
               </Button>
             </div>
           </DialogContent>
@@ -183,10 +183,10 @@ export default function Wardrobe() {
           {bodyParts?.length === 0 ? (
             <div className="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-neutral-200">
               <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4 text-neutral-400">
-                <User className="w-8 h-8" />
+                <UserIcon className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-medium text-neutral-900">Votre bibliothèque est vide</h3>
-              <p className="text-neutral-500 mt-2">Commencez par ajouter une photo de vous.</p>
+              <h3 className="text-lg font-medium text-neutral-900">{t.wardrobe.emptyTitle}</h3>
+              <p className="text-neutral-500 mt-2">{t.wardrobe.emptyText}</p>
             </div>
           ) : (
             bodyParts?.map((part) => (

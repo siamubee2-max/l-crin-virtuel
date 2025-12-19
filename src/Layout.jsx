@@ -1,17 +1,30 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Gem, User, Sparkles, Menu, X } from 'lucide-react';
+import { Gem, User, Sparkles, Menu, X, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
-export default function Layout({ children }) {
+function LayoutContent({ children }) {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const { t, language, setLanguage } = useLanguage();
 
   const navItems = [
-    { label: "Galerie", icon: Gem, path: "/" },
-    { label: "L'Atelier", icon: Sparkles, path: "/Studio" },
-    { label: "Ma Bibliothèque", icon: User, path: "/Wardrobe" },
+    { label: t.nav.gallery, icon: Gem, path: "/" },
+    { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
+    { label: t.nav.wardrobe, icon: User, path: "/Wardrobe" },
+  ];
+
+  const languages = [
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+    { code: 'it', label: 'Italiano', flag: '🇮🇹' },
+    { code: 'pt', label: 'Português', flag: '🇵🇹' },
   ];
 
   const isActive = (path) => {
@@ -52,6 +65,28 @@ export default function Layout({ children }) {
                 {item.label}
               </Link>
             ))}
+
+            {/* Language Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="ml-4 gap-2">
+                  <Globe className="w-4 h-4" />
+                  {languages.find(l => l.code === language)?.code.toUpperCase()}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {languages.map((lang) => (
+                  <DropdownMenuItem 
+                    key={lang.code}
+                    onClick={() => setLanguage(lang.code)}
+                    className="gap-2"
+                  >
+                    <span>{lang.flag}</span>
+                    {lang.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Mobile Menu Button */}
@@ -88,6 +123,27 @@ export default function Layout({ children }) {
                 {item.label}
               </Link>
             ))}
+            
+            <div className="border-t pt-6">
+              <p className="text-sm text-neutral-500 mb-3">Language</p>
+              <div className="grid grid-cols-2 gap-2">
+                {languages.map((lang) => (
+                  <Button
+                    key={lang.code}
+                    variant={language === lang.code ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => {
+                      setLanguage(lang.code);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="justify-start gap-2"
+                  >
+                    <span>{lang.flag}</span>
+                    {lang.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -99,8 +155,16 @@ export default function Layout({ children }) {
 
       {/* Simple Footer */}
       <footer className="border-t border-neutral-200 py-8 text-center text-neutral-400 text-xs tracking-widest uppercase">
-        L'Écrin Virtuel © 2024 — Luxe & Technologie
+        {t.common.footer}
       </footer>
     </div>
+  );
+}
+
+export default function Layout({ children }) {
+  return (
+    <LanguageProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </LanguageProvider>
   );
 }

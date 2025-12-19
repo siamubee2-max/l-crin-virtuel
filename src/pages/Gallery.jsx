@@ -4,14 +4,28 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
-import { Loader2, Plus, ArrowRight, Share2, Download } from "lucide-react";
+import { Loader2, Plus, ArrowRight, Download } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from '@/components/LanguageProvider';
 
 export default function Gallery() {
+  const { t } = useLanguage();
   const { data: creations, isLoading } = useQuery({
     queryKey: ['creations'],
     queryFn: () => base44.entities.Creation.list('-created_date'),
   });
+
+  const getJewelryTypeLabel = (type) => {
+    switch(type) {
+      case 'necklace': return t.studio.step1.types.necklace;
+      case 'earrings': return t.studio.step1.types.earrings;
+      case 'ring': return t.studio.step1.types.ring;
+      case 'bracelet': return t.studio.step1.types.bracelet;
+      case 'anklet': return t.studio.step1.types.anklet;
+      case 'set': return t.studio.step1.types.set;
+      default: return type;
+    }
+  };
 
   return (
     <div className="space-y-12">
@@ -20,16 +34,15 @@ export default function Gallery() {
         <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=2075&auto=format&fit=crop')] bg-cover bg-center" />
         <div className="relative z-10 max-w-xl space-y-6">
           <h1 className="text-4xl md:text-5xl font-serif leading-tight">
-            Essayez l'inaccessible. <br />
-            <span className="text-amber-400 italic">Virtuellement.</span>
+            {t.gallery.hero.title} <br />
+            <span className="text-amber-400 italic">{t.gallery.hero.subtitle}</span>
           </h1>
           <p className="text-neutral-300 text-lg">
-            Importez un bijou, choisissez votre photo, et laissez la magie opérer.
-            Visualisez le résultat avant d'acheter ou juste pour rêver.
+            {t.gallery.hero.desc}
           </p>
           <Link to={createPageUrl("Studio")}>
             <Button size="lg" className="bg-white text-neutral-900 hover:bg-amber-50 rounded-full px-8 mt-4">
-              Nouvel Essayage <ArrowRight className="ml-2 w-4 h-4" />
+              {t.gallery.hero.cta} <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>
         </div>
@@ -39,8 +52,8 @@ export default function Gallery() {
       <section>
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h2 className="text-3xl font-serif text-neutral-900">Mes Créations</h2>
-            <p className="text-neutral-500 mt-2">Vos derniers essayages virtuels.</p>
+            <h2 className="text-3xl font-serif text-neutral-900">{t.gallery.myCreations}</h2>
+            <p className="text-neutral-500 mt-2">{t.gallery.latestTryons}</p>
           </div>
         </div>
 
@@ -50,10 +63,10 @@ export default function Gallery() {
           </div>
         ) : creations?.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-neutral-200">
-            <p className="text-neutral-500 mb-6 text-lg">Vous n'avez pas encore fait d'essayages.</p>
+            <p className="text-neutral-500 mb-6 text-lg">{t.gallery.empty}</p>
             <Link to={createPageUrl("Studio")}>
               <Button className="bg-amber-600 hover:bg-amber-700 text-white">
-                <Plus className="mr-2 w-4 h-4" /> Créer mon premier look
+                <Plus className="mr-2 w-4 h-4" /> {t.gallery.createFirst}
               </Button>
             </Link>
           </div>
@@ -87,10 +100,7 @@ export default function Gallery() {
                 <div className="p-5 flex justify-between items-center bg-white z-10">
                   <div>
                     <p className="font-medium text-neutral-900 capitalize">
-                      {creation.jewelry_type === 'necklace' ? 'Collier' : 
-                       creation.jewelry_type === 'earrings' ? "Boucles d'oreilles" : 
-                       creation.jewelry_type === 'set' ? "Parure Complète" :
-                       creation.jewelry_type}
+                      {getJewelryTypeLabel(creation.jewelry_type)}
                     </p>
                     <p className="text-xs text-neutral-400 mt-1">
                       {new Date(creation.created_date).toLocaleDateString()}

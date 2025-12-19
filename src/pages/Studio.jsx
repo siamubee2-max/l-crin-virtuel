@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Sparkles, Upload, ArrowRight, CheckCircle2, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/components/LanguageProvider';
 
 const STEPS = {
   UPLOAD: 0,
@@ -19,6 +19,7 @@ const STEPS = {
 };
 
 export default function Studio() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [step, setStep] = useState(STEPS.UPLOAD);
   const [uploading, setUploading] = useState(false);
@@ -101,7 +102,7 @@ export default function Studio() {
       }
     } catch (error) {
       console.error("Generation failed", error);
-      alert("Une erreur est survenue lors de la génération. Veuillez réessayer.");
+      alert("Error during generation. Please try again.");
       setStep(STEPS.SELECT_BODY);
     } finally {
       setGenerating(false);
@@ -122,9 +123,9 @@ export default function Studio() {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-12 text-center">
-        <h1 className="text-4xl font-serif text-neutral-900 mb-4">L'Atelier de Création</h1>
+        <h1 className="text-4xl font-serif text-neutral-900 mb-4">{t.studio.title}</h1>
         <p className="text-neutral-500">
-          Essayez virtuellement n'importe quel bijou en quelques secondes grâce à l'IA.
+          {t.studio.subtitle}
         </p>
       </div>
 
@@ -134,10 +135,10 @@ export default function Studio() {
         <div className="w-full md:w-1/3 bg-neutral-50 p-8 border-r border-neutral-100 flex flex-col">
           <div className="space-y-6">
             {[
-              { id: STEPS.UPLOAD, label: "Le Bijou", icon: "💎" },
-              { id: STEPS.SELECT_BODY, label: "Le Modèle", icon: "👤" },
-              { id: STEPS.GENERATE, label: "La Magie", icon: "✨" },
-              { id: STEPS.RESULT, label: "Le Résultat", icon: "🖼️" },
+              { id: STEPS.UPLOAD, label: t.studio.steps.upload, icon: "💎" },
+              { id: STEPS.SELECT_BODY, label: t.studio.steps.selectBody, icon: "👤" },
+              { id: STEPS.GENERATE, label: t.studio.steps.generate, icon: "✨" },
+              { id: STEPS.RESULT, label: t.studio.steps.result, icon: "🖼️" },
             ].map((s) => (
               <div 
                 key={s.id}
@@ -167,7 +168,7 @@ export default function Studio() {
                 variant="outline"
                 className="mt-auto"
               >
-                <RefreshCw className="w-4 h-4 mr-2" /> Nouvel Essai
+                <RefreshCw className="w-4 h-4 mr-2" /> {t.studio.newTry}
              </Button>
           )}
         </div>
@@ -186,24 +187,24 @@ export default function Studio() {
                 className="space-y-6 h-full flex flex-col"
               >
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-serif">Choisissez le bijou</h2>
-                  <p className="text-neutral-500 text-sm">Importez une photo depuis une boutique en ligne ou prenez-la en photo.</p>
+                  <h2 className="text-2xl font-serif">{t.studio.step1.title}</h2>
+                  <p className="text-neutral-500 text-sm">{t.studio.step1.desc}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Type de bijou</Label>
+                    <Label>{t.studio.step1.typeLabel}</Label>
                     <Select value={jewelryType} onValueChange={setJewelryType}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="earrings">Boucles d'oreilles</SelectItem>
-                        <SelectItem value="necklace">Collier / Pendentif</SelectItem>
-                        <SelectItem value="ring">Bague</SelectItem>
-                        <SelectItem value="bracelet">Bracelet</SelectItem>
-                        <SelectItem value="anklet">Bracelet de cheville</SelectItem>
-                        <SelectItem value="set">Parure Complète</SelectItem>
+                        <SelectItem value="earrings">{t.studio.step1.types.earrings}</SelectItem>
+                        <SelectItem value="necklace">{t.studio.step1.types.necklace}</SelectItem>
+                        <SelectItem value="ring">{t.studio.step1.types.ring}</SelectItem>
+                        <SelectItem value="bracelet">{t.studio.step1.types.bracelet}</SelectItem>
+                        <SelectItem value="anklet">{t.studio.step1.types.anklet}</SelectItem>
+                        <SelectItem value="set">{t.studio.step1.types.set}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -223,7 +224,7 @@ export default function Studio() {
                   ) : (
                     <>
                       <Upload className="w-10 h-10 text-neutral-300 mb-4" />
-                      <p className="text-neutral-900 font-medium">Cliquez pour importer</p>
+                      <p className="text-neutral-900 font-medium">{t.common.clickToUpload}</p>
                       <p className="text-neutral-400 text-sm mt-1">JPG, PNG</p>
                     </>
                   )}
@@ -235,7 +236,7 @@ export default function Studio() {
                     disabled={!jewelryImage}
                     className="bg-neutral-900 text-white hover:bg-neutral-800"
                   >
-                    Suivant <ArrowRight className="w-4 h-4 ml-2" />
+                    {t.common.next} <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
               </motion.div>
@@ -251,16 +252,16 @@ export default function Studio() {
                 className="space-y-6 h-full flex flex-col"
               >
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-serif">Sur qui on essaye ?</h2>
-                  <p className="text-neutral-500 text-sm">Sélectionnez une photo compatible depuis votre bibliothèque.</p>
+                  <h2 className="text-2xl font-serif">{t.studio.step2.title}</h2>
+                  <p className="text-neutral-500 text-sm">{t.studio.step2.desc}</p>
                 </div>
 
                 <div className="flex-1 overflow-y-auto max-h-[400px] pr-2">
                   {filteredBodyParts?.length === 0 ? (
                     <div className="text-center py-10">
-                      <p className="text-neutral-500 mb-4">Aucune photo compatible trouvée dans votre bibliothèque.</p>
+                      <p className="text-neutral-500 mb-4">{t.studio.step2.empty}</p>
                       <Button variant="outline" onClick={() => navigate(createPageUrl('Wardrobe'))}>
-                        Aller à la bibliothèque
+                        {t.studio.step2.goToWardrobe}
                       </Button>
                     </div>
                   ) : (
@@ -286,22 +287,22 @@ export default function Studio() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Instructions spéciales (Optionnel)</Label>
+                  <Label>{t.studio.step2.notesLabel}</Label>
                   <Input 
-                    placeholder="Ex: Le bijou est très petit, gardez les proportions..." 
+                    placeholder={t.studio.step2.notesPlaceholder}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                   />
                 </div>
 
                 <div className="flex justify-between pt-4">
-                  <Button variant="ghost" onClick={() => setStep(STEPS.UPLOAD)}>Retour</Button>
+                  <Button variant="ghost" onClick={() => setStep(STEPS.UPLOAD)}>{t.common.back}</Button>
                   <Button 
                     onClick={generateTryOn}
                     disabled={!selectedBodyPartId}
                     className="bg-amber-600 text-white hover:bg-amber-700"
                   >
-                    <Sparkles className="w-4 h-4 mr-2" /> Générer l'Essayage
+                    <Sparkles className="w-4 h-4 mr-2" /> {t.studio.step2.generateBtn}
                   </Button>
                 </div>
               </motion.div>
@@ -322,9 +323,9 @@ export default function Studio() {
                   <Sparkles className="absolute inset-0 m-auto w-8 h-8 text-amber-500 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-serif font-medium">Création de la magie...</h3>
+                  <h3 className="text-xl font-serif font-medium">{t.studio.step3.title}</h3>
                   <p className="text-neutral-500 mt-2 max-w-xs mx-auto">
-                    L'IA ajuste la lumière, les ombres et la perspective pour un rendu parfait.
+                    {t.studio.step3.desc}
                   </p>
                 </div>
               </motion.div>
@@ -339,8 +340,8 @@ export default function Studio() {
                 className="h-full flex flex-col space-y-6"
               >
                  <div className="space-y-2 text-center">
-                  <h2 className="text-2xl font-serif">C'est prêt !</h2>
-                  <p className="text-neutral-500 text-sm">Voici votre essayage virtuel.</p>
+                  <h2 className="text-2xl font-serif">{t.studio.step4.title}</h2>
+                  <p className="text-neutral-500 text-sm">{t.studio.step4.desc}</p>
                 </div>
 
                 <div className="flex-1 bg-neutral-900 rounded-xl overflow-hidden relative group">
@@ -353,13 +354,13 @@ export default function Studio() {
                     className="w-full"
                     onClick={() => window.open(resultImage, '_blank')}
                   >
-                    Télécharger
+                    {t.common.download}
                   </Button>
                   <Button 
                     className="w-full bg-neutral-900 text-white"
                     onClick={() => navigate(createPageUrl("Gallery"))}
                   >
-                    Aller à la Galerie
+                    {t.studio.step4.goToGallery}
                   </Button>
                 </div>
               </motion.div>
