@@ -543,6 +543,8 @@ export default function Studio() {
           </AnimatePresence>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }
