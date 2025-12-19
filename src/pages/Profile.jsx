@@ -1,0 +1,309 @@
+import React, { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, User, Heart, Clock, Save, Gem } from "lucide-react";
+import { motion } from "framer-motion";
+import { useLanguage } from '@/components/LanguageProvider';
+
+export default function Profile() {
+  const { t } = useLanguage();
+  const queryClient = useQueryClient();
+  const [isSaving, setIsSaving] = useState(false);
+
+  // User Data State
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    bio: "",
+    style_preferences: {
+      favorite_colors: [],
+      favorite_jewelry_types: [],
+      frequent_occasions: []
+    }
+  });
+
+  // Constants for preferences
+  const COLORS = ["Or / Gold", "Argent / Silver", "Or Rose / Rose Gold", "Noir / Black", "Coloré / Colorful"];
+  const TYPES = ["Colliers", "Boucles d'oreilles", "Bagues", "Bracelets", "Parures"];
+  const OCCASIONS = ["Quotidien", "Travail", "Soirée", "Mariage", "Vacances"];
+
+  // Fetch Current User
+  const { data: user, isLoading: userLoading } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const userData = await base44.auth.me();
+      // If user has no style_preferences init, ensure structure
+      if (!userData.style_preferences) {
+        userData.style_preferences = {
+          favorite_colors: [],
+          favorite_jewelry_types: [],
+          frequent_occasions: []
+        };
+      }
+      return userData;
+    },
+  });
+
+  // Fetch User Creations
+  const { data: creations, isLoading: creationsLoading } = useQuery({
+    queryKey: ['myCreations'],
+    queryFn: () => base44.entities.Creation.list('-created_date', 20), // Last 20 creations
+  });
+
+  // Populate form when user data loads
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        full_name: user.full_name || "",
+        email: user.email || "",
+        bio: user.bio || "",
+        style_preferences: {
+          favorite_colors: user.style_preferences?.favorite_colors || [],
+          favorite_jewelry_types: user.style_preferences?.favorite_jewelry_types || [],
+          frequent_occasions: user.style_preferences?.frequent_occasions || []
+        }
+      });
+    }
+  }, [user]);
+
+  // Update Mutation
+  const updateMutation = useMutation({
+    mutationFn: (data) => base44.auth.updateMe(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      setIsSaving(false);
+      // Optional: Show success toast/message
+    },
+    onError: () => setIsSaving(false)
+  });
+
+  const handleSave = () => {
+    setIsSaving(true);
+    // Don't send email as it might not be editable depending on auth provider, 
+    // but base44.auth.updateMe usually handles allowed fields. 
+    // We'll try to update bio and preferences. 
+    // full_name is usually updatable.
+    updateMutation.mutate({
+      full_name: formData.full_name,
+      bio: formData.bio,
+      style_preferences: formData.style_preferences
+    });
+  };
+
+  const togglePreference = (category, value) => {
+    setFormData(prev => {
+      const currentList = prev.style_preferences[category] || [];
+      const newList = currentList.includes(value)
+        ? currentList.filter(item => item !== value)
+        : [...currentList, value];
+      
+      return {
+        ...prev,
+        style_preferences: {
+          ...prev.style_preferences,
+          [category]: newList
+        }
+      };
+    });
+  };
+
+  if (userLoading) {
+    return <div className="flex justify-center items-center h-screen"><Loader2 className="w-8 h-8 animate-spin text-neutral-300" /></div>;
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-8">
+      <div>
+        <h1 className="text-3xl font-serif text-neutral-900 mb-2">{t.profile.title}</h1>
+        <p className="text-neutral-500">{t.profile.subtitle}</p>
+      </div>
+
+      <Tabs defaultValue="info" className="space-y-8">
+        <TabsList className="bg-white border border-neutral-100 p-1 rounded-xl">
+          <TabsTrigger value="info" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
+            <User className="w-4 h-4 mr-2" /> {t.profile.personalInfo}
+          </TabsTrigger>
+          <TabsTrigger value="style" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
+            <Heart className="w-4 h-4 mr-2" /> {t.profile.stylePrefs}
+          </TabsTrigger>
+          <TabsTrigger value="history" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
+            <Clock className="w-4 h-4 mr-2" /> {t.profile.history}
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Personal Info Tab */}
+        <TabsContent value="info">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm space-y-6"
+          >
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label>{t.profile.name}</Label>
+                <Input 
+                  value={formData.full_name} 
+                  onChange={(e) => setFormData({...formData, full_name: e.target.value})} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t.profile.email}</Label>
+                <Input 
+                  value={formData.email} 
+                  disabled 
+                  className="bg-neutral-50 text-neutral-500" 
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t.profile.bio}</Label>
+              <Textarea 
+                placeholder={t.profile.bioPlaceholder}
+                value={formData.bio}
+                onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                className="h-32"
+              />
+            </div>
+
+            <div className="pt-4 flex justify-end">
+              <Button 
+                onClick={handleSave} 
+                disabled={isSaving}
+                className="bg-neutral-900 hover:bg-neutral-800 text-white min-w-[150px]"
+              >
+                {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                {updateMutation.isSuccess && !isSaving ? t.profile.saved : t.profile.save}
+              </Button>
+            </div>
+          </motion.div>
+        </TabsContent>
+
+        {/* Style Preferences Tab */}
+        <TabsContent value="style">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm space-y-8"
+          >
+            {/* Colors */}
+            <div className="space-y-4">
+              <h3 className="font-serif text-lg flex items-center gap-2">
+                <span className="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold">1</span>
+                {t.profile.favColors}
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {COLORS.map(color => (
+                  <div key={color} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={`color-${color}`} 
+                      checked={formData.style_preferences.favorite_colors?.includes(color)}
+                      onCheckedChange={() => togglePreference('favorite_colors', color)}
+                    />
+                    <label htmlFor={`color-${color}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                      {color}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="h-px bg-neutral-100" />
+
+            {/* Jewelry Types */}
+            <div className="space-y-4">
+              <h3 className="font-serif text-lg flex items-center gap-2">
+                <span className="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold">2</span>
+                {t.profile.favTypes}
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {TYPES.map(type => (
+                  <div key={type} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={`type-${type}`} 
+                      checked={formData.style_preferences.favorite_jewelry_types?.includes(type)}
+                      onCheckedChange={() => togglePreference('favorite_jewelry_types', type)}
+                    />
+                    <label htmlFor={`type-${type}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                      {type}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="h-px bg-neutral-100" />
+
+            {/* Occasions */}
+            <div className="space-y-4">
+              <h3 className="font-serif text-lg flex items-center gap-2">
+                <span className="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold">3</span>
+                {t.profile.occasions}
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {OCCASIONS.map(occ => (
+                  <div key={occ} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={`occ-${occ}`} 
+                      checked={formData.style_preferences.frequent_occasions?.includes(occ)}
+                      onCheckedChange={() => togglePreference('frequent_occasions', occ)}
+                    />
+                    <label htmlFor={`occ-${occ}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                      {occ}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 flex justify-end">
+              <Button 
+                onClick={handleSave} 
+                disabled={isSaving}
+                className="bg-neutral-900 hover:bg-neutral-800 text-white min-w-[150px]"
+              >
+                {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                {updateMutation.isSuccess && !isSaving ? t.profile.saved : t.profile.save}
+              </Button>
+            </div>
+          </motion.div>
+        </TabsContent>
+
+        {/* History Tab */}
+        <TabsContent value="history">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            {creationsLoading ? (
+              <div className="flex justify-center py-10"><Loader2 className="animate-spin text-neutral-300" /></div>
+            ) : creations?.length === 0 ? (
+              <div className="bg-white p-12 rounded-3xl border border-dashed border-neutral-200 text-center">
+                <Gem className="w-12 h-12 text-neutral-200 mx-auto mb-4" />
+                <p className="text-neutral-500">{t.profile.noCreations}</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {creations.map((creation) => (
+                  <div key={creation.id} className="group relative aspect-[3/4] bg-neutral-100 rounded-xl overflow-hidden cursor-pointer" onClick={() => window.open(creation.result_image_url, '_blank')}>
+                    <img src={creation.result_image_url} alt="Creation" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                      <p className="text-white text-xs font-medium truncate">{new Date(creation.created_date).toLocaleDateString()}</p>
+                      <p className="text-white/80 text-[10px] capitalize">{creation.jewelry_type}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

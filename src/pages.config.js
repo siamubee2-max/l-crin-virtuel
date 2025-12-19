@@ -3,6 +3,7 @@ import Studio from './pages/Studio';
 import Gallery from './pages/Gallery';
 import JewelryBox from './pages/JewelryBox';
 import Closet from './pages/Closet';
+import Profile from './pages/Profile';
 import __Layout from './Layout.jsx';
 
 
@@ -12,6 +13,7 @@ export const PAGES = {
     "Gallery": Gallery,
     "JewelryBox": JewelryBox,
     "Closet": Closet,
+    "Profile": Profile,
 }
 
 export const pagesConfig = {

@@ -7,7 +7,8 @@ const translations = {
       studio: "L'Atelier",
       wardrobe: "Ma Bibliothèque",
       closet: "Mon Dressing",
-      jewelryBox: "Mon Écrin"
+      jewelryBox: "Mon Écrin",
+      profile: "Mon Profil"
       },
     common: {
       footer: "L'Écrin Virtuel © 2024 — Luxe & Technologie",
