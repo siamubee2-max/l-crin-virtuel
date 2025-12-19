@@ -21,8 +21,13 @@ export default function Closet() {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   
+  // Selection State
+  const [selectedClothingIds, setSelectedClothingIds] = useState([]);
+  const [selectionMode, setSelectionMode] = useState(false);
+
   // AI Styling State
-  const [selectedItemForAI, setSelectedItemForAI] = useState(null);
+  const [stylistMode, setStylistMode] = useState('outfit'); // 'outfit' (clothes->jewelry) or 'jewelry' (jewelry->clothes)
+  const [selectedJewelryForAI, setSelectedJewelryForAI] = useState(null); // For 'jewelry' mode
   const [occasionPrompt, setOccasionPrompt] = useState("");
   const [aiSuggestion, setAiSuggestion] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -97,44 +102,80 @@ export default function Closet() {
   };
 
   const handleAiStyling = async () => {
-    if (!selectedItemForAI) return;
     setAnalyzing(true);
     setAiSuggestion(null);
 
     try {
-      const prompt = `
-        As a personal stylist, suggest a jewelry combination for this clothing item.
+      let prompt = "";
+      let file_urls = [];
+      let jsonSchema = {};
+
+      if (stylistMode === 'outfit') {
+        // Mode: Clothes -> Jewelry
+        const selectedClothes = clothes.filter(c => selectedClothingIds.includes(c.id));
+        if (selectedClothes.length === 0) return;
+
+        file_urls = selectedClothes.map(c => c.image_url);
         
-        Clothing Item:
-        - Type: ${selectedItemForAI.type}
-        - Name: ${selectedItemForAI.name}
-        - Color: ${selectedItemForAI.color}
-        - Material: ${selectedItemForAI.material}
-        - Description: ${selectedItemForAI.description}
+        prompt = `
+          As a personal stylist, suggest a jewelry combination for this outfit.
+          
+          Outfit Items:
+          ${selectedClothes.map(c => `- ${c.type}: ${c.name} (${c.color}, ${c.material})`).join('\n')}
+          
+          Occasion/Style Context: ${occasionPrompt || "General elegant style"}
+          
+          Available Jewelry (ID: Name - Type - Material):
+          ${jewelry?.map(j => `- ${j.id}: ${j.name} - ${j.type} - ${j.material}`).join('\n')}
+          
+          Task:
+          Select 1-3 best matching jewelry items from the list above that complement the entire outfit.
+          Explain why they work well together with the outfit and the occasion.
+          
+          Return JSON format:
+          {
+            "recommended_ids": ["id1", "id2"],
+            "reasoning": "Explanation..."
+          }
+        `;
+      } else {
+        // Mode: Jewelry -> Clothes
+        if (!selectedJewelryForAI) return;
         
-        Occasion/Style Context: ${occasionPrompt || "General elegant style"}
+        file_urls = [selectedJewelryForAI.image_url];
         
-        Available Jewelry (ID: Name - Type - Material):
-        ${jewelry?.map(j => `- ${j.id}: ${j.name} - ${j.type} - ${j.material}`).join('\n')}
-        
-        Task:
-        Select 1-3 best matching jewelry items from the list above.
-        Explain why they work well together with the clothing and the occasion.
-        
-        Return JSON format:
-        {
-          "recommended_jewelry_ids": ["id1", "id2"],
-          "reasoning": "Explanation..."
-        }
-      `;
+        prompt = `
+          As a personal stylist, build an outfit from my closet that matches this jewelry piece.
+          
+          Jewelry Piece:
+          - Type: ${selectedJewelryForAI.type}
+          - Name: ${selectedJewelryForAI.name}
+          - Material: ${selectedJewelryForAI.material}
+          
+          Occasion/Style Context: ${occasionPrompt || "General elegant style"}
+          
+          Available Closet Items (ID: Name - Type - Color):
+          ${clothes?.map(c => `- ${c.id}: ${c.name} - ${c.type} - ${c.color} - ${c.material}`).join('\n')}
+          
+          Task:
+          Select a complete outfit (e.g. top+bottom OR dress + optional shoes/bag) from the list above that matches the jewelry.
+          Explain the style choice.
+          
+          Return JSON format:
+          {
+            "recommended_ids": ["id1", "id2"],
+            "reasoning": "Explanation..."
+          }
+        `;
+      }
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
-        file_urls: [selectedItemForAI.image_url],
+        file_urls: file_urls,
         response_json_schema: {
           type: "object",
           properties: {
-            recommended_jewelry_ids: { type: "array", items: { type: "string" } },
+            recommended_ids: { type: "array", items: { type: "string" } },
             reasoning: { type: "string" }
           }
         }
@@ -148,6 +189,12 @@ export default function Closet() {
     } finally {
       setAnalyzing(false);
     }
+  };
+
+  const toggleSelection = (id) => {
+    setSelectedClothingIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   const filteredClothes = clothes?.filter(item => {
@@ -311,6 +358,18 @@ export default function Closet() {
         </div>
         <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
           <Button
+             variant={selectionMode ? "secondary" : "outline"}
+             size="sm"
+             onClick={() => {
+                setSelectionMode(!selectionMode);
+                if (selectionMode) setSelectedClothingIds([]);
+             }}
+             className={selectionMode ? "bg-amber-100 text-amber-900 border-amber-200" : "border-neutral-200"}
+          >
+            {selectionMode ? t.closet?.ai?.clear || "Annuler" : "Sélectionner"}
+          </Button>
+          <div className="w-px h-6 bg-neutral-200 mx-2" />
+          <Button
              variant={typeFilter === "all" ? "default" : "outline"}
              size="sm"
              onClick={() => setTypeFilter("all")}
@@ -351,29 +410,44 @@ export default function Closet() {
               <div className="aspect-[3/4] bg-neutral-50 relative overflow-hidden">
                 <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
                 
-                {/* Actions Overlay */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
-                   <Button 
-                      size="sm" 
-                      className="bg-white text-neutral-900 hover:bg-amber-50"
-                      onClick={() => {
-                        setSelectedItemForAI(item);
-                        setIsAIModalOpen(true);
-                        setAiSuggestion(null);
-                        setOccasionPrompt("");
-                      }}
-                   >
-                     <Sparkles className="w-3 h-3 mr-2 text-amber-500" /> {t.closet?.aiMatch || "Styliste"}
-                   </Button>
-                   <Button 
-                      size="icon" 
-                      variant="destructive"
-                      className="h-8 w-8 rounded-full"
-                      onClick={() => deleteMutation.mutate(item.id)}
-                   >
-                     <Trash2 className="w-4 h-4" />
-                   </Button>
-                </div>
+                {/* Selection Checkbox */}
+                {selectionMode && (
+                  <div className="absolute top-2 right-2 z-10">
+                     <button 
+                        onClick={(e) => { e.stopPropagation(); toggleSelection(item.id); }}
+                        className={`w-6 h-6 rounded bg-white shadow-sm flex items-center justify-center transition-colors ${selectedClothingIds.includes(item.id) ? 'text-amber-600' : 'text-neutral-300'}`}
+                     >
+                        {selectedClothingIds.includes(item.id) ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5" />}
+                     </button>
+                  </div>
+                )}
+
+                {/* Actions Overlay (only if not selecting) */}
+                {!selectionMode && (
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
+                     <Button 
+                        size="sm" 
+                        className="bg-white text-neutral-900 hover:bg-amber-50"
+                        onClick={() => {
+                          setSelectedClothingIds([item.id]);
+                          setStylistMode('outfit');
+                          setIsAIModalOpen(true);
+                          setAiSuggestion(null);
+                          setOccasionPrompt("");
+                        }}
+                     >
+                       <Sparkles className="w-3 h-3 mr-2 text-amber-500" /> {t.closet?.aiMatch || "Styliste"}
+                     </Button>
+                     <Button 
+                        size="icon" 
+                        variant="destructive"
+                        className="h-8 w-8 rounded-full"
+                        onClick={() => deleteMutation.mutate(item.id)}
+                     >
+                       <Trash2 className="w-4 h-4" />
+                     </Button>
+                  </div>
+                )}
               </div>
               
               <div className="p-4 flex-1 flex flex-col">

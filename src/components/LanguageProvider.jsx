@@ -180,7 +180,13 @@ const translations = {
           promptLabel: "Pour quelle occasion ?",
           promptPlaceholder: "Ex: Un mariage chic en été, une réunion professionnelle...",
           resultTitle: "Suggestion du Styliste",
-          why: "Pourquoi ce choix :"
+          why: "Pourquoi ce choix :",
+          modeOutfit: "Compléter ma tenue",
+          modeJewelry: "Assortir un bijou",
+          selectJewel: "Choisissez le bijou vedette",
+          selectClothes: "Sélectionnez vos vêtements",
+          selection: "sélectionnés",
+          clear: "Effacer"
         }
         }
         },
