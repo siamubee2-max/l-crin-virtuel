@@ -100,8 +100,16 @@ const translations = {
       latestTryons: "Vos derniers essayages virtuels.",
       empty: "Vous n'avez pas encore fait d'essayages.",
       createFirst: "Créer mon premier look"
-    }
-  },
+      },
+      stylist: {
+      title: "Styliste IA",
+      analyzeBtn: "Demander conseil au Styliste",
+      analyzing: "Analyse de style en cours...",
+      suggestions: "Suggestions de Style",
+      advice: "Couleurs & Occasions",
+      compatible: "Compléter le Look"
+      }
+      },
   en: {
     nav: {
       gallery: "Gallery",
