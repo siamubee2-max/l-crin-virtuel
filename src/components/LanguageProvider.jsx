@@ -201,8 +201,16 @@ const translations = {
       latestTryons: "Your latest virtual try-ons.",
       empty: "You haven't made any try-ons yet.",
       createFirst: "Create my first look"
+    },
+    stylist: {
+      title: "AI Stylist",
+      analyzeBtn: "Ask the Stylist",
+      analyzing: "Analyzing style...",
+      suggestions: "Styling Suggestions",
+      advice: "Color & Occasion",
+      compatible: "Complete the Look"
     }
-  },
+    },
   es: {
     nav: {
       gallery: "Galería",
@@ -302,8 +310,16 @@ const translations = {
       latestTryons: "Tus últimas pruebas virtuales.",
       empty: "Aún no has hecho ninguna prueba.",
       createFirst: "Crear mi primer look"
+    },
+    stylist: {
+      title: "Estilista IA",
+      analyzeBtn: "Preguntar al Estilista",
+      analyzing: "Analizando estilo...",
+      suggestions: "Sugerencias de Estilo",
+      advice: "Color y Ocasión",
+      compatible: "Completar el Look"
     }
-  },
+    },
   de: {
     nav: {
       gallery: "Galerie",
@@ -403,8 +419,16 @@ const translations = {
       latestTryons: "Ihre neuesten virtuellen Anproben.",
       empty: "Sie haben noch keine Anproben gemacht.",
       createFirst: "Meinen ersten Look erstellen"
+    },
+    stylist: {
+      title: "KI-Stylist",
+      analyzeBtn: "Den Stylisten fragen",
+      analyzing: "Stilanalyse...",
+      suggestions: "Styling-Vorschläge",
+      advice: "Farbe & Anlass",
+      compatible: "Den Look vervollständigen"
     }
-  },
+    },
   it: {
     nav: {
       gallery: "Galleria",
@@ -504,8 +528,16 @@ const translations = {
       latestTryons: "Le tue ultime prove virtuali.",
       empty: "Non hai ancora fatto prove.",
       createFirst: "Crea il mio primo look"
+    },
+    stylist: {
+      title: "Stilista IA",
+      analyzeBtn: "Chiedi allo Stilista",
+      analyzing: "Analisi dello stile...",
+      suggestions: "Suggerimenti di Stile",
+      advice: "Colore e Occasione",
+      compatible: "Completa il Look"
     }
-  },
+    },
   pt: {
     nav: {
       gallery: "Galeria",
@@ -605,8 +637,16 @@ const translations = {
       latestTryons: "Suas últimas provas virtuais.",
       empty: "Você ainda não fez nenhuma prova.",
       createFirst: "Criar meu primeiro look"
+    },
+    stylist: {
+      title: "Estilista IA",
+      analyzeBtn: "Perguntar ao Estilista",
+      analyzing: "Analisando estilo...",
+      suggestions: "Sugestões de Estilo",
+      advice: "Cor e Ocasião",
+      compatible: "Completar o Look"
     }
-  }
+    }
 };
 
 const LanguageContext = createContext();

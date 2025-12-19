@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Sparkles, Upload, ArrowRight, CheckCircle2, RefreshCw } from "lucide-react";
+import { Loader2, Sparkles, Upload, ArrowRight, CheckCircle2, RefreshCw, Lightbulb, Wand2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +31,8 @@ export default function Studio() {
   const [selectedBodyPartId, setSelectedBodyPartId] = useState("");
   const [notes, setNotes] = useState("");
   const [resultImage, setResultImage] = useState("");
+  const [stylistData, setStylistData] = useState(null);
+  const [analyzingStyle, setAnalyzingStyle] = useState(false);
 
   const { data: bodyParts } = useQuery({
     queryKey: ['bodyParts'],
@@ -49,6 +51,52 @@ export default function Studio() {
       console.error("Upload failed", error);
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleStylistAnalysis = async () => {
+    if (!jewelryImage || !selectedBodyPartId) return;
+    
+    setAnalyzingStyle(true);
+    try {
+      const bodyPart = bodyParts.find(p => p.id === selectedBodyPartId);
+      
+      const prompt = `
+        You are a luxury fashion stylist and jewelry expert.
+        Analyze these two images:
+        Image 1: The user (focus on skin tone, features, and style).
+        Image 2: A piece of jewelry (${jewelryType}).
+
+        Provide expert advice in the following JSON format:
+        {
+          "suggestions": "Styling suggestions based on the user's features and the jewelry piece (max 2 sentences)",
+          "advice": "Advice on color matching (gold/silver vs skin tone) and appropriate occasions (max 2 sentences)",
+          "compatible_items": ["Item 1", "Item 2", "Item 3"] (3 specific jewelry items that would complete a set with this piece)
+        }
+        
+        Be elegant, professional, and helpful.
+      `;
+
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: prompt,
+        file_urls: [bodyPart.image_url, jewelryImage],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            suggestions: { type: "string" },
+            advice: { type: "string" },
+            compatible_items: { type: "array", items: { type: "string" } }
+          }
+        }
+      });
+
+      if (response) {
+        setStylistData(response);
+      }
+    } catch (error) {
+      console.error("Stylist analysis failed", error);
+    } finally {
+      setAnalyzingStyle(false);
     }
   };
 
@@ -304,6 +352,59 @@ export default function Studio() {
                   >
                     <Sparkles className="w-4 h-4 mr-2" /> {t.studio.step2.generateBtn}
                   </Button>
+                </div>
+
+                {/* AI Stylist Section */}
+                <div className="mt-8 border-t border-neutral-100 pt-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-serif flex items-center gap-2 text-neutral-800">
+                      <Wand2 className="w-5 h-5 text-amber-500" />
+                      {t.stylist.title}
+                    </h3>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleStylistAnalysis}
+                      disabled={analyzingStyle || !selectedBodyPartId}
+                      className="border-amber-200 text-amber-700 hover:bg-amber-50"
+                    >
+                      {analyzingStyle ? (
+                        <><Loader2 className="w-3 h-3 mr-2 animate-spin" /> {t.stylist.analyzing}</>
+                      ) : (
+                        <><Lightbulb className="w-3 h-3 mr-2" /> {t.stylist.analyzeBtn}</>
+                      )}
+                    </Button>
+                  </div>
+
+                  <AnimatePresence>
+                    {stylistData && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="bg-neutral-50 rounded-xl p-5 space-y-4 border border-neutral-100 text-sm"
+                      >
+                        <div>
+                          <p className="font-medium text-amber-700 mb-1">{t.stylist.suggestions}</p>
+                          <p className="text-neutral-600 leading-relaxed">{stylistData.suggestions}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium text-amber-700 mb-1">{t.stylist.advice}</p>
+                          <p className="text-neutral-600 leading-relaxed">{stylistData.advice}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium text-amber-700 mb-2">{t.stylist.compatible}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {stylistData.compatible_items?.map((item, idx) => (
+                              <span key={idx} className="bg-white border border-neutral-200 px-3 py-1 rounded-full text-neutral-600 text-xs shadow-sm">
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
             )}
