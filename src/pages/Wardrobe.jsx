@@ -90,7 +90,7 @@ export default function Wardrobe() {
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-white hover:bg-stone-200 text-black rounded-sm px-6 font-medium">
+            <Button className="bg-amber-500 hover:bg-amber-400 text-black rounded-sm px-6 font-medium transition-all shadow-[0_0_15px_rgba(245,158,11,0.2)] border-none">
               <Plus className="w-4 h-4 mr-2" /> {t.wardrobe.addPhoto}
             </Button>
           </DialogTrigger>
@@ -164,7 +164,7 @@ export default function Wardrobe() {
 
               <Button 
                 onClick={handleSubmit} 
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                className="w-full bg-amber-500 hover:bg-amber-400 text-black font-medium"
                 disabled={!newPart.name || !newPart.image_url || createMutation.isPending}
               >
                 {createMutation.isPending ? t.common.saving : t.common.save}

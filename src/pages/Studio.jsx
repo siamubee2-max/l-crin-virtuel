@@ -234,7 +234,7 @@ export default function Studio() {
                   <Button 
                     onClick={() => setStep(STEPS.SELECT_BODY)}
                     disabled={!jewelryImage}
-                    className="bg-white text-black hover:bg-amber-400 hover:text-black font-medium"
+                    className="bg-amber-500 text-black hover:bg-amber-400 font-medium border-none shadow-lg shadow-amber-900/20"
                   >
                     {t.common.next} <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -301,7 +301,7 @@ export default function Studio() {
                   <Button 
                     onClick={generateTryOn}
                     disabled={!selectedBodyPartId}
-                    className="bg-amber-600 text-white hover:bg-amber-500"
+                    className="bg-amber-500 text-black hover:bg-amber-400 font-medium shadow-[0_0_20px_rgba(245,158,11,0.4)]"
                   >
                     <Sparkles className="w-4 h-4 mr-2" /> {t.studio.step2.generateBtn}
                   </Button>
@@ -358,7 +358,7 @@ export default function Studio() {
                     {t.common.download}
                   </Button>
                   <Button 
-                    className="w-full bg-amber-600 text-white hover:bg-amber-500"
+                    className="w-full bg-amber-500 text-black hover:bg-amber-400 font-medium"
                     onClick={() => navigate(createPageUrl("Gallery"))}
                   >
                     {t.studio.step4.goToGallery}

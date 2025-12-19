@@ -41,7 +41,7 @@ export default function Gallery() {
             {t.gallery.hero.desc}
           </p>
           <Link to={createPageUrl("Studio")}>
-            <Button size="lg" className="bg-white text-neutral-950 hover:bg-amber-400 hover:text-black border-none rounded-sm px-8 mt-4 font-serif tracking-wide transition-all">
+            <Button size="lg" className="bg-amber-500 text-neutral-950 hover:bg-amber-400 hover:scale-105 border-none rounded-sm px-8 mt-4 font-serif tracking-wide transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)]">
               {t.gallery.hero.cta} <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>
@@ -65,7 +65,7 @@ export default function Gallery() {
           <div className="text-center py-20 bg-neutral-900 rounded-3xl border border-dashed border-white/10">
             <p className="text-stone-400 mb-6 text-lg">{t.gallery.empty}</p>
             <Link to={createPageUrl("Studio")}>
-              <Button className="bg-amber-600 hover:bg-amber-700 text-white border-none">
+              <Button className="bg-amber-500 hover:bg-amber-400 text-black border-none font-medium shadow-lg shadow-amber-900/20">
                 <Plus className="mr-2 w-4 h-4" /> {t.gallery.createFirst}
               </Button>
             </Link>
