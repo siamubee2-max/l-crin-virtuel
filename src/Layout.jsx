@@ -34,17 +34,17 @@ function LayoutContent({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 font-sans text-neutral-900 selection:bg-amber-100">
+    <div className="min-h-screen bg-neutral-950 font-sans text-stone-200 selection:bg-amber-900 selection:text-white">
       {/* Top Navigation Bar */}
-      <nav className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-neutral-100 z-50">
+      <nav className="fixed top-0 left-0 right-0 h-16 bg-neutral-950/80 backdrop-blur-md border-b border-white/10 z-50">
         <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
           
           {/* Logo */}
           <Link to={createPageUrl("Gallery")} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center rounded-sm font-serif text-xl">
+            <div className="w-8 h-8 bg-white text-neutral-950 flex items-center justify-center rounded-sm font-serif text-xl shadow-[0_0_15px_rgba(255,255,255,0.3)]">
               É
             </div>
-            <span className="font-serif text-xl tracking-tight font-medium group-hover:text-amber-600 transition-colors">
+            <span className="font-serif text-xl tracking-tight font-medium text-white group-hover:text-amber-400 transition-colors">
               L'Écrin Virtuel
             </span>
           </Link>
@@ -57,11 +57,11 @@ function LayoutContent({ children }) {
                 to={createPageUrl(item.path === "/" ? "Gallery" : item.path.substring(1))}
                 className={`flex items-center gap-2 text-sm font-medium tracking-wide transition-all duration-300 ${
                   isActive(item.path)
-                    ? "text-amber-600"
-                    : "text-neutral-500 hover:text-neutral-900"
+                    ? "text-amber-400"
+                    : "text-stone-400 hover:text-white"
                 }`}
               >
-                <item.icon className={`w-4 h-4 ${isActive(item.path) ? "fill-amber-100" : ""}`} />
+                <item.icon className={`w-4 h-4 ${isActive(item.path) ? "fill-amber-900 text-amber-400" : ""}`} />
                 {item.label}
               </Link>
             ))}
@@ -91,7 +91,7 @@ function LayoutContent({ children }) {
 
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden p-2 text-neutral-600"
+            className="md:hidden p-2 text-stone-400 hover:text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X /> : <Menu />}
@@ -106,7 +106,7 @@ function LayoutContent({ children }) {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 top-16 bg-white z-40 md:hidden p-6 flex flex-col gap-6"
+            className="fixed inset-0 top-16 bg-neutral-950 z-40 md:hidden p-6 flex flex-col gap-6"
           >
             {navItems.map((item) => (
               <Link
@@ -115,8 +115,8 @@ function LayoutContent({ children }) {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-4 text-lg font-medium p-4 rounded-xl ${
                   isActive(item.path)
-                    ? "bg-amber-50 text-amber-700"
-                    : "text-neutral-600 hover:bg-neutral-50"
+                    ? "bg-amber-900/20 text-amber-400 border border-amber-900/50"
+                    : "text-stone-400 hover:bg-neutral-900 hover:text-white"
                 }`}
               >
                 <item.icon className="w-6 h-6" />

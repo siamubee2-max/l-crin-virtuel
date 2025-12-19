@@ -121,19 +121,19 @@ export default function Studio() {
   });
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       <div className="mb-12 text-center">
-        <h1 className="text-4xl font-serif text-neutral-900 mb-4">{t.studio.title}</h1>
-        <p className="text-neutral-500">
+        <h1 className="text-4xl font-serif text-white mb-4 drop-shadow-lg">{t.studio.title}</h1>
+        <p className="text-stone-400 text-lg">
           {t.studio.subtitle}
         </p>
       </div>
 
-      <div className="bg-white rounded-3xl shadow-xl border border-neutral-100 overflow-hidden min-h-[500px] flex flex-col md:flex-row">
+      <div className="bg-neutral-900 rounded-3xl shadow-2xl shadow-black/50 border border-white/5 overflow-hidden min-h-[600px] flex flex-col md:flex-row">
         
         {/* Left Side - Progress & Steps */}
-        <div className="w-full md:w-1/3 bg-neutral-50 p-8 border-r border-neutral-100 flex flex-col">
-          <div className="space-y-6">
+        <div className="w-full md:w-1/3 bg-neutral-950 p-8 border-r border-white/5 flex flex-col">
+          <div className="space-y-8">
             {[
               { id: STEPS.UPLOAD, label: t.studio.steps.upload, icon: "💎" },
               { id: STEPS.SELECT_BODY, label: t.studio.steps.selectBody, icon: "👤" },
@@ -142,18 +142,18 @@ export default function Studio() {
             ].map((s) => (
               <div 
                 key={s.id}
-                className={`flex items-center gap-4 transition-colors ${
-                  step === s.id ? "text-amber-600 font-medium" : 
-                  step > s.id ? "text-green-600" : "text-neutral-400"
+                className={`flex items-center gap-4 transition-all duration-300 ${
+                  step === s.id ? "text-amber-400 font-medium translate-x-2" : 
+                  step > s.id ? "text-green-500" : "text-stone-600"
                 }`}
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${
-                  step === s.id ? "border-amber-600 bg-amber-50" : 
-                  step > s.id ? "border-green-600 bg-green-50" : "border-neutral-200"
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center border ${
+                  step === s.id ? "border-amber-500 bg-amber-900/20 text-amber-400" : 
+                  step > s.id ? "border-green-600 bg-green-900/20" : "border-stone-800 bg-stone-900"
                 }`}>
-                  {step > s.id ? <CheckCircle2 className="w-4 h-4" /> : <span>{s.id + 1}</span>}
+                  {step > s.id ? <CheckCircle2 className="w-5 h-5" /> : <span className="font-serif">{s.id + 1}</span>}
                 </div>
-                <span>{s.label}</span>
+                <span className="font-serif tracking-wide">{s.label}</span>
               </div>
             ))}
           </div>
@@ -166,7 +166,7 @@ export default function Studio() {
                   setResultImage("");
                 }}
                 variant="outline"
-                className="mt-auto"
+                className="mt-auto border-white/10 text-stone-300 hover:bg-white hover:text-black transition-colors"
               >
                 <RefreshCw className="w-4 h-4 mr-2" /> {t.studio.newTry}
              </Button>
@@ -187,30 +187,30 @@ export default function Studio() {
                 className="space-y-6 h-full flex flex-col"
               >
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-serif">{t.studio.step1.title}</h2>
-                  <p className="text-neutral-500 text-sm">{t.studio.step1.desc}</p>
+                  <h2 className="text-2xl font-serif text-white">{t.studio.step1.title}</h2>
+                  <p className="text-stone-400 text-sm">{t.studio.step1.desc}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>{t.studio.step1.typeLabel}</Label>
+                    <Label className="text-stone-300">{t.studio.step1.typeLabel}</Label>
                     <Select value={jewelryType} onValueChange={setJewelryType}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-neutral-800 border-white/10 text-white">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="earrings">{t.studio.step1.types.earrings}</SelectItem>
-                        <SelectItem value="necklace">{t.studio.step1.types.necklace}</SelectItem>
-                        <SelectItem value="ring">{t.studio.step1.types.ring}</SelectItem>
-                        <SelectItem value="bracelet">{t.studio.step1.types.bracelet}</SelectItem>
-                        <SelectItem value="anklet">{t.studio.step1.types.anklet}</SelectItem>
-                        <SelectItem value="set">{t.studio.step1.types.set}</SelectItem>
+                      <SelectContent className="bg-neutral-900 border-white/10 text-white">
+                        <SelectItem value="earrings" className="focus:bg-neutral-800 focus:text-white">{t.studio.step1.types.earrings}</SelectItem>
+                        <SelectItem value="necklace" className="focus:bg-neutral-800 focus:text-white">{t.studio.step1.types.necklace}</SelectItem>
+                        <SelectItem value="ring" className="focus:bg-neutral-800 focus:text-white">{t.studio.step1.types.ring}</SelectItem>
+                        <SelectItem value="bracelet" className="focus:bg-neutral-800 focus:text-white">{t.studio.step1.types.bracelet}</SelectItem>
+                        <SelectItem value="anklet" className="focus:bg-neutral-800 focus:text-white">{t.studio.step1.types.anklet}</SelectItem>
+                        <SelectItem value="set" className="focus:bg-neutral-800 focus:text-white">{t.studio.step1.types.set}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
-                <div className="border-2 border-dashed border-neutral-200 rounded-xl flex-1 flex flex-col items-center justify-center p-6 text-center hover:bg-neutral-50 transition-colors relative min-h-[200px]">
+                <div className="border-2 border-dashed border-white/10 rounded-xl flex-1 flex flex-col items-center justify-center p-6 text-center hover:bg-neutral-800/50 transition-colors relative min-h-[200px] bg-neutral-950/30">
                   <input 
                     type="file" 
                     accept="image/*"
@@ -220,12 +220,12 @@ export default function Studio() {
                   {uploading ? (
                     <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
                   ) : jewelryImage ? (
-                    <img src={jewelryImage} alt="Jewelry" className="h-full max-h-64 object-contain" />
+                    <img src={jewelryImage} alt="Jewelry" className="h-full max-h-64 object-contain drop-shadow-lg" />
                   ) : (
                     <>
-                      <Upload className="w-10 h-10 text-neutral-300 mb-4" />
-                      <p className="text-neutral-900 font-medium">{t.common.clickToUpload}</p>
-                      <p className="text-neutral-400 text-sm mt-1">JPG, PNG</p>
+                      <Upload className="w-10 h-10 text-stone-600 mb-4" />
+                      <p className="text-stone-200 font-medium">{t.common.clickToUpload}</p>
+                      <p className="text-stone-500 text-sm mt-1">JPG, PNG</p>
                     </>
                   )}
                 </div>
@@ -234,7 +234,7 @@ export default function Studio() {
                   <Button 
                     onClick={() => setStep(STEPS.SELECT_BODY)}
                     disabled={!jewelryImage}
-                    className="bg-neutral-900 text-white hover:bg-neutral-800"
+                    className="bg-white text-black hover:bg-amber-400 hover:text-black font-medium"
                   >
                     {t.common.next} <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -252,15 +252,15 @@ export default function Studio() {
                 className="space-y-6 h-full flex flex-col"
               >
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-serif">{t.studio.step2.title}</h2>
-                  <p className="text-neutral-500 text-sm">{t.studio.step2.desc}</p>
+                  <h2 className="text-2xl font-serif text-white">{t.studio.step2.title}</h2>
+                  <p className="text-stone-400 text-sm">{t.studio.step2.desc}</p>
                 </div>
 
-                <div className="flex-1 overflow-y-auto max-h-[400px] pr-2">
+                <div className="flex-1 overflow-y-auto max-h-[400px] pr-2 scrollbar-thin scrollbar-thumb-stone-700 scrollbar-track-transparent">
                   {filteredBodyParts?.length === 0 ? (
                     <div className="text-center py-10">
-                      <p className="text-neutral-500 mb-4">{t.studio.step2.empty}</p>
-                      <Button variant="outline" onClick={() => navigate(createPageUrl('Wardrobe'))}>
+                      <p className="text-stone-500 mb-4">{t.studio.step2.empty}</p>
+                      <Button variant="outline" className="text-stone-300 border-white/10 hover:bg-neutral-800" onClick={() => navigate(createPageUrl('Wardrobe'))}>
                         {t.studio.step2.goToWardrobe}
                       </Button>
                     </div>
@@ -270,14 +270,14 @@ export default function Studio() {
                         <div 
                           key={part.id}
                           onClick={() => setSelectedBodyPartId(part.id)}
-                          className={`cursor-pointer rounded-xl border-2 overflow-hidden relative aspect-[3/4] transition-all ${
+                          className={`cursor-pointer rounded-xl border-2 overflow-hidden relative aspect-[3/4] transition-all duration-300 ${
                             selectedBodyPartId === part.id 
-                              ? "border-amber-600 ring-2 ring-amber-100" 
-                              : "border-transparent hover:border-neutral-200"
+                              ? "border-amber-500 ring-2 ring-amber-900/50 scale-105 shadow-xl shadow-black/50" 
+                              : "border-transparent hover:border-white/20 opacity-70 hover:opacity-100"
                           }`}
                         >
                           <img src={part.image_url} alt={part.name} className="w-full h-full object-cover" />
-                          <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90 text-xs font-medium truncate">
+                          <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/80 text-white text-xs font-medium truncate backdrop-blur-sm">
                             {part.name}
                           </div>
                         </div>
@@ -287,20 +287,21 @@ export default function Studio() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{t.studio.step2.notesLabel}</Label>
+                  <Label className="text-stone-300">{t.studio.step2.notesLabel}</Label>
                   <Input 
                     placeholder={t.studio.step2.notesPlaceholder}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
+                    className="bg-neutral-800 border-white/10 text-white placeholder:text-stone-600 focus:border-amber-500/50"
                   />
                 </div>
 
                 <div className="flex justify-between pt-4">
-                  <Button variant="ghost" onClick={() => setStep(STEPS.UPLOAD)}>{t.common.back}</Button>
+                  <Button variant="ghost" onClick={() => setStep(STEPS.UPLOAD)} className="text-stone-400 hover:text-white">{t.common.back}</Button>
                   <Button 
                     onClick={generateTryOn}
                     disabled={!selectedBodyPartId}
-                    className="bg-amber-600 text-white hover:bg-amber-700"
+                    className="bg-amber-600 text-white hover:bg-amber-500"
                   >
                     <Sparkles className="w-4 h-4 mr-2" /> {t.studio.step2.generateBtn}
                   </Button>
@@ -340,24 +341,24 @@ export default function Studio() {
                 className="h-full flex flex-col space-y-6"
               >
                  <div className="space-y-2 text-center">
-                  <h2 className="text-2xl font-serif">{t.studio.step4.title}</h2>
-                  <p className="text-neutral-500 text-sm">{t.studio.step4.desc}</p>
+                  <h2 className="text-2xl font-serif text-white">{t.studio.step4.title}</h2>
+                  <p className="text-stone-400 text-sm">{t.studio.step4.desc}</p>
                 </div>
 
-                <div className="flex-1 bg-neutral-900 rounded-xl overflow-hidden relative group">
+                <div className="flex-1 bg-neutral-950 rounded-xl overflow-hidden relative group border border-white/5">
                   <img src={resultImage} alt="Result" className="w-full h-full object-contain" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <Button 
                     variant="outline" 
-                    className="w-full"
+                    className="w-full border-white/10 text-stone-300 hover:bg-white hover:text-black"
                     onClick={() => window.open(resultImage, '_blank')}
                   >
                     {t.common.download}
                   </Button>
                   <Button 
-                    className="w-full bg-neutral-900 text-white"
+                    className="w-full bg-amber-600 text-white hover:bg-amber-500"
                     onClick={() => navigate(createPageUrl("Gallery"))}
                   >
                     {t.studio.step4.goToGallery}
