@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 const BODY_TYPES = [
   { value: "face", label: "Visage (Face)", icon: "👤" },
   { value: "neck", label: "Cou & Décolleté", icon: "🧣" },
+  { value: "bust_with_hands", label: "Buste avec Mains (Parure complète)", icon: "💃" },
   { value: "left_ear_profile", label: "Oreille Gauche", icon: "👂" },
   { value: "right_ear_profile", label: "Oreille Droite", icon: "👂" },
   { value: "left_wrist", label: "Poignet Gauche", icon: "⌚" },

@@ -72,7 +72,8 @@ export default function Studio() {
         
         Details:
         - The jewelry should be realistically sized and positioned for a ${jewelryType}.
-        - If the type is 'set', please identify and place all components (e.g., necklace AND earrings) appropriately on the model.
+        - If the type is 'set', identify all components (necklace, earrings, rings, bracelets) and place them appropriately.
+        - IMPORTANT: If the user provides a 'set', look for hands/wrists in the base image to place rings/bracelets if present in the jewelry image.
         - Lighting and shadows must match the skin texture of the body part.
         - High fashion aesthetic, elegant, clean.
         - Maintain the identity and skin tone of the person in the base image.
@@ -114,7 +115,7 @@ export default function Studio() {
     if (jewelryType === 'ring') return part.type.includes('hand');
     if (jewelryType === 'bracelet') return part.type.includes('wrist') || part.type.includes('hand');
     if (jewelryType === 'anklet') return part.type.includes('ankle');
-    if (jewelryType === 'set') return part.type === 'face' || part.type === 'neck';
+    if (jewelryType === 'set') return part.type === 'face' || part.type === 'neck' || part.type === 'bust_with_hands';
     return true;
   });
 
