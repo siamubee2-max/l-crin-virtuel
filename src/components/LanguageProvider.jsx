@@ -115,7 +115,13 @@ const translations = {
       myCreations: "Mes Créations",
       latestTryons: "Vos derniers essayages virtuels.",
       empty: "Vous n'avez pas encore fait d'essayages.",
-      createFirst: "Créer mon premier look"
+      createFirst: "Créer mon premier look",
+      sort: "Trier par",
+      filter: "Filtrer",
+      newest: "Plus récents",
+      oldest: "Plus anciens",
+      loadMore: "Voir plus",
+      bodyPart: "Sur : "
       },
       stylist: {
         title: "Styliste IA",
@@ -258,8 +264,14 @@ const translations = {
       myCreations: "My Creations",
       latestTryons: "Your latest virtual try-ons.",
       empty: "You haven't made any try-ons yet.",
-      createFirst: "Create my first look"
-    },
+      createFirst: "Create my first look",
+      sort: "Sort by",
+      filter: "Filter",
+      newest: "Newest",
+      oldest: "Oldest",
+      loadMore: "Load More",
+      bodyPart: "On: "
+      },
     stylist: {
       title: "AI Stylist",
       analyzeBtn: "Ask the Stylist",
@@ -383,8 +395,14 @@ const translations = {
       myCreations: "Mis Creaciones",
       latestTryons: "Tus últimas pruebas virtuales.",
       empty: "Aún no has hecho ninguna prueba.",
-      createFirst: "Crear mi primer look"
-    },
+      createFirst: "Crear mi primer look",
+      sort: "Ordenar por",
+      filter: "Filtrar",
+      newest: "Más recientes",
+      oldest: "Más antiguos",
+      loadMore: "Cargar más",
+      bodyPart: "En: "
+      },
     stylist: {
       title: "Estilista IA",
       analyzeBtn: "Preguntar al Estilista",
@@ -508,8 +526,14 @@ const translations = {
       myCreations: "Meine Kreationen",
       latestTryons: "Ihre neuesten virtuellen Anproben.",
       empty: "Sie haben noch keine Anproben gemacht.",
-      createFirst: "Meinen ersten Look erstellen"
-    },
+      createFirst: "Meinen ersten Look erstellen",
+      sort: "Sortieren nach",
+      filter: "Filtern",
+      newest: "Neueste",
+      oldest: "Älteste",
+      loadMore: "Mehr laden",
+      bodyPart: "Auf: "
+      },
     stylist: {
       title: "KI-Stylist",
       analyzeBtn: "Den Stylisten fragen",
@@ -633,8 +657,14 @@ const translations = {
       myCreations: "Le Mie Creazioni",
       latestTryons: "Le tue ultime prove virtuali.",
       empty: "Non hai ancora fatto prove.",
-      createFirst: "Crea il mio primo look"
-    },
+      createFirst: "Crea il mio primo look",
+      sort: "Ordina per",
+      filter: "Filtra",
+      newest: "Più recenti",
+      oldest: "Più vecchi",
+      loadMore: "Carica altro",
+      bodyPart: "Su: "
+      },
     stylist: {
       title: "Stilista IA",
       analyzeBtn: "Chiedi allo Stilista",
@@ -758,8 +788,14 @@ const translations = {
       myCreations: "Minhas Criações",
       latestTryons: "Suas últimas provas virtuais.",
       empty: "Você ainda não fez nenhuma prova.",
-      createFirst: "Criar meu primeiro look"
-    },
+      createFirst: "Criar meu primeiro look",
+      sort: "Ordenar por",
+      filter: "Filtrar",
+      newest: "Mais recentes",
+      oldest: "Mais antigos",
+      loadMore: "Carregar mais",
+      bodyPart: "Em: "
+      },
     stylist: {
       title: "Estilista IA",
       analyzeBtn: "Perguntar ao Estilista",
