@@ -37,14 +37,11 @@ function LayoutContent({ children }) {
   });
 
   const navItems = [
+    { label: t.nav.shop || "Boutique", icon: ShoppingBag, path: "/Shop" },
     { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
-    { label: t.nav.gallery, icon: Gem, path: "/" },
     { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
-    { label: t.nav.wardrobe, icon: User, path: "/Wardrobe" },
-    { label: t.nav.closet, icon: Shirt, path: "/Closet" },
-    { label: t.nav.jewelryBox, icon: Box, path: "/JewelryBox" },
+    { label: t.nav.gallery, icon: Gem, path: "/" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
-    { label: "Orders", icon: Package, path: "/Orders" },
   ];
 
   if (currentUser?.role === 'admin') {
