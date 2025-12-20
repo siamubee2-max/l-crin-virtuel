@@ -283,21 +283,29 @@ export default function JewelryBox() {
   });
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-        <div>
-          <h1 className="text-3xl font-serif text-neutral-900 mb-2">{t.jewelryBox?.title || "Mon Écrin"}</h1>
-          <p className="text-neutral-500 max-w-lg">
-            {t.jewelryBox?.subtitle || "Cataloguez vos bijoux précieux."}
-          </p>
-        </div>
+    <div className="space-y-12 pb-20">
+      {/* Header Section */}
+      <div className="relative py-12 px-6 rounded-3xl bg-neutral-900 text-white overflow-hidden">
+         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+         <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-900/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
-              <Plus className="w-4 h-4 mr-2" /> {t.jewelryBox?.addBtn || "Ajouter un bijou"}
-            </Button>
-          </DialogTrigger>
+         <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-6">
+            <div className="space-y-4 max-w-2xl">
+              <span className="text-amber-400 uppercase tracking-[0.2em] text-xs font-medium">Collection Privée</span>
+              <h1 className="text-5xl md:text-6xl font-serif font-light leading-tight">
+                {t.jewelryBox?.title || "Mon Écrin"}
+              </h1>
+              <p className="text-neutral-300 text-lg font-light leading-relaxed max-w-lg">
+                {t.jewelryBox?.subtitle || "Cataloguez vos bijoux précieux dans un espace dédié à l'élégance."}
+              </p>
+            </div>
+
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-white text-neutral-900 hover:bg-amber-50 rounded-none px-8 py-6 text-sm uppercase tracking-widest transition-all duration-300">
+                  <Plus className="w-4 h-4 mr-2" /> {t.jewelryBox?.addBtn || "Ajouter"}
+                </Button>
+              </DialogTrigger>
           <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="font-serif text-xl">{t.jewelryBox?.newItem || "Nouveau Bijou"}</DialogTitle>
@@ -756,10 +764,13 @@ export default function JewelryBox() {
           <Loader2 className="w-8 h-8 text-neutral-300 animate-spin" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredItems?.length === 0 ? (
-            <div className="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-neutral-200">
-              <p className="text-neutral-500 mb-4">{t.jewelryBox?.empty || "Vide"}</p>
+            <div className="col-span-full py-24 text-center">
+              <div className="w-24 h-24 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                 <ShoppingBag className="w-10 h-10 text-neutral-300" />
+              </div>
+              <p className="text-neutral-400 text-lg font-light italic">{t.jewelryBox?.empty || "Votre écrin est vide pour le moment."}</p>
             </div>
           ) : (
             filteredItems?.map((item) => {
@@ -768,72 +779,83 @@ export default function JewelryBox() {
                 <motion.div
                   key={item.id}
                   layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-neutral-100 cursor-pointer"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -5 }}
+                  className="group bg-white rounded-[2rem] overflow-hidden shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 cursor-pointer relative"
                   onClick={() => setDetailItem(item)}
                 >
-                  <div className="aspect-square bg-neutral-50 relative overflow-hidden">
+                  <div className="aspect-[4/5] bg-neutral-100 relative overflow-hidden">
                     <img 
                       src={item.image_url} 
                       alt={item.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+
                     <SalesBadge price={item.price} salePrice={item.sale_price} endDate={item.sale_end_date} />
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+
+                    <div className="absolute top-4 right-4 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
                        <Button
                         variant="secondary"
                         size="icon"
-                        className="h-8 w-8 rounded-full bg-white/90 hover:bg-white text-neutral-700"
+                        className="h-10 w-10 rounded-full bg-white/90 backdrop-blur hover:bg-white text-neutral-900 shadow-lg"
                         onClick={(e) => { e.stopPropagation(); setDetailItem(item); }}
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
                       <Button
-                        variant="destructive"
+                        variant="secondary"
                         size="icon"
-                        className="h-8 w-8 rounded-full bg-red-500/80 hover:bg-red-600"
+                        className="h-10 w-10 rounded-full bg-white/90 backdrop-blur hover:bg-red-50 text-neutral-900 hover:text-red-500 shadow-lg"
                         onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(item.id); }}
                         >
                         <Trash2 className="w-4 h-4" />
                         </Button>
-                        </div>
+                    </div>
 
-                        {/* Wishlist Button Overlay */}
-                        <div className="absolute top-2 left-2">
+                    <div className="absolute top-4 left-4">
                         <Button
                           variant="secondary"
                           size="icon"
-                          className={`h-8 w-8 rounded-full shadow-sm transition-colors ${isWishlisted(item.id) ? "bg-red-50 text-red-500 hover:bg-red-100" : "bg-white/90 hover:bg-white text-neutral-400 hover:text-red-400"}`}
+                          className={`h-10 w-10 rounded-full shadow-lg backdrop-blur transition-all duration-300 ${isWishlisted(item.id) ? "bg-red-500 text-white hover:bg-red-600" : "bg-white/90 hover:bg-white text-neutral-400 hover:text-red-500"}`}
                           onClick={(e) => toggleWishlist(e, item.id)}
                         >
                           <Heart className={`w-4 h-4 ${isWishlisted(item.id) ? "fill-current" : ""}`} />
                         </Button>
-                        </div>
+                    </div>
+
                     {stats.count > 0 && (
-                      <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1">
-                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                        <span className="text-white text-xs font-medium">{stats.avg.toFixed(1)}</span>
-                        <span className="text-white/60 text-[10px]">({stats.count})</span>
+                      <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                        <span className="text-neutral-900 text-xs font-semibold">{stats.avg.toFixed(1)}</span>
                       </div>
                     )}
                   </div>
-                  <div className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div className="w-full">
-                        <h3 className="font-serif font-medium text-neutral-900 truncate">{item.name}</h3>
-                        <p className="text-xs text-neutral-500 uppercase tracking-wider">{item.brand || item.type}</p>
-                      </div>
+
+                  <div className="p-6">
+                    <div className="mb-2">
+                       <p className="text-[10px] uppercase tracking-widest text-amber-600 font-medium mb-1">{item.brand || item.type}</p>
+                       <h3 className="font-serif text-lg text-neutral-900 truncate">{item.name}</h3>
                     </div>
-                    {item.tags?.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-3">
-                        {item.tags.slice(0, 3).map((tag, idx) => (
-                          <span key={idx} className="text-[10px] bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded-full">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+
+                    <div className="flex items-center justify-between">
+                       <div className="flex items-baseline gap-2">
+                         {item.sale_price && item.sale_price < item.price ? (
+                           <>
+                             <span className="text-lg font-medium text-neutral-900">${item.sale_price}</span>
+                             <span className="text-sm text-neutral-400 line-through">${item.price}</span>
+                           </>
+                         ) : item.price ? (
+                           <span className="text-lg font-medium text-neutral-900">${item.price}</span>
+                         ) : (
+                           <span className="text-sm text-neutral-400 italic">Sur demande</span>
+                         )}
+                       </div>
+                       {item.tags?.length > 0 && (
+                          <span className="text-xs text-neutral-400 italic">#{item.tags[0]}</span>
+                       )}
+                    </div>
                   </div>
                 </motion.div>
               );
