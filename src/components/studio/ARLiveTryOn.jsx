@@ -2,27 +2,36 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, RefreshCw, X, Maximize2, RotateCw, Move, Loader2, Check, Sparkles, Eye, EyeOff, Gem, Shirt } from "lucide-react";
+import { Camera, RefreshCw, X, Maximize2, RotateCw, Move, Loader2, Check, Sparkles, Eye, EyeOff, Gem, Shirt, Scan, Zap, Sun, Contrast } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import { useQueryClient } from '@tanstack/react-query';
 
 // Positioning presets based on jewelry type
 const JEWELRY_PRESETS = {
-  earrings: { x: 0, y: -80, scale: 0.4 },
-  necklace: { x: 0, y: 60, scale: 0.8 },
+  earrings: { x: 70, y: -60, scale: 0.35 },
+  necklace: { x: 0, y: 80, scale: 0.7 },
   ring: { x: 80, y: 120, scale: 0.25 },
   bracelet: { x: 100, y: 100, scale: 0.4 },
+  anklet: { x: 0, y: 200, scale: 0.3 },
   default: { x: 0, y: 0, scale: 1 }
 };
 
-export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", clothingImage, mode = "jewelry", onBack, onSaveToGallery }) {
+const CLOTHING_PRESETS = {
+  top: { x: 0, y: 50, scale: 1.2 },
+  dress: { x: 0, y: 80, scale: 1.5 },
+  outerwear: { x: 0, y: 40, scale: 1.3 },
+  default: { x: 0, y: 0, scale: 1 }
+};
+
+export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", clothingImage, clothingType = "top", mode = "jewelry", onBack, onSaveToGallery }) {
   const { t } = useLanguage();
   const queryClient = useQueryClient();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const detectionCanvasRef = useRef(null);
+  const animationFrameRef = useRef(null);
   
   const [stream, setStream] = useState(null);
   const [error, setError] = useState(null);
@@ -31,8 +40,20 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [showGuides, setShowGuides] = useState(true);
   
-  // Get preset based on jewelry type
-  const preset = JEWELRY_PRESETS[jewelryType] || JEWELRY_PRESETS.default;
+  // Face detection state
+  const [faceDetected, setFaceDetected] = useState(false);
+  const [facePosition, setFacePosition] = useState(null);
+  const [autoTrack, setAutoTrack] = useState(true);
+  
+  // Visual effects
+  const [brightness, setBrightness] = useState([100]);
+  const [contrast, setContrast] = useState([100]);
+  const [showEffects, setShowEffects] = useState(false);
+  
+  // Get preset based on item type
+  const preset = mode === "jewelry" 
+    ? (JEWELRY_PRESETS[jewelryType] || JEWELRY_PRESETS.default)
+    : (CLOTHING_PRESETS[clothingType] || CLOTHING_PRESETS.default);
   
   // Jewelry/Clothing Adjustments
   const [position, setPosition] = useState({ x: preset.x, y: preset.y });
@@ -42,6 +63,101 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
   
   // For earrings, we need two positions (mirrored)
   const [isSymmetric, setIsSymmetric] = useState(jewelryType === 'earrings');
+  
+  // Face detection using canvas-based approach
+  const detectFace = useCallback(() => {
+    if (!videoRef.current || !detectionCanvasRef.current || !autoTrack) return;
+    
+    const video = videoRef.current;
+    const canvas = detectionCanvasRef.current;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    
+    if (video.readyState !== 4) return;
+    
+    canvas.width = 160; // Small for performance
+    canvas.height = 120;
+    ctx.drawImage(video, 0, 0, 160, 120);
+    
+    const imageData = ctx.getImageData(0, 0, 160, 120);
+    const data = imageData.data;
+    
+    // Simple skin tone detection for face region estimation
+    let skinPixels = [];
+    for (let y = 0; y < 120; y++) {
+      for (let x = 0; x < 160; x++) {
+        const i = (y * 160 + x) * 4;
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        
+        // Skin tone detection heuristic (works for various skin tones)
+        const isSkin = (
+          r > 60 && g > 40 && b > 20 &&
+          r > g && r > b &&
+          Math.abs(r - g) > 15 &&
+          r - b > 15 && r - b < 170
+        );
+        
+        if (isSkin) {
+          skinPixels.push({ x, y });
+        }
+      }
+    }
+    
+    if (skinPixels.length > 200) {
+      // Calculate centroid of skin pixels (approximates face center)
+      const avgX = skinPixels.reduce((sum, p) => sum + p.x, 0) / skinPixels.length;
+      const avgY = skinPixels.reduce((sum, p) => sum + p.y, 0) / skinPixels.length;
+      
+      // Find bounding box
+      const minY = Math.min(...skinPixels.map(p => p.y));
+      const maxY = Math.max(...skinPixels.map(p => p.y));
+      const faceHeight = maxY - minY;
+      
+      // Convert to screen coordinates
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      if (containerRect) {
+        const scaleX = containerRect.width / 160;
+        const scaleY = containerRect.height / 120;
+        
+        setFacePosition({
+          x: (facingMode === "user" ? (160 - avgX) : avgX) * scaleX - containerRect.width / 2,
+          y: avgY * scaleY - containerRect.height / 2,
+          width: faceHeight * scaleX * 0.8,
+          height: faceHeight * scaleY
+        });
+        setFaceDetected(true);
+        
+        // Auto-position jewelry based on face
+        if (autoTrack && mode === "jewelry") {
+          const faceX = (facingMode === "user" ? (160 - avgX) : avgX) * scaleX - containerRect.width / 2;
+          const faceY = avgY * scaleY - containerRect.height / 2;
+          const faceScale = faceHeight / 60; // Normalize
+          
+          if (jewelryType === 'necklace') {
+            setPosition({ x: faceX, y: faceY + faceHeight * scaleY * 0.6 });
+            setScale([0.7 * faceScale]);
+          } else if (jewelryType === 'earrings') {
+            setPosition({ x: faceHeight * scaleX * 0.4, y: faceY - 10 });
+            setScale([0.3 * faceScale]);
+          }
+        }
+      }
+    } else {
+      setFaceDetected(false);
+    }
+    
+    animationFrameRef.current = requestAnimationFrame(detectFace);
+  }, [autoTrack, facingMode, mode, jewelryType]);
+  
+  useEffect(() => {
+    if (stream && autoTrack) {
+      animationFrameRef.current = requestAnimationFrame(detectFace);
+    }
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [stream, autoTrack, detectFace]);
 
   // Start Camera
   useEffect(() => {
@@ -172,11 +288,17 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
   }, [jewelryImage, clothingImage, mode, jewelryType, scale, rotation, opacity, position, isSymmetric, queryClient, onSaveToGallery]);
 
   const itemImage = mode === "jewelry" ? jewelryImage : clothingImage;
+  
+  const videoStyle = {
+    transform: facingMode === "user" ? "scaleX(-1)" : "none",
+    filter: `brightness(${brightness[0]}%) contrast(${contrast[0]}%)`
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
-      {/* Hidden canvas for capture */}
+      {/* Hidden canvases */}
       <canvas ref={canvasRef} className="hidden" />
+      <canvas ref={detectionCanvasRef} className="hidden" />
       
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 p-4 z-20 flex justify-between items-center bg-gradient-to-b from-black/70 to-transparent">
@@ -192,6 +314,25 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
           )}
         </div>
         <div className="flex gap-2">
+          {/* Auto-track toggle */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className={`rounded-full ${autoTrack ? 'text-green-400 bg-green-400/20' : 'text-white/70 hover:text-white hover:bg-white/20'}`}
+            onClick={() => setAutoTrack(!autoTrack)}
+            title="Auto-track face"
+          >
+            <Scan className="w-5 h-5" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className={`rounded-full ${showEffects ? 'text-amber-400 bg-amber-400/20' : 'text-white/70 hover:text-white hover:bg-white/20'}`}
+            onClick={() => setShowEffects(!showEffects)}
+            title="Visual effects"
+          >
+            <Zap className="w-5 h-5" />
+          </Button>
           <Button 
             variant="ghost" 
             size="icon" 
@@ -210,6 +351,27 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
           </Button>
         </div>
       </div>
+      
+      {/* Face Detection Indicator */}
+      <AnimatePresence>
+        {autoTrack && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-16 left-1/2 -translate-x-1/2 z-20"
+          >
+            <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 ${
+              faceDetected 
+                ? 'bg-green-500/80 text-white' 
+                : 'bg-yellow-500/80 text-white'
+            }`}>
+              <div className={`w-2 h-2 rounded-full ${faceDetected ? 'bg-white animate-pulse' : 'bg-white/50'}`} />
+              {faceDetected ? 'Face detected - Auto-positioning' : 'Looking for face...'}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main AR View */}
       <div ref={containerRef} className="flex-1 relative overflow-hidden bg-black flex items-center justify-center">
@@ -229,8 +391,23 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
               playsInline
               muted
               className="absolute inset-0 w-full h-full object-cover"
-              style={{ transform: facingMode === "user" ? "scaleX(-1)" : "none" }}
+              style={videoStyle}
             />
+            
+            {/* Face detection box overlay */}
+            {showGuides && faceDetected && facePosition && autoTrack && (
+              <motion.div
+                className="absolute border-2 border-green-400/50 rounded-2xl pointer-events-none"
+                style={{
+                  left: `calc(50% + ${facePosition.x}px - ${facePosition.width/2}px)`,
+                  top: `calc(50% + ${facePosition.y}px - ${facePosition.height/2}px)`,
+                  width: facePosition.width,
+                  height: facePosition.height
+                }}
+                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            )}
             
             {/* Face/Body Guide Overlay */}
             {showGuides && (
@@ -427,6 +604,33 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
                 </button>
               </div>
             )}
+            
+            {/* Visual Effects Panel */}
+            <AnimatePresence>
+              {showEffects && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="pt-3 mt-3 border-t border-white/10 space-y-3 overflow-hidden"
+                >
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs text-white/70">
+                      <span className="flex items-center gap-1"><Sun className="w-3 h-3" /> Brightness</span>
+                      <span>{brightness[0]}%</span>
+                    </div>
+                    <Slider value={brightness} onValueChange={setBrightness} min={50} max={150} step={5} />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-xs text-white/70">
+                      <span className="flex items-center gap-1"><Contrast className="w-3 h-3" /> Contrast</span>
+                      <span>{contrast[0]}%</span>
+                    </div>
+                    <Slider value={contrast} onValueChange={setContrast} min={50} max={150} step={5} />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
