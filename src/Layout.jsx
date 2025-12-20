@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle } from 'lucide-react';
+import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -13,6 +13,7 @@ function LayoutContent({ children }) {
   const { t, language, setLanguage } = useLanguage();
 
   const navItems = [
+    { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
     { label: t.nav.gallery, icon: Gem, path: "/" },
     { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
     { label: t.nav.wardrobe, icon: User, path: "/Wardrobe" },

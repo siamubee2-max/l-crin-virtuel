@@ -8,9 +8,10 @@ const translations = {
       wardrobe: "Ma Bibliothèque",
       closet: "Mon Dressing",
       jewelryBox: "Mon Écrin",
-      profile: "Mon Profil"
+      profile: "Mon Profil",
+      feed: "Style Feed"
       },
-    common: {
+      common: {
       footer: "L'Écrin Virtuel © 2024 — Luxe & Technologie",
       loading: "Chargement...",
       save: "Enregistrer",

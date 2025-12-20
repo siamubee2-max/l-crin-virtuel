@@ -4,6 +4,7 @@ import Gallery from './pages/Gallery';
 import JewelryBox from './pages/JewelryBox';
 import Closet from './pages/Closet';
 import Profile from './pages/Profile';
+import StyleFeed from './pages/StyleFeed';
 import __Layout from './Layout.jsx';
 
 
@@ -14,6 +15,7 @@ export const PAGES = {
     "JewelryBox": JewelryBox,
     "Closet": Closet,
     "Profile": Profile,
+    "StyleFeed": StyleFeed,
 }
 
 export const pagesConfig = {
