@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, ArrowRight, Lightbulb, TrendingUp, Heart } from "lucide-react";
+import { Loader2, Sparkles, ArrowRight, Lightbulb, TrendingUp, Heart, ThumbsUp, ThumbsDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import { Link } from 'react-router-dom';
@@ -32,11 +32,43 @@ export default function StyleFeed() {
     queryFn: () => base44.entities.ClothingItem.list(),
   });
 
+  // Fetch Feedback History
+  const { data: feedbackHistory } = useQuery({
+    queryKey: ['recommendationFeedback'],
+    queryFn: () => base44.entities.RecommendationFeedback.list(),
+  });
+
   // Fetch Wishlist for toggle status
   const { data: myWishlist } = useQuery({
     queryKey: ['myWishlist'],
     queryFn: () => base44.entities.WishlistItem.list()
   });
+
+  const feedbackMutation = useMutation({
+    mutationFn: (data) => base44.entities.RecommendationFeedback.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recommendationFeedback'] });
+    }
+  });
+
+  const handleFeedback = (e, item, type, feedbackType) => {
+    e.preventDefault();
+    if (!user) return;
+    
+    // Optimistic check to prevent double submission locally if needed, 
+    // but React Query invalidation handles it well enough for this scale.
+    feedbackMutation.mutate({
+      user_id: user.id,
+      item_id: item.id,
+      item_type: type,
+      feedback_type: feedbackType
+    });
+  };
+
+  const getFeedbackStatus = (itemId) => {
+    const feedback = feedbackHistory?.find(f => f.item_id === itemId);
+    return feedback ? feedback.feedback_type : null;
+  };
 
   const toggleWishlist = async (e, itemId) => {
     e.preventDefault(); 
@@ -108,32 +140,91 @@ export default function StyleFeed() {
     generateTip();
   }, [user]);
 
-  // Recommendation Logic
+  // Advanced Recommendation Logic
+  const calculateScore = (item, type) => {
+    if (!user) return 0;
+    const prefs = user.style_preferences || {};
+    let score = 0;
+
+    // 1. History Filter (Disliked items get negative score)
+    const feedback = feedbackHistory?.find(f => f.item_id === item.id);
+    if (feedback?.feedback_type === 'dislike') return -100;
+    if (feedback?.feedback_type === 'like') score += 5; // Boost liked items slightly so they stay? Or maybe hide them? Let's keep them but lower priority if we want discovery? No, usually you want to see what you liked or similar. Let's just not filter them out.
+
+    // 2. Wishlist Boost
+    if (isWishlisted(item.id)) score += 10;
+
+    // 3. Jewelry Specific Scoring
+    if (type === 'jewelry') {
+      const favTypes = prefs.favorite_jewelry_types || [];
+      const prefMetals = prefs.preferred_metals || [];
+      const aesthetics = prefs.aesthetics || [];
+      const prefGemCuts = prefs.preferred_gemstone_cuts || [];
+      
+      // Type Match
+      if (favTypes.length > 0) {
+        const typeMatch = favTypes.some(t => 
+          t.toLowerCase().includes(item.type) || 
+          (item.type === 'necklace' && t.includes('Colliers')) ||
+          (item.type === 'earrings' && t.includes('Boucles')) ||
+          (item.type === 'ring' && t.includes('Bagues')) ||
+          (item.type === 'bracelet' && t.includes('Bracelets'))
+        );
+        if (typeMatch) score += 5;
+      }
+
+      // Metal Match
+      if (prefMetals.length > 0 && item.metal_type) {
+         if (prefMetals.includes(item.metal_type)) score += 5;
+      }
+
+      // Aesthetic/Tags Match
+      if (aesthetics.length > 0 && item.tags) {
+         const tagMatches = item.tags.filter(tag => aesthetics.some(a => tag.toLowerCase().includes(a.toLowerCase()))).length;
+         score += tagMatches * 2;
+      }
+
+      // Gemstone Cut Match (Loose string matching)
+      if (prefGemCuts.length > 0 && item.description) {
+         if (prefGemCuts.some(cut => item.description.toLowerCase().includes(cut.toLowerCase()))) score += 3;
+      }
+    }
+
+    // 4. Clothing Specific Scoring
+    if (type === 'clothing') {
+       const favColors = prefs.favorite_colors || [];
+       const aesthetics = prefs.aesthetics || [];
+       
+       // Color Match
+       if (favColors.length > 0 && item.color) {
+          if (favColors.some(c => item.color.toLowerCase().includes(c.toLowerCase()))) score += 5;
+       }
+       
+       // Aesthetic Match (via Description or Type)
+       if (aesthetics.length > 0) {
+          if (aesthetics.some(a => item.description?.toLowerCase().includes(a.toLowerCase()))) score += 3;
+       }
+    }
+
+    return score;
+  };
+
   const getRecommendedJewelry = () => {
     if (!jewelryItems || !user) return [];
-    const prefs = user.style_preferences || {};
-    const favTypes = prefs.favorite_jewelry_types || [];
-    const favColors = prefs.favorite_colors || [];
-
-    // Simple matching algorithm
-    return jewelryItems.filter(item => {
-      if (favTypes.length === 0) return true; // Show all if no prefs
-      // Check type match
-      const typeMatch = favTypes.some(t => 
-        t.toLowerCase().includes(item.type) || 
-        (item.type === 'necklace' && t.includes('Colliers')) ||
-        (item.type === 'earrings' && t.includes('Boucles')) ||
-        (item.type === 'ring' && t.includes('Bagues')) ||
-        (item.type === 'bracelet' && t.includes('Bracelets'))
-      );
-      return typeMatch;
-    }).slice(0, 4); // Limit to 4
+    return jewelryItems
+      .map(item => ({ ...item, score: calculateScore(item, 'jewelry') }))
+      .filter(item => item.score > -50) // Filter out disliked
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 4);
   };
 
   const getRecommendedClothing = () => {
     if (!clothingItems || !user) return [];
-    // Just return some random items for now if no specific clothing logic is defined
-    return clothingItems.slice(0, 4);
+    return clothingItems
+      .map(item => ({ ...item, score: calculateScore(item, 'clothing') }))
+      .filter(item => item.score > -50)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 4);
   };
 
   const recommendedJewelry = getRecommendedJewelry();
@@ -209,9 +300,28 @@ export default function StyleFeed() {
                   >
                     <Heart className={`w-4 h-4 ${isWishlisted(item.id) ? "fill-red-500 text-red-500" : ""}`} />
                   </button>
+                  
+                  {/* Feedback Actions */}
+                  <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                     <button 
+                        onClick={(e) => handleFeedback(e, item, 'jewelry', 'dislike')}
+                        className={`p-2 rounded-full shadow-sm transition-colors ${getFeedbackStatus(item.id) === 'dislike' ? 'bg-red-100 text-red-500' : 'bg-white/90 text-neutral-400 hover:bg-white hover:text-red-500'}`}
+                     >
+                        <ThumbsDown className="w-3 h-3" />
+                     </button>
+                     <button 
+                        onClick={(e) => handleFeedback(e, item, 'jewelry', 'like')}
+                        className={`p-2 rounded-full shadow-sm transition-colors ${getFeedbackStatus(item.id) === 'like' ? 'bg-green-100 text-green-500' : 'bg-white/90 text-neutral-400 hover:bg-white hover:text-green-500'}`}
+                     >
+                        <ThumbsUp className="w-3 h-3" />
+                     </button>
+                  </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-medium text-neutral-900 truncate">{item.name}</h3>
+                  <div className="flex justify-between items-start mb-1">
+                    <h3 className="font-medium text-neutral-900 truncate flex-1">{item.name}</h3>
+                    {item.score > 0 && <span className="text-[10px] bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded border border-amber-100 whitespace-nowrap ml-2">Match {(item.score/20 * 100).toFixed(0)}%</span>}
+                  </div>
                   <p className="text-xs text-neutral-500 capitalize mb-3">{item.type}</p>
                   <Link to={createPageUrl("Studio")}>
                     <Button size="sm" className="w-full bg-neutral-900 text-white hover:bg-neutral-800">
@@ -248,9 +358,27 @@ export default function StyleFeed() {
                       {item.brand || "Brand"}
                     </Badge>
                   </div>
+                   {/* Feedback Actions */}
+                  <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                     <button 
+                        onClick={(e) => handleFeedback(e, item, 'clothing', 'dislike')}
+                        className={`p-2 rounded-full shadow-sm transition-colors ${getFeedbackStatus(item.id) === 'dislike' ? 'bg-red-100 text-red-500' : 'bg-white/90 text-neutral-400 hover:bg-white hover:text-red-500'}`}
+                     >
+                        <ThumbsDown className="w-3 h-3" />
+                     </button>
+                     <button 
+                        onClick={(e) => handleFeedback(e, item, 'clothing', 'like')}
+                        className={`p-2 rounded-full shadow-sm transition-colors ${getFeedbackStatus(item.id) === 'like' ? 'bg-green-100 text-green-500' : 'bg-white/90 text-neutral-400 hover:bg-white hover:text-green-500'}`}
+                     >
+                        <ThumbsUp className="w-3 h-3" />
+                     </button>
+                  </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-medium text-neutral-900 truncate">{item.name}</h3>
+                  <div className="flex justify-between items-start mb-1">
+                     <h3 className="font-medium text-neutral-900 truncate flex-1">{item.name}</h3>
+                     {item.score > 0 && <span className="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded whitespace-nowrap ml-2">Match</span>}
+                  </div>
                   <p className="text-xs text-neutral-500 capitalize mb-3">{item.type} • {item.color}</p>
                   <Button variant="outline" size="sm" className="w-full">
                     Suggérer un look
