@@ -3,11 +3,12 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle, Compass, Package, ShieldCheck, ShoppingBag } from 'lucide-react';
+import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle, Compass, Package, ShieldCheck, ShoppingBag, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import NotificationBell from '@/components/notifications/NotificationBell';
 import { CartProvider, useCart } from '@/components/cart/CartProvider';
 import CartSheet from '@/components/cart/CartSheet';
@@ -67,11 +68,23 @@ function LayoutContent({ children }) {
     return false;
   };
 
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const navigate = React.useNavigate ? React.useNavigate() : null; // Safe check although Layout is in Router context usually
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Using window.location.href or similar if navigate not available, but usually Layout is wrapped.
+      // Assuming navigate is available via context or we can import useNavigate from react-router-dom
+       window.location.href = createPageUrl(`SearchResults?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-neutral-50 font-sans text-neutral-900 selection:bg-amber-100">
       {/* Top Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-neutral-100 z-50">
-        <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between gap-4">
           
           {/* Logo */}
           <Link to={createPageUrl("Gallery")} className="flex items-center gap-2 group">
@@ -83,8 +96,19 @@ function LayoutContent({ children }) {
             </span>
           </Link>
 
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="hidden md:flex relative max-w-xs w-full ml-4">
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+             <Input 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="pl-9 h-9 bg-neutral-100 border-transparent focus:bg-white transition-all rounded-full"
+             />
+          </form>
+
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6 ml-auto">
             {navItems.map((item) => (
               <Link
                 key={item.path}

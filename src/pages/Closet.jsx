@@ -8,9 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Loader2, Camera, Shirt, Trash2, Sparkles, Link as LinkIcon, X } from "lucide-react";
+import { Plus, Search, Loader2, Camera, Shirt, Trash2, Sparkles, Link as LinkIcon, X, CheckSquare, Square } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
+import ClothingFilters from '@/components/clothing/ClothingFilters';
 
 export default function Closet() {
   const { t } = useLanguage();
@@ -18,8 +19,16 @@ export default function Closet() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilter, setTypeFilter] = useState("all");
+  
+  const [filters, setFilters] = useState({
+    search: "",
+    type: "all",
+    brand: "all",
+    color: "all",
+    material: "all",
+    minPrice: "",
+    maxPrice: ""
+  });
   
   // Selection State
   const [selectedClothingIds, setSelectedClothingIds] = useState([]);
@@ -197,12 +206,26 @@ export default function Closet() {
     );
   };
 
+  const uniqueBrands = React.useMemo(() => [...new Set(clothes?.map(c => c.brand).filter(Boolean))].sort(), [clothes]);
+  const uniqueColors = React.useMemo(() => [...new Set(clothes?.map(c => c.color).filter(Boolean))].sort(), [clothes]);
+  const uniqueMaterials = React.useMemo(() => [...new Set(clothes?.map(c => c.material).filter(Boolean))].sort(), [clothes]);
+
   const filteredClothes = clothes?.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          item.color?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          item.material?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === "all" || item.type === typeFilter;
-    return matchesSearch && matchesType;
+    const matchesSearch = item.name.toLowerCase().includes(filters.search.toLowerCase()) || 
+                          item.description?.toLowerCase().includes(filters.search.toLowerCase());
+    
+    const matchesType = filters.type === "all" || item.type === filters.type;
+    const matchesBrand = filters.brand === "all" || item.brand === filters.brand;
+    const matchesColor = filters.color === "all" || item.color === filters.color;
+    const matchesMaterial = filters.material === "all" || item.material === filters.material;
+
+    const min = parseFloat(filters.minPrice);
+    const max = parseFloat(filters.maxPrice);
+    const itemPrice = item.price || 0;
+    const matchesMinPrice = isNaN(min) || itemPrice >= min;
+    const matchesMaxPrice = isNaN(max) || itemPrice <= max;
+
+    return matchesSearch && matchesType && matchesBrand && matchesColor && matchesMaterial && matchesMinPrice && matchesMaxPrice;
   });
 
   const toggleJewelryAssociation = (id) => {
@@ -346,49 +369,27 @@ export default function Closet() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-neutral-100 shadow-sm">
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-          <Input 
-            placeholder={t.closet?.searchPlaceholder || "Rechercher..."}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border-neutral-200"
-          />
-        </div>
-        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-          <Button
-             variant={selectionMode ? "secondary" : "outline"}
+      <ClothingFilters 
+        filters={filters} 
+        setFilters={setFilters} 
+        uniqueBrands={uniqueBrands}
+        uniqueColors={uniqueColors}
+        uniqueMaterials={uniqueMaterials}
+      />
+      
+      {/* Selection Mode Toggle - integrated below filters or kept separate? Keeping nearby for utility */}
+      <div className="flex justify-end mt-2">
+         <Button
+             variant={selectionMode ? "secondary" : "ghost"}
              size="sm"
              onClick={() => {
                 setSelectionMode(!selectionMode);
                 if (selectionMode) setSelectedClothingIds([]);
              }}
-             className={selectionMode ? "bg-amber-100 text-amber-900 border-amber-200" : "border-neutral-200"}
+             className={selectionMode ? "bg-amber-100 text-amber-900 border-amber-200" : "text-neutral-500"}
           >
-            {selectionMode ? t.closet?.ai?.clear || "Annuler" : "Sélectionner"}
+            {selectionMode ? "Cancel Selection" : "Select Items"}
           </Button>
-          <div className="w-px h-6 bg-neutral-200 mx-2" />
-          <Button
-             variant={typeFilter === "all" ? "default" : "outline"}
-             size="sm"
-             onClick={() => setTypeFilter("all")}
-             className={typeFilter === "all" ? "bg-neutral-900 text-white" : "border-neutral-200"}
-          >
-            Tout
-          </Button>
-          {['top', 'bottom', 'dress', 'outerwear', 'shoes', 'bag'].map(type => (
-            <Button
-              key={type}
-              variant={typeFilter === type ? "default" : "outline"}
-              size="sm"
-              onClick={() => setTypeFilter(type)}
-              className={typeFilter === type ? "bg-neutral-900 text-white" : "border-neutral-200 text-neutral-600 capitalize"}
-            >
-              {t.closet?.types?.[type] || type}
-            </Button>
-          ))}
-        </div>
       </div>
 
       {/* Grid */}
