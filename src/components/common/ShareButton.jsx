@@ -14,7 +14,8 @@ import {
   Twitter, 
   Facebook, 
   Mail, 
-  Check 
+  Check,
+  Instagram
 } from "lucide-react";
 import { useLanguage } from '@/components/LanguageProvider';
 
@@ -63,6 +64,14 @@ export default function ShareButton({ title, text, url, imageUrl, variant = "out
       case 'email':
         shareUrl = `mailto:?subject=${encodeURIComponent(shareData.title)}&body=${encodedText}%20${encodedUrl}`;
         break;
+      case 'instagram':
+        // Instagram doesn't have a direct web share URL for posts. 
+        // Best we can do is open Instagram and maybe copy the text/url.
+        // For stories, mobile apps might handle intent:// but on web it's limited.
+        shareUrl = `https://www.instagram.com/`;
+        navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+        alert("Texte copié ! Ouvrez Instagram pour publier votre création.");
+        break;
       default:
         return;
     }
@@ -100,6 +109,9 @@ export default function ShareButton({ title, text, url, imageUrl, variant = "out
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => openSocial('facebook')}>
           <Facebook className="w-4 h-4 mr-2" /> Facebook
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => openSocial('instagram')}>
+          <Instagram className="w-4 h-4 mr-2" /> Instagram
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => openSocial('pinterest')} disabled={!imageUrl}>
           <span className="w-4 h-4 mr-2 flex items-center justify-center font-bold text-xs bg-red-600 text-white rounded-full">P</span> Pinterest
