@@ -13,6 +13,7 @@ import { useLanguage } from '@/components/LanguageProvider';
 import StarRating from '@/components/reviews/StarRating';
 import ReviewSection from '@/components/reviews/ReviewSection';
 import SalesBadge from '@/components/jewelry/SalesBadge';
+import JewelryFilters from '@/components/jewelry/JewelryFilters';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -28,6 +29,9 @@ export default function JewelryBox() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [metalFilter, setMetalFilter] = useState("all");
   const [gemstoneFilter, setGemstoneFilter] = useState("all");
+  const [brandFilter, setBrandFilter] = useState("all");
+  const [collectionFilter, setCollectionFilter] = useState("all");
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [saleFilter, setSaleFilter] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -234,7 +238,17 @@ export default function JewelryBox() {
     }
   };
 
+  const uniqueBrands = React.useMemo(() => {
+     return [...new Set(jewelryItems?.map(i => i.brand).filter(Boolean))].sort();
+  }, [jewelryItems]);
+
+  const uniqueCollections = React.useMemo(() => {
+     return [...new Set(jewelryItems?.map(i => i.collection_name).filter(Boolean))].sort();
+  }, [jewelryItems]);
+
   const filteredItems = jewelryItems?.filter(item => {
+    const currentPrice = (item.sale_price && item.sale_price < item.price) ? item.sale_price : item.price;
+    
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           item.material?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           item.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -244,9 +258,16 @@ export default function JewelryBox() {
     const matchesType = typeFilter === "all" || item.type === typeFilter;
     const matchesMetal = metalFilter === "all" || item.metal_type === metalFilter;
     const matchesGemstone = gemstoneFilter === "all" || (gemstoneFilter === "none" ? !item.gemstone_type : item.gemstone_type?.toLowerCase().includes(gemstoneFilter.toLowerCase()));
+    const matchesBrand = brandFilter === "all" || item.brand === brandFilter;
+    const matchesCollection = collectionFilter === "all" || item.collection_name === collectionFilter;
     const matchesSale = !saleFilter || (item.sale_price && item.sale_price < item.price);
+    
+    const min = parseFloat(priceRange.min);
+    const max = parseFloat(priceRange.max);
+    const matchesMinPrice = isNaN(min) || (currentPrice && currentPrice >= min);
+    const matchesMaxPrice = isNaN(max) || (currentPrice && currentPrice <= max);
 
-    return matchesSearch && matchesType && matchesMetal && matchesGemstone && matchesSale;
+    return matchesSearch && matchesType && matchesMetal && matchesGemstone && matchesBrand && matchesCollection && matchesSale && matchesMinPrice && matchesMaxPrice;
   });
 
   return (
@@ -689,78 +710,18 @@ export default function JewelryBox() {
       </Dialog>
 
       {/* Search and Filters */}
-      <div className="bg-white p-4 rounded-xl border border-neutral-100 shadow-sm space-y-4">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-            <Input 
-              placeholder={t.jewelryBox?.searchPlaceholder || "Rechercher..."}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-neutral-200"
-            />
-          </div>
-
-          {/* Advanced Filters */}
-          <div className="flex gap-2 flex-wrap">
-             <Select value={metalFilter} onValueChange={setMetalFilter}>
-                <SelectTrigger className="w-[140px] h-9 text-sm">
-                  <SelectValue placeholder="Metal" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Metals</SelectItem>
-                  {["Gold", "Silver", "Platinum", "Rose Gold", "White Gold"].map(m => (
-                    <SelectItem key={m} value={m}>{m}</SelectItem>
-                  ))}
-                </SelectContent>
-             </Select>
-
-             <Select value={gemstoneFilter} onValueChange={setGemstoneFilter}>
-                <SelectTrigger className="w-[140px] h-9 text-sm">
-                  <SelectValue placeholder="Gemstone" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Gems</SelectItem>
-                  <SelectItem value="Diamond">Diamond</SelectItem>
-                  <SelectItem value="Pearl">Pearl</SelectItem>
-                  <SelectItem value="Ruby">Ruby</SelectItem>
-                  <SelectItem value="Sapphire">Sapphire</SelectItem>
-                  <SelectItem value="Emerald">Emerald</SelectItem>
-                  <SelectItem value="none">No Gemstone</SelectItem>
-                </SelectContent>
-             </Select>
-             
-             <Button
-                variant={saleFilter ? "default" : "outline"}
-                className={saleFilter ? "bg-red-500 hover:bg-red-600 text-white border-red-500" : "border-red-200 text-red-500 hover:bg-red-50"}
-                onClick={() => setSaleFilter(!saleFilter)}
-             >
-                <Percent className="w-4 h-4 mr-2" /> On Sale
-             </Button>
-          </div>
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {[
-            { id: "all", label: "Tout" },
-            { id: "necklace", label: "Colliers" },
-            { id: "earrings", label: "Boucles" },
-            { id: "ring", label: "Bagues" },
-            { id: "bracelet", label: "Bracelets" },
-            { id: "set", label: "Parures" },
-          ].map(filter => (
-            <Button
-              key={filter.id}
-              variant={typeFilter === filter.id ? "default" : "outline"}
-              size="sm"
-              onClick={() => setTypeFilter(filter.id)}
-              className={typeFilter === filter.id ? "bg-neutral-900 text-white" : "border-neutral-200 text-neutral-600"}
-            >
-              {filter.label}
-            </Button>
-          ))}
-        </div>
-      </div>
+      <JewelryFilters
+        searchTerm={searchTerm} setSearchTerm={setSearchTerm}
+        typeFilter={typeFilter} setTypeFilter={setTypeFilter}
+        metalFilter={metalFilter} setMetalFilter={setMetalFilter}
+        gemstoneFilter={gemstoneFilter} setGemstoneFilter={setGemstoneFilter}
+        brandFilter={brandFilter} setBrandFilter={setBrandFilter}
+        collectionFilter={collectionFilter} setCollectionFilter={setCollectionFilter}
+        priceRange={priceRange} setPriceRange={setPriceRange}
+        saleFilter={saleFilter} setSaleFilter={setSaleFilter}
+        uniqueBrands={uniqueBrands}
+        uniqueCollections={uniqueCollections}
+      />
 
       {isLoading ? (
         <div className="flex items-center justify-center h-64">
