@@ -45,6 +45,7 @@ function LayoutContent({ children }) {
     { label: t.nav.jewelryBox, icon: Box, path: "/JewelryBox" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
     { label: "Orders", icon: Package, path: "/Orders" },
+    { label: "Stylists", icon: Star, path: "/Stylists" },
   ];
 
   if (currentUser?.role === 'admin') {

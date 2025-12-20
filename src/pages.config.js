@@ -8,6 +8,9 @@ import StyleFeed from './pages/StyleFeed';
 import Orders from './pages/Orders';
 import AdminOrders from './pages/AdminOrders';
 import Checkout from './pages/Checkout';
+import Stylists from './pages/Stylists';
+import StylistProfile from './pages/StylistProfile';
+import Lookbook from './pages/Lookbook';
 import __Layout from './Layout.jsx';
 
 
@@ -22,6 +25,9 @@ export const PAGES = {
     "Orders": Orders,
     "AdminOrders": AdminOrders,
     "Checkout": Checkout,
+    "Stylists": Stylists,
+    "StylistProfile": StylistProfile,
+    "Lookbook": Lookbook,
 }
 
 export const pagesConfig = {
