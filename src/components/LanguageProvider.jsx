@@ -199,6 +199,18 @@ const translations = {
           selection: "sélectionnés",
           clear: "Effacer"
         }
+        },
+        feed: {
+          title: "Mon Fil de Style",
+          subtitle: "Inspirations quotidiennes, tendances et suggestions personnalisées rien que pour vous.",
+          dailyTip: "Conseil du Jour",
+          loadingTip: "Le styliste réfléchit...",
+          recommendedJewelry: "Bijoux recommandés pour vous",
+          recommendedClothing: "Pièces mode à découvrir",
+          matchYourStyle: "Correspond à votre style",
+          basedOn: "Basé sur vos préférences :",
+          trendAlert: "Alerte Tendance",
+          viewItem: "Voir le détail"
         }
         },
   en: {
