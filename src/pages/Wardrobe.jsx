@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Trash2, Camera, Loader2, User as UserIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
+import WardrobeAIAssistant from '@/components/wardrobe/WardrobeAIAssistant';
 
 export default function Wardrobe() {
   const { t } = useLanguage();
@@ -41,6 +42,18 @@ export default function Wardrobe() {
   const { data: bodyParts, isLoading } = useQuery({
     queryKey: ['bodyParts'],
     queryFn: () => base44.entities.BodyPart.list(),
+  });
+
+  // Fetch clothing items for AI assistant
+  const { data: clothingItems } = useQuery({
+    queryKey: ['clothingItems'],
+    queryFn: () => base44.entities.ClothingItem.list(),
+  });
+
+  // Fetch jewelry items for AI assistant
+  const { data: jewelryItems } = useQuery({
+    queryKey: ['jewelryItems'],
+    queryFn: () => base44.entities.JewelryItem.list(),
   });
 
   const createMutation = useMutation({
@@ -89,12 +102,18 @@ export default function Wardrobe() {
           </p>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
-              <Plus className="w-4 h-4 mr-2" /> {t.wardrobe.addPhoto}
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-3">
+          <WardrobeAIAssistant 
+            clothingItems={clothingItems || []} 
+            jewelryItems={jewelryItems || []} 
+          />
+          
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
+                <Plus className="w-4 h-4 mr-2" /> {t.wardrobe.addPhoto}
+              </Button>
+            </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="font-serif text-xl">{t.wardrobe.newPhoto}</DialogTitle>
@@ -172,7 +191,8 @@ export default function Wardrobe() {
               </Button>
             </div>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       {isLoading ? (
