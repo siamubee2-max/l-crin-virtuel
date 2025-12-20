@@ -1057,7 +1057,24 @@ const translations = {
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState('fr');
+  const [language, setLanguageState] = useState(() => {
+    // Try to get from localStorage, default to 'fr'
+    try {
+      const saved = localStorage.getItem('app_language');
+      return saved || 'fr';
+    } catch (e) {
+      return 'fr';
+    }
+  });
+
+  const setLanguage = (lang) => {
+    setLanguageState(lang);
+    try {
+      localStorage.setItem('app_language', lang);
+    } catch (e) {
+      // Ignore storage errors
+    }
+  };
 
   const t = translations[language];
 

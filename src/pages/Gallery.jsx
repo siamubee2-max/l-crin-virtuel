@@ -13,8 +13,17 @@ import { useLanguage } from '@/components/LanguageProvider';
 const ITEMS_PER_PAGE = 9;
 
 export default function Gallery() {
-  const { t } = useLanguage();
+  const { t, setLanguage, language } = useLanguage();
   const [page, setPage] = useState(1);
+
+  const languages = [
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+    { code: 'it', label: 'Italiano', flag: '🇮🇹' },
+    { code: 'pt', label: 'Português', flag: '🇵🇹' },
+  ];
   const [sortOrder, setSortOrder] = useState("-created_date");
   const [typeFilter, setTypeFilter] = useState("all");
 
@@ -75,11 +84,30 @@ export default function Gallery() {
           <p className="text-neutral-300 text-lg">
             {t.gallery.hero.desc}
           </p>
-          <Link to={createPageUrl("Studio")}>
-            <Button size="lg" className="bg-white text-neutral-900 hover:bg-amber-50 rounded-full px-8 mt-4">
-              {t.gallery.hero.cta} <ArrowRight className="ml-2 w-4 h-4" />
-            </Button>
-          </Link>
+          <div className="flex flex-col gap-6 mt-4">
+            <Link to={createPageUrl("Studio")}>
+              <Button size="lg" className="bg-white text-neutral-900 hover:bg-amber-50 rounded-full px-8">
+                {t.gallery.hero.cta} <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
+
+            <div className="flex flex-wrap gap-2">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => setLanguage(lang.code)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm transition-all ${
+                    language === lang.code 
+                      ? "bg-amber-500 text-white font-medium" 
+                      : "bg-white/10 text-neutral-300 hover:bg-white/20"
+                  }`}
+                >
+                  <span>{lang.flag}</span>
+                  {lang.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
