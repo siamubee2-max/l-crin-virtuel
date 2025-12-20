@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle, Compass, Package, ShieldCheck, ShoppingBag, ExternalLink, Lightbulb } from 'lucide-react';
+import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle, Compass, Package, ShieldCheck, ShoppingBag, ExternalLink, Lightbulb, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -40,6 +40,7 @@ function LayoutContent({ children }) {
     { label: t.nav.shop || "Boutique", icon: ShoppingBag, path: "/Shop" },
     { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
     { label: "AI Advisor", icon: Lightbulb, path: "/StyleAdvisor" },
+    { label: "Community", icon: Users, path: "/Community" },
     { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
     { label: t.nav.gallery, icon: Gem, path: "/" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },

@@ -11,6 +11,7 @@ import Checkout from './pages/Checkout';
 import Shop from './pages/Shop';
 import StyleAdvisor from './pages/StyleAdvisor';
 import OutfitStudio from './pages/OutfitStudio';
+import Community from './pages/Community';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +29,7 @@ export const PAGES = {
     "Shop": Shop,
     "StyleAdvisor": StyleAdvisor,
     "OutfitStudio": OutfitStudio,
+    "Community": Community,
 }
 
 export const pagesConfig = {

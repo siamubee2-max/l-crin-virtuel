@@ -444,6 +444,22 @@ export default function Closet() {
                             >
                                <Share2 className="w-4 h-4 mr-2" /> Share
                             </ShareButton>
+                            {/* Community Share Button */}
+                             <Button
+                                variant="outline"
+                                className={`flex-1 ${outfit.is_public ? "text-green-600 border-green-200 bg-green-50" : ""}`}
+                                onClick={() => {
+                                  // Simplified toggle for public/private and seeking advice
+                                  // In a real app, this would open a dialog to configure sharing options
+                                  const newPublicState = !outfit.is_public;
+                                  base44.entities.Outfit.update(outfit.id, { 
+                                    is_public: newPublicState,
+                                    seeking_advice: newPublicState ? true : false // Default to seeking advice when shared for now or could be separate
+                                  }).then(() => queryClient.invalidateQueries({ queryKey: ['outfits'] }));
+                                }}
+                             >
+                                <Users className="w-4 h-4 mr-2" /> {outfit.is_public ? "Posted" : "Post to Community"}
+                             </Button>
                          </div>
                       </div>
                    </div>
