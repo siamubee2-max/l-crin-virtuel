@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 function LayoutContent({ children }) {
   const location = useLocation();
@@ -73,7 +74,7 @@ function LayoutContent({ children }) {
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="ml-4 gap-2">
+                <Button variant="ghost" size="sm" className="ml-2 gap-2">
                   <Globe className="w-4 h-4" />
                   {languages.find(l => l.code === language)?.code.toUpperCase()}
                 </Button>
@@ -91,7 +92,12 @@ function LayoutContent({ children }) {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
+
+            {/* Notification Bell */}
+            <div className="ml-2 border-l border-neutral-200 pl-4">
+               <NotificationBell />
+            </div>
+            </div>
 
           {/* Mobile Menu Button */}
           <button 

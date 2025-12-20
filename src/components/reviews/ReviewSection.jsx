@@ -31,10 +31,44 @@ export default function ReviewSection({ jewelryId }) {
     queryFn: () => base44.auth.me().catch(() => null),
   });
 
+  // Need to fetch the jewelry item to get the owner ID for notification
+  const { data: jewelryItem } = useQuery({
+    queryKey: ['jewelryItem', jewelryId],
+    queryFn: () => base44.entities.JewelryItem.list().then(items => items.find(i => i.id === jewelryId)),
+    enabled: !!jewelryId
+  });
+
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Review.create(data),
+    mutationFn: async (data) => {
+      // Create review
+      await base44.entities.Review.create(data);
+      
+      // Create notification for owner (if owner is not self)
+      if (jewelryItem?.created_by && jewelryItem.created_by !== user?.email) {
+          // Note: recipient_id should ideally be the user ID. 
+          // Since created_by is email in Base44, we might need to lookup user ID by email 
+          // OR if the system handles email notifications. 
+          // For this specific app, let's assume we can notify by finding the user or if we just use email matching.
+          // LIMITATION: 'created_by' gives email. 'Notification' wants 'recipient_id'. 
+          // We need to find the user with that email.
+          
+          const users = await base44.entities.User.list();
+          const owner = users.find(u => u.email === jewelryItem.created_by);
+          
+          if (owner) {
+             await base44.entities.Notification.create({
+                recipient_id: owner.id,
+                title: "New Review",
+                message: `${user?.full_name || "Someone"} reviewed your item "${jewelryItem.name}"`,
+                type: "review",
+                related_item_id: jewelryItem.id,
+                link: `/JewelryBox?item=${jewelryItem.id}` // Hypothetical link deep linking
+             });
+          }
+      }
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reviews'] }); // Invalidate all or specific
+      queryClient.invalidateQueries({ queryKey: ['reviews'] });
       setNewRating(0);
       setComment("");
       setIsSubmitting(false);
