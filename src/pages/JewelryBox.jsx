@@ -7,11 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Search, Loader2, Camera, Tag, Trash2, Filter, Star, Eye, Heart } from "lucide-react";
+import { Plus, Search, Loader2, Camera, Tag, Trash2, Filter, Star, Eye, Heart, DollarSign, Calendar as CalendarIcon, Edit2, Percent } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import StarRating from '@/components/reviews/StarRating';
 import ReviewSection from '@/components/reviews/ReviewSection';
+import SalesBadge from '@/components/jewelry/SalesBadge';
+import { format } from 'date-fns';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function JewelryBox() {
   const { t } = useLanguage();
@@ -24,6 +28,10 @@ export default function JewelryBox() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [metalFilter, setMetalFilter] = useState("all");
   const [gemstoneFilter, setGemstoneFilter] = useState("all");
+  const [saleFilter, setSaleFilter] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editItemData, setEditItemData] = useState(null);
 
   const [newItem, setNewItem] = useState({
     name: "",
@@ -36,7 +44,10 @@ export default function JewelryBox() {
     material_options: [],
     image_url: "",
     description: "",
-    tags: []
+    tags: [],
+    price: "",
+    sale_price: "",
+    sale_end_date: ""
   });
 
   const { data: jewelryItems, isLoading } = useQuery({
@@ -100,8 +111,53 @@ export default function JewelryBox() {
         material_options: [],
         image_url: "",
         description: "",
-        tags: []
+        tags: [],
+        price: "",
+        sale_price: "",
+        sale_end_date: ""
       });
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }) => {
+      const originalItem = jewelryItems.find(i => i.id === id);
+      await base44.entities.JewelryItem.update(id, data);
+      
+      // Notification Logic: Check if sale started or price dropped
+      const oldPrice = originalItem.sale_price || originalItem.price;
+      const newPrice = data.sale_price || data.price;
+      
+      const isSaleStart = !originalItem.sale_price && data.sale_price;
+      const isPriceDrop = newPrice < oldPrice;
+
+      if (isSaleStart || isPriceDrop) {
+         // Find wishlists with this item
+         const wishlists = await base44.entities.WishlistItem.filter({ jewelry_item_id: id });
+         
+         // Notify each user (assuming we can map created_by to user or just send to created_by email if system supports)
+         // NOTE: Here we iterate. In production backend, this should be a batch job.
+         const users = await base44.entities.User.list();
+         
+         for (const w of wishlists) {
+            const user = users.find(u => u.email === w.created_by);
+            if (user) {
+               await base44.entities.Notification.create({
+                 recipient_id: user.id,
+                 title: isSaleStart ? "Sale Alert!" : "Price Drop!",
+                 message: `Great news! "${data.name}" is now available for $${newPrice}.`,
+                 type: "price_drop",
+                 related_item_id: id,
+                 link: `/JewelryBox?item=${id}`
+               });
+            }
+         }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['jewelryItems'] });
+      setIsEditing(false);
+      setDetailItem(null); // Close detail or refresh it? Close for simplicity
     }
   });
 
@@ -188,8 +244,9 @@ export default function JewelryBox() {
     const matchesType = typeFilter === "all" || item.type === typeFilter;
     const matchesMetal = metalFilter === "all" || item.metal_type === metalFilter;
     const matchesGemstone = gemstoneFilter === "all" || (gemstoneFilter === "none" ? !item.gemstone_type : item.gemstone_type?.toLowerCase().includes(gemstoneFilter.toLowerCase()));
+    const matchesSale = !saleFilter || (item.sale_price && item.sale_price < item.price);
 
-    return matchesSearch && matchesType && matchesMetal && matchesGemstone;
+    return matchesSearch && matchesType && matchesMetal && matchesGemstone && matchesSale;
   });
 
   return (
@@ -373,6 +430,52 @@ export default function JewelryBox() {
                 </div>
               </div>
 
+              <div className="border-t pt-4 mt-4">
+                 <h4 className="text-sm font-medium mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4" /> Pricing & Sales</h4>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                       <Label>Regular Price ($)</Label>
+                       <Input 
+                         type="number"
+                         value={newItem.price}
+                         onChange={(e) => setNewItem({...newItem, price: parseFloat(e.target.value)})}
+                         placeholder="0.00"
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <Label>Sale Price ($)</Label>
+                       <Input 
+                         type="number"
+                         value={newItem.sale_price}
+                         onChange={(e) => setNewItem({...newItem, sale_price: parseFloat(e.target.value)})}
+                         placeholder="Optional"
+                       />
+                    </div>
+                 </div>
+                 <div className="mt-4 space-y-2">
+                    <Label>Sale End Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={`w-full justify-start text-left font-normal ${!newItem.sale_end_date && "text-muted-foreground"}`}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {newItem.sale_end_date ? format(new Date(newItem.sale_end_date), "PPP") : <span>Pick a date</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={newItem.sale_end_date ? new Date(newItem.sale_end_date) : undefined}
+                          onSelect={(date) => setNewItem({...newItem, sale_end_date: date ? date.toISOString() : ""})}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                 </div>
+              </div>
+
               <Button 
                 onClick={() => createMutation.mutate(newItem)} 
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white"
@@ -386,7 +489,13 @@ export default function JewelryBox() {
       </div>
 
       {/* Detail View Dialog */}
-      <Dialog open={!!detailItem} onOpenChange={(open) => !open && setDetailItem(null)}>
+      <Dialog open={!!detailItem} onOpenChange={(open) => {
+        if (!open) {
+           setDetailItem(null);
+           setIsEditing(false);
+           setEditItemData(null);
+        }
+      }}>
          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
            <DialogHeader>
              <div className="flex items-center justify-between pr-8">
@@ -517,6 +626,14 @@ export default function JewelryBox() {
                   <SelectItem value="none">No Gemstone</SelectItem>
                 </SelectContent>
              </Select>
+             
+             <Button
+                variant={saleFilter ? "default" : "outline"}
+                className={saleFilter ? "bg-red-500 hover:bg-red-600 text-white border-red-500" : "border-red-200 text-red-500 hover:bg-red-50"}
+                onClick={() => setSaleFilter(!saleFilter)}
+             >
+                <Percent className="w-4 h-4 mr-2" /> On Sale
+             </Button>
           </div>
         </div>
 
@@ -570,6 +687,7 @@ export default function JewelryBox() {
                       alt={item.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
+                    <SalesBadge price={item.price} salePrice={item.sale_price} endDate={item.sale_end_date} />
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
                        <Button
                         variant="secondary"
