@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, User, Heart, Clock, Save, Gem } from "lucide-react";
+import { Loader2, User, Heart, Clock, Save, Gem, Bookmark } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 
@@ -55,6 +55,31 @@ export default function Profile() {
     queryKey: ['myCreations'],
     queryFn: () => base44.entities.Creation.list('-created_date', 20), // Last 20 creations
   });
+
+  // Fetch Wishlist
+  const { data: wishlistItems } = useQuery({
+    queryKey: ['myWishlist'],
+    queryFn: async () => {
+       const userEmail = user?.email; // Assuming we can filter by creator implicitly or explicit
+       // Note: Standard list() returns items created by user if RLS is on, or all. 
+       // We'll filter client side if needed or assume backend handles 'my data'.
+       // Best practice with base44: .list() usually returns what user has access to.
+       // If we want to be safe we can use .filter({ created_by: user.email }) if we had the email.
+       // But usually for simple apps, list() is fine.
+       const items = await base44.entities.WishlistItem.list();
+       return items; 
+    }
+  });
+
+  // Fetch all jewelry to map wishlist items (optimized: fetch all and filter client side for small catalogs)
+  const { data: allJewelry } = useQuery({
+     queryKey: ['allJewelry'],
+     queryFn: () => base44.entities.JewelryItem.list()
+  });
+
+  const myWishlistJewelry = allJewelry?.filter(j => 
+     wishlistItems?.some(w => w.jewelry_item_id === j.id)
+  ) || [];
 
   // Populate form when user data loads
   useEffect(() => {
@@ -135,7 +160,10 @@ export default function Profile() {
           <TabsTrigger value="history" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
             <Clock className="w-4 h-4 mr-2" /> {t.profile.history}
           </TabsTrigger>
-        </TabsList>
+          <TabsTrigger value="wishlist" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
+            <Bookmark className="w-4 h-4 mr-2" /> {t.profile.wishlist || "Wishlist"}
+          </TabsTrigger>
+          </TabsList>
 
         {/* Personal Info Tab */}
         <TabsContent value="info">
@@ -272,6 +300,52 @@ export default function Profile() {
                 {updateMutation.isSuccess && !isSaving ? t.profile.saved : t.profile.save}
               </Button>
             </div>
+          </motion.div>
+        </TabsContent>
+
+        {/* Wishlist Tab */}
+        <TabsContent value="wishlist">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            {myWishlistJewelry.length === 0 ? (
+              <div className="bg-white p-12 rounded-3xl border border-dashed border-neutral-200 text-center">
+                <Heart className="w-12 h-12 text-neutral-200 mx-auto mb-4" />
+                <p className="text-neutral-500">{t.profile.emptyWishlist || "Your wishlist is empty."}</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                 {myWishlistJewelry.map(item => (
+                   <div key={item.id} className="bg-white rounded-xl border border-neutral-100 overflow-hidden group hover:shadow-lg transition-all">
+                      <div className="aspect-square bg-neutral-50 relative overflow-hidden">
+                         <img src={item.image_url} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                         <div className="absolute top-2 right-2">
+                            <Button
+                              size="icon"
+                              variant="destructive" 
+                              className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={async () => {
+                                 const wishlistItem = wishlistItems.find(w => w.jewelry_item_id === item.id);
+                                 if (wishlistItem) {
+                                    await base44.entities.WishlistItem.delete(wishlistItem.id);
+                                    queryClient.invalidateQueries({ queryKey: ['myWishlist'] });
+                                 }
+                              }}
+                            >
+                              <Heart className="w-4 h-4 fill-white" />
+                            </Button>
+                         </div>
+                      </div>
+                      <div className="p-4">
+                         <h3 className="font-medium text-neutral-900 truncate">{item.name}</h3>
+                         <p className="text-xs text-neutral-500">{item.brand || item.type}</p>
+                      </div>
+                   </div>
+                 ))}
+              </div>
+            )}
           </motion.div>
         </TabsContent>
 

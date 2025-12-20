@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Search, Loader2, Camera, Tag, Trash2, Filter, Star, Eye } from "lucide-react";
+import { Plus, Search, Loader2, Camera, Tag, Trash2, Filter, Star, Eye, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import StarRating from '@/components/reviews/StarRating';
@@ -56,6 +56,27 @@ export default function JewelryBox() {
       count: itemReviews.length
     };
   };
+
+  // Wishlist Logic
+  const { data: myWishlist } = useQuery({
+    queryKey: ['myWishlist'],
+    queryFn: () => base44.entities.WishlistItem.list()
+  });
+
+  const toggleWishlist = async (e, itemId) => {
+    e.stopPropagation();
+    const existing = myWishlist?.find(w => w.jewelry_item_id === itemId);
+    
+    // Optimistic update could go here, but for simplicity we'll await
+    if (existing) {
+      await base44.entities.WishlistItem.delete(existing.id);
+    } else {
+      await base44.entities.WishlistItem.create({ jewelry_item_id: itemId });
+    }
+    queryClient.invalidateQueries({ queryKey: ['myWishlist'] });
+  };
+
+  const isWishlisted = (itemId) => myWishlist?.some(w => w.jewelry_item_id === itemId);
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.JewelryItem.create(data),
@@ -314,7 +335,19 @@ export default function JewelryBox() {
       <Dialog open={!!detailItem} onOpenChange={(open) => !open && setDetailItem(null)}>
          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
            <DialogHeader>
-             <DialogTitle className="font-serif text-2xl">{detailItem?.name}</DialogTitle>
+             <div className="flex items-center justify-between pr-8">
+               <DialogTitle className="font-serif text-2xl">{detailItem?.name}</DialogTitle>
+               {detailItem && (
+                 <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => toggleWishlist(e, detailItem.id)}
+                    className="text-neutral-500 hover:text-red-500 hover:bg-red-50"
+                  >
+                    <Heart className={`w-6 h-6 ${isWishlisted(detailItem.id) ? "fill-red-500 text-red-500" : ""}`} />
+                  </Button>
+               )}
+             </div>
            </DialogHeader>
 
            {detailItem && (
@@ -440,10 +473,22 @@ export default function JewelryBox() {
                         size="icon"
                         className="h-8 w-8 rounded-full bg-red-500/80 hover:bg-red-600"
                         onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(item.id); }}
-                      >
+                        >
                         <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+                        </Button>
+                        </div>
+
+                        {/* Wishlist Button Overlay */}
+                        <div className="absolute top-2 left-2">
+                        <Button
+                          variant="secondary"
+                          size="icon"
+                          className={`h-8 w-8 rounded-full shadow-sm transition-colors ${isWishlisted(item.id) ? "bg-red-50 text-red-500 hover:bg-red-100" : "bg-white/90 hover:bg-white text-neutral-400 hover:text-red-400"}`}
+                          onClick={(e) => toggleWishlist(e, item.id)}
+                        >
+                          <Heart className={`w-4 h-4 ${isWishlisted(item.id) ? "fill-current" : ""}`} />
+                        </Button>
+                        </div>
                     {stats.count > 0 && (
                       <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1">
                         <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
