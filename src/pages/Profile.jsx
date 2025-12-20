@@ -225,88 +225,14 @@ export default function Profile() {
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm space-y-8"
+            className="bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm"
           >
-            {/* Colors */}
-            <div className="space-y-4">
-              <h3 className="font-serif text-lg flex items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold">1</span>
-                {t.profile.favColors}
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {COLORS.map(color => (
-                  <div key={color} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`color-${color}`} 
-                      checked={formData.style_preferences.favorite_colors?.includes(color)}
-                      onCheckedChange={() => togglePreference('favorite_colors', color)}
-                    />
-                    <label htmlFor={`color-${color}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
-                      {color}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="h-px bg-neutral-100" />
-
-            {/* Jewelry Types */}
-            <div className="space-y-4">
-              <h3 className="font-serif text-lg flex items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold">2</span>
-                {t.profile.favTypes}
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {TYPES.map(type => (
-                  <div key={type} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`type-${type}`} 
-                      checked={formData.style_preferences.favorite_jewelry_types?.includes(type)}
-                      onCheckedChange={() => togglePreference('favorite_jewelry_types', type)}
-                    />
-                    <label htmlFor={`type-${type}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
-                      {type}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="h-px bg-neutral-100" />
-
-            {/* Occasions */}
-            <div className="space-y-4">
-              <h3 className="font-serif text-lg flex items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold">3</span>
-                {t.profile.occasions}
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {OCCASIONS.map(occ => (
-                  <div key={occ} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`occ-${occ}`} 
-                      checked={formData.style_preferences.frequent_occasions?.includes(occ)}
-                      onCheckedChange={() => togglePreference('frequent_occasions', occ)}
-                    />
-                    <label htmlFor={`occ-${occ}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
-                      {occ}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-4 flex justify-end">
-              <Button 
-                onClick={handleSave} 
-                disabled={isSaving}
-                className="bg-neutral-900 hover:bg-neutral-800 text-white min-w-[150px]"
-              >
-                {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                {updateMutation.isSuccess && !isSaving ? t.profile.saved : t.profile.save}
-              </Button>
-            </div>
+             <StyleProfileEditor 
+               preferences={formData.style_preferences}
+               onChange={(newPrefs) => setFormData({...formData, style_preferences: newPrefs})}
+               onSave={handleSave}
+               isSaving={isSaving}
+             />
           </motion.div>
         </TabsContent>
 
