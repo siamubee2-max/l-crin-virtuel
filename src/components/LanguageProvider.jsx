@@ -31,7 +31,7 @@ const translations = {
       noCreations: "Vous n'avez pas encore créé d'essayages."
       },
       common: {
-      footer: "L'Écrin Virtuel © 2024 — Luxe & Technologie",
+      footer: "Moni'attitude © 2025 — Bijoux artisanaux uniques & Ateliers",
       loading: "Chargement...",
       save: "Enregistrer",
       saving: "Enregistrement...",
@@ -261,7 +261,7 @@ const translations = {
       noCreations: "You haven't created any try-ons yet."
     },
     common: {
-      footer: "The Virtual Jewelry Box © 2024 — Luxury & Technology",
+      footer: "Moni'attitude © 2025 — Unique Handcrafted Jewelry & Workshops",
       loading: "Loading...",
       save: "Save",
       saving: "Saving...",

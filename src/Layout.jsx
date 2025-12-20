@@ -74,12 +74,17 @@ function LayoutContent({ children }) {
           
           {/* Logo */}
           <Link to={createPageUrl("Gallery")} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center rounded-sm font-serif text-xl">
-              É
+            <div className="w-8 h-8 bg-amber-500 text-white flex items-center justify-center rounded-full font-serif text-xl">
+              M
             </div>
-            <span className="font-serif text-xl tracking-tight font-medium group-hover:text-amber-600 transition-colors">
-              L'Écrin Virtuel
-            </span>
+            <div className="flex flex-col -gap-1">
+              <span className="font-serif text-xl tracking-tight font-medium group-hover:text-amber-600 transition-colors">
+                Moni'attitude
+              </span>
+              <span className="text-[10px] text-neutral-400 tracking-widest uppercase hidden md:block">
+                Bijoux artisanaux uniques
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Menu */}
