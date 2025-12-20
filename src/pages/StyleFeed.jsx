@@ -40,6 +40,10 @@ export default function StyleFeed() {
       const colors = prefs.favorite_colors?.join(", ") || "neutrals";
       const occasions = prefs.frequent_occasions?.join(", ") || "everyday life";
       const types = prefs.favorite_jewelry_types?.join(", ") || "jewelry";
+      
+      const aesthetics = prefs.aesthetics?.join(", ") || "general";
+      const styleType = prefs.jewelry_preference_type || "balanced";
+      const metals = prefs.preferred_metals?.join(", ") || "any metal";
 
       const prompt = `
         You are a high-end fashion editor.
@@ -47,9 +51,12 @@ export default function StyleFeed() {
         - Favorite Colors: ${colors}
         - Occasions: ${occasions}
         - Loves: ${types}
+        - Aesthetics: ${aesthetics}
+        - Preference: ${styleType}
+        - Metals: ${metals}
         - Bio: ${user.bio || "Fashion enthusiast"}
 
-        Generate a short, inspiring "Daily Style Tip" (max 2 sentences) and a "Trend Alert" (1 sentence) relevant to this user.
+        Generate a short, inspiring "Daily Style Tip" (max 2 sentences) and a "Trend Alert" (1 sentence) relevant to this user's specific aesthetics and style.
         Format as JSON: { "tip": "...", "trend": "..." }
       `;
 

@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, User, Heart, Clock, Save, Gem, Bookmark } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
+import StyleProfileEditor from '@/components/profile/StyleProfileEditor';
 
 export default function Profile() {
   const { t } = useLanguage();
@@ -91,7 +92,13 @@ export default function Profile() {
         style_preferences: {
           favorite_colors: user.style_preferences?.favorite_colors || [],
           favorite_jewelry_types: user.style_preferences?.favorite_jewelry_types || [],
-          frequent_occasions: user.style_preferences?.frequent_occasions || []
+          frequent_occasions: user.style_preferences?.frequent_occasions || [],
+          // New fields
+          aesthetics: user.style_preferences?.aesthetics || [],
+          jewelry_preference_type: user.style_preferences?.jewelry_preference_type || "mix",
+          preferred_metals: user.style_preferences?.preferred_metals || [],
+          preferred_gemstone_cuts: user.style_preferences?.preferred_gemstone_cuts || [],
+          inspiration_images: user.style_preferences?.inspiration_images || []
         }
       });
     }

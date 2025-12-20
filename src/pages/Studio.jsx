@@ -25,6 +25,13 @@ const STEPS = {
 export default function Studio() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  
+  // Fetch user for stylist context
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me().catch(() => null), // Handle not logged in
+  });
+
   const [step, setStep] = useState(STEPS.UPLOAD);
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -82,20 +89,29 @@ export default function Studio() {
     try {
       const bodyPart = bodyParts.find(p => p.id === selectedBodyPartId);
       
+      const userPrefs = user?.style_preferences ? `
+        User Style Context:
+        - Aesthetics: ${user.style_preferences.aesthetics?.join(", ") || "Unknown"}
+        - Preferred Metals: ${user.style_preferences.preferred_metals?.join(", ") || "Unknown"}
+        - Style: ${user.style_preferences.jewelry_preference_type || "Mix"}
+      ` : "";
+
       const prompt = `
         You are a luxury fashion stylist and jewelry expert.
         Analyze these two images:
         Image 1: The user (focus on skin tone, features, and style).
         Image 2: A piece of jewelry (${jewelryType}).
+        
+        ${userPrefs}
 
         Provide expert advice in the following JSON format:
         {
-          "suggestions": "Styling suggestions based on the user's features and the jewelry piece (max 2 sentences)",
+          "suggestions": "Styling suggestions based on the user's features, their personal style aesthetics, and the jewelry piece (max 2 sentences)",
           "advice": "Advice on color matching (gold/silver vs skin tone) and appropriate occasions (max 2 sentences)",
           "compatible_items": ["Item 1", "Item 2", "Item 3"] (3 specific jewelry items that would complete a set with this piece)
         }
         
-        Be elegant, professional, and helpful.
+        Be elegant, professional, and helpful. Incorporate their aesthetic preferences if provided.
       `;
 
       const response = await base44.integrations.Core.InvokeLLM({
