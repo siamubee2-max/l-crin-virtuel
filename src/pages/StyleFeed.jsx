@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, ArrowRight, Lightbulb, TrendingUp, Heart } from "lucide-react";
+import { Loader2, Sparkles, ArrowRight, Lightbulb, TrendingUp, Heart, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import ForYouSection from '@/components/feed/ForYouSection';
 
 export default function StyleFeed() {
   const { t, preferences, setPreference } = useLanguage();
@@ -175,6 +176,33 @@ export default function StyleFeed() {
         <p className="text-neutral-500 max-w-2xl mx-auto">{t.feed.subtitle}</p>
       </div>
 
+      {/* User Style Profile Summary */}
+      {user?.style_preferences && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-2xl p-6 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center">
+              <User className="w-6 h-6 text-amber-400" />
+            </div>
+            <div>
+              <p className="text-white font-medium">Welcome back, {user.full_name?.split(' ')[0] || 'Stylist'}</p>
+              <p className="text-neutral-400 text-sm">
+                {user.style_preferences.aesthetics?.slice(0, 2).join(' • ') || 'Classic'} style
+                {user.style_preferences.preferred_metals?.length > 0 && ` • ${user.style_preferences.preferred_metals[0]} lover`}
+              </p>
+            </div>
+          </div>
+          <Link to={createPageUrl("Profile")}>
+            <Button variant="outline" size="sm" className="border-neutral-700 text-neutral-300 hover:bg-neutral-800 hover:text-white">
+              Edit Style
+            </Button>
+          </Link>
+        </motion.div>
+      )}
+
       {/* Hero: AI Daily Tip */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -205,6 +233,9 @@ export default function StyleFeed() {
         </div>
         <Sparkles className="absolute top-10 right-10 text-amber-200 w-32 h-32 opacity-20" />
       </motion.div>
+
+      {/* FOR YOU SECTION - Personalized Recommendations */}
+      <ForYouSection user={user} />
 
       {/* Recommended Jewelry */}
       <section className="space-y-6">

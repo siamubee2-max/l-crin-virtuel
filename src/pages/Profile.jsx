@@ -11,6 +11,8 @@ import { Loader2, User, Heart, Clock, Save, Gem, Bookmark } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import StyleProfileEditor from '@/components/profile/StyleProfileEditor';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function Profile() {
   const { t } = useLanguage();
