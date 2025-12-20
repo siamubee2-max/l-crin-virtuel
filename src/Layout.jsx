@@ -39,6 +39,7 @@ function LayoutContent({ children }) {
   const navItems = [
     { label: t.nav.shop || "Boutique", icon: ShoppingBag, path: "/Shop" },
     { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
+    { label: "AI Advisor", icon: Lightbulb, path: "/StyleAdvisor" },
     { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
     { label: t.nav.gallery, icon: Gem, path: "/" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
