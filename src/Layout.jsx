@@ -3,12 +3,28 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle, Compass, Package, ShieldCheck } from 'lucide-react';
+import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle, Compass, Package, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { CartProvider, useCart } from '@/components/cart/CartProvider';
+import CartSheet from '@/components/cart/CartSheet';
+
+function CartButton() {
+  const { cartCount, setIsOpen } = useCart();
+  return (
+    <Button variant="ghost" size="sm" className="relative" onClick={() => setIsOpen(true)}>
+      <ShoppingBag className="w-5 h-5" />
+      {cartCount > 0 && (
+        <span className="absolute -top-1 -right-1 bg-amber-600 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">
+          {cartCount}
+        </span>
+      )}
+    </Button>
+  );
+}
 
 function LayoutContent({ children }) {
   const location = useLocation();
@@ -105,8 +121,9 @@ function LayoutContent({ children }) {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Notification Bell */}
-            <div className="ml-2 border-l border-neutral-200 pl-4">
+            {/* Notification Bell & Cart */}
+            <div className="ml-2 border-l border-neutral-200 pl-4 flex items-center gap-2">
+               <CartButton />
                <NotificationBell />
             </div>
             </div>
@@ -186,7 +203,12 @@ function LayoutContent({ children }) {
 export default function Layout({ children }) {
   return (
     <LanguageProvider>
-      <LayoutContent>{children}</LayoutContent>
+      <CartProvider>
+        <LayoutContent>
+           {children}
+           <CartSheet />
+        </LayoutContent>
+      </CartProvider>
     </LanguageProvider>
   );
 }

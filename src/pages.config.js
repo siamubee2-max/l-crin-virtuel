@@ -7,6 +7,7 @@ import Profile from './pages/Profile';
 import StyleFeed from './pages/StyleFeed';
 import Orders from './pages/Orders';
 import AdminOrders from './pages/AdminOrders';
+import Checkout from './pages/Checkout';
 import __Layout from './Layout.jsx';
 
 
@@ -20,6 +21,7 @@ export const PAGES = {
     "StyleFeed": StyleFeed,
     "Orders": Orders,
     "AdminOrders": AdminOrders,
+    "Checkout": Checkout,
 }
 
 export const pagesConfig = {
