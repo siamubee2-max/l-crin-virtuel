@@ -288,7 +288,7 @@ export default function JewelryBox() {
       <div className="relative py-12 px-6 rounded-3xl bg-neutral-900 text-white overflow-hidden">
          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
          <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-900/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-
+         
          <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-6">
             <div className="space-y-4 max-w-2xl">
               <span className="text-amber-400 uppercase tracking-[0.2em] text-xs font-medium">Collection Privée</span>
