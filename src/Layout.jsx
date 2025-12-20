@@ -1,7 +1,9 @@
 import React from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle, Compass } from 'lucide-react';
+import { Gem, User, Sparkles, Menu, X, Globe, Box, Shirt, UserCircle, Compass, Package, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -13,6 +15,11 @@ function LayoutContent({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const { t, language, setLanguage } = useLanguage();
 
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUserLayout'],
+    queryFn: () => base44.auth.me().catch(() => null),
+  });
+
   const navItems = [
     { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
     { label: t.nav.gallery, icon: Gem, path: "/" },
@@ -21,7 +28,12 @@ function LayoutContent({ children }) {
     { label: t.nav.closet, icon: Shirt, path: "/Closet" },
     { label: t.nav.jewelryBox, icon: Box, path: "/JewelryBox" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
-    ];
+    { label: "Orders", icon: Package, path: "/Orders" },
+  ];
+
+  if (currentUser?.role === 'admin') {
+    navItems.push({ label: "Admin", icon: ShieldCheck, path: "/AdminOrders" });
+  }
 
   const languages = [
     { code: 'fr', label: 'Français', flag: '🇫🇷' },

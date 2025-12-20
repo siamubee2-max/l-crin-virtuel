@@ -25,6 +25,10 @@ export default function JewelryBox() {
   const [detailItem, setDetailItem] = useState(null); // For detail view dialog
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [checkoutStep, setCheckoutStep] = useState("address"); // address, success
+
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [metalFilter, setMetalFilter] = useState("all");
@@ -98,6 +102,32 @@ export default function JewelryBox() {
   };
 
   const isWishlisted = (itemId) => myWishlist?.some(w => w.jewelry_item_id === itemId);
+
+  const orderMutation = useMutation({
+    mutationFn: async ({ item, address }) => {
+       const user = await base44.auth.me();
+       const price = item.sale_price && item.sale_price < item.price ? item.sale_price : item.price;
+       
+       return base44.entities.Order.create({
+         item_id: item.id,
+         quantity: 1,
+         total_price: price || 0,
+         status: "pending",
+         shipping_address: address,
+         customer_email: user.email,
+         customer_name: user.full_name
+       });
+    },
+    onSuccess: () => {
+       setCheckoutStep("success");
+       // Optional: Add notification for admin
+    }
+  });
+
+  const handleCheckout = () => {
+    if (!shippingAddress) return;
+    orderMutation.mutate({ item: detailItem, address: shippingAddress });
+  };
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.JewelryItem.create(data),
@@ -632,7 +662,62 @@ export default function JewelryBox() {
                      </div>
                    )}
 
-                   <div className="pt-4 border-t border-neutral-100">
+                   <div className="pt-4 border-t border-neutral-100 space-y-4">
+                      {showCheckout ? (
+                        <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200 animate-in fade-in zoom-in duration-300">
+                           {checkoutStep === "address" ? (
+                             <div className="space-y-3">
+                                <h4 className="font-medium text-neutral-900">Checkout</h4>
+                                <div className="space-y-1">
+                                  <Label>Shipping Address</Label>
+                                  <Textarea 
+                                    placeholder="Enter your full shipping address..."
+                                    value={shippingAddress}
+                                    onChange={(e) => setShippingAddress(e.target.value)}
+                                  />
+                                </div>
+                                <div className="flex gap-2 justify-end pt-2">
+                                  <Button variant="ghost" size="sm" onClick={() => setShowCheckout(false)}>Cancel</Button>
+                                  <Button 
+                                    size="sm" 
+                                    className="bg-neutral-900 text-white"
+                                    onClick={handleCheckout}
+                                    disabled={!shippingAddress || orderMutation.isPending}
+                                  >
+                                    {orderMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Confirm Order"}
+                                  </Button>
+                                </div>
+                             </div>
+                           ) : (
+                             <div className="text-center py-4 space-y-3">
+                                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto text-green-600">
+                                   <CheckCircle2 className="w-6 h-6" />
+                                </div>
+                                <h4 className="font-medium text-lg text-green-700">Order Placed!</h4>
+                                <p className="text-sm text-neutral-500">Thank you for your purchase. We'll send you updates soon.</p>
+                                <Button 
+                                  variant="outline" 
+                                  className="mt-2"
+                                  onClick={() => {
+                                    setShowCheckout(false);
+                                    setCheckoutStep("address");
+                                    setDetailItem(null);
+                                  }}
+                                >
+                                  Close
+                                </Button>
+                             </div>
+                           )}
+                        </div>
+                      ) : (
+                         <Button 
+                           className="w-full bg-neutral-900 text-white h-12 text-lg"
+                           onClick={() => setShowCheckout(true)}
+                         >
+                           Buy Now • {detailItem.sale_price ? `$${detailItem.sale_price}` : `$${detailItem.price}`}
+                         </Button>
+                      )}
+                   
                       <ReviewSection jewelryId={detailItem.id} />
                    </div>
                 </div>
