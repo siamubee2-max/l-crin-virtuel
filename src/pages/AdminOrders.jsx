@@ -30,6 +30,25 @@ export default function AdminOrders() {
     enabled: !!user // Only fetch if user is loaded
   });
 
+  // Fetch details for the selected order
+  const { data: orderItem } = useQuery({
+    queryKey: ['orderItem', selectedOrder?.item_id],
+    queryFn: async () => {
+      const items = await base44.entities.JewelryItem.filter({ id: selectedOrder.item_id });
+      return items[0];
+    },
+    enabled: !!selectedOrder?.item_id
+  });
+
+  const { data: orderCustomer } = useQuery({
+    queryKey: ['orderCustomer', selectedOrder?.customer_email],
+    queryFn: async () => {
+       const users = await base44.entities.User.list(); 
+       return users.find(u => u.email === selectedOrder.customer_email);
+    },
+    enabled: !!selectedOrder?.customer_email
+  });
+
   const updateOrderMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Order.update(id, data),
     onSuccess: () => {
@@ -175,33 +194,72 @@ export default function AdminOrders() {
                         <DialogHeader>
                           <DialogTitle>Manage Order #{order.id.slice(0, 8)}</DialogTitle>
                         </DialogHeader>
-                        <div className="space-y-4 py-4">
+                        <div className="space-y-6 py-4">
+                          {/* Item Details */}
+                          {orderItem && (
+                            <div className="flex gap-4 bg-neutral-50 p-3 rounded-lg border border-neutral-100">
+                              <div className="w-16 h-16 bg-white rounded-md overflow-hidden border flex-shrink-0">
+                                <img src={orderItem.image_url} alt={orderItem.name} className="w-full h-full object-cover" />
+                              </div>
+                              <div>
+                                <h4 className="font-medium text-sm">{orderItem.name}</h4>
+                                <p className="text-xs text-neutral-500">{orderItem.brand} • {orderItem.type}</p>
+                                <p className="text-sm font-medium mt-1">${order.total_price}</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Customer Details */}
                           <div className="space-y-2">
-                             <Label>Status</Label>
-                             <Select value={statusInput} onValueChange={setStatusInput}>
-                               <SelectTrigger>
-                                 <SelectValue />
-                               </SelectTrigger>
-                               <SelectContent>
-                                 <SelectItem value="pending">Pending</SelectItem>
-                                 <SelectItem value="processing">Processing</SelectItem>
-                                 <SelectItem value="shipped">Shipped</SelectItem>
-                                 <SelectItem value="delivered">Delivered</SelectItem>
-                                 <SelectItem value="cancelled">Cancelled</SelectItem>
-                               </SelectContent>
-                             </Select>
+                             <h4 className="text-sm font-medium flex items-center gap-2 text-neutral-900">
+                               Customer Details
+                               {orderCustomer && <Badge variant="outline" className="text-[10px] h-5">Registered User</Badge>}
+                             </h4>
+                             <div className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-md border border-neutral-100 space-y-1">
+                                <p><span className="text-neutral-400 w-16 inline-block">Name:</span> {order.customer_name}</p>
+                                <p><span className="text-neutral-400 w-16 inline-block">Email:</span> {order.customer_email}</p>
+                                {orderCustomer && (
+                                   <div className="pt-2 mt-2 border-t border-neutral-200">
+                                      <p className="text-xs text-neutral-400">User ID: {orderCustomer.id}</p>
+                                      {orderCustomer.style_preferences && (
+                                        <p className="text-xs text-neutral-500 mt-1">
+                                          Style: {orderCustomer.style_preferences.jewelry_preference_type || "Not set"}
+                                        </p>
+                                      )}
+                                   </div>
+                                )}
+                             </div>
                           </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                               <Label>Status</Label>
+                               <Select value={statusInput} onValueChange={setStatusInput}>
+                                 <SelectTrigger>
+                                   <SelectValue />
+                                 </SelectTrigger>
+                                 <SelectContent>
+                                   <SelectItem value="pending">Pending</SelectItem>
+                                   <SelectItem value="processing">Processing</SelectItem>
+                                   <SelectItem value="shipped">Shipped</SelectItem>
+                                   <SelectItem value="delivered">Delivered</SelectItem>
+                                   <SelectItem value="cancelled">Cancelled</SelectItem>
+                                 </SelectContent>
+                               </Select>
+                            </div>
+                            <div className="space-y-2">
+                               <Label>Tracking Number</Label>
+                               <Input 
+                                 value={trackingInput}
+                                 onChange={(e) => setTrackingInput(e.target.value)}
+                                 placeholder="e.g. UPS123456789"
+                               />
+                            </div>
+                          </div>
+
                           <div className="space-y-2">
-                             <Label>Tracking Number</Label>
-                             <Input 
-                               value={trackingInput}
-                               onChange={(e) => setTrackingInput(e.target.value)}
-                               placeholder="e.g. UPS123456789"
-                             />
-                          </div>
-                          <div className="space-y-2 pt-2 border-t">
                              <Label>Shipping Address</Label>
-                             <p className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-md">
+                             <p className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-md border border-neutral-100">
                                {order.shipping_address}
                              </p>
                           </div>
