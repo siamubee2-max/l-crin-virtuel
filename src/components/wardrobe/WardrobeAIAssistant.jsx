@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Sparkles, Shirt, MessageCircle, Loader2, Send, WashingMachine, CheckCircle2, AlertTriangle, Info, Wand2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sparkles, Shirt, MessageCircle, Loader2, Send, WashingMachine, CheckCircle2, AlertTriangle, Info, Wand2, Gem, User, Bot, Lightbulb, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 
@@ -14,6 +17,13 @@ export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems =
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("outfits");
+  const chatEndRef = useRef(null);
+  
+  // Fetch user preferences for context
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me().catch(() => null),
+  });
   
   // Outfit suggestions state
   const [selectedItems, setSelectedItems] = useState([]);
@@ -26,10 +36,26 @@ export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems =
   const [careInstructions, setCareInstructions] = useState(null);
   const [loadingCare, setLoadingCare] = useState(false);
   
-  // Styling Q&A state
+  // Enhanced Chat State
   const [styleQuestion, setStyleQuestion] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [loadingChat, setLoadingChat] = useState(false);
+  const [selectedChatItem, setSelectedChatItem] = useState(null);
+  const [showItemPicker, setShowItemPicker] = useState(false);
+  
+  // Suggested questions based on context
+  const suggestedQuestions = [
+    "How can I style my jewelry for a casual day out?",
+    "What accessories go best with formal wear?",
+    "Help me create a complete outfit for date night",
+    "Which of my items work best together?",
+    "What's trending in jewelry styling right now?"
+  ];
+  
+  // Scroll to bottom when chat updates
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatHistory]);
 
   const occasions = [
     { value: "casual", label: "Casual / Everyday" },
@@ -140,36 +166,97 @@ export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems =
     }
   };
 
-  const askStyleQuestion = async () => {
-    if (!styleQuestion.trim()) return;
+  const askStyleQuestion = async (questionOverride) => {
+    const question = questionOverride || styleQuestion;
+    if (!question.trim()) return;
     
-    const userMessage = styleQuestion;
+    const userMessage = question;
     setStyleQuestion("");
-    setChatHistory(prev => [...prev, { role: "user", content: userMessage }]);
+    
+    // Build user message with item context if selected
+    const messageWithContext = selectedChatItem 
+      ? { role: "user", content: userMessage, item: selectedChatItem }
+      : { role: "user", content: userMessage };
+    
+    setChatHistory(prev => [...prev, messageWithContext]);
     setLoadingChat(true);
+    setShowItemPicker(false);
     
     try {
-      const wardrobeContext = clothingItems.slice(0, 10).map(item => 
-        `${item.name} (${item.type}, ${item.color || ''})`
-      ).join(", ");
+      // Build comprehensive wardrobe context
+      const clothingContext = clothingItems.slice(0, 15).map(item => 
+        `- ${item.name}: ${item.type}, ${item.color || 'unknown color'}, ${item.material || ''}, ${item.brand || ''}`
+      ).join("\n");
       
-      const prompt = `You are a friendly and knowledgeable fashion stylist assistant. The user has these items in their wardrobe: ${wardrobeContext || "various clothing items"}.
+      const jewelryContext = jewelryItems.slice(0, 15).map(item => 
+        `- ${item.name}: ${item.type}, ${item.metal_type || item.material || ''}, ${item.gemstone_type || ''}`
+      ).join("\n");
       
-      Previous conversation:
-      ${chatHistory.slice(-4).map(m => `${m.role}: ${m.content}`).join("\n")}
+      // User style preferences
+      const stylePrefs = user?.style_preferences;
+      const prefsContext = stylePrefs ? `
+User Style Profile:
+- Favorite colors: ${stylePrefs.favorite_colors?.join(", ") || "not specified"}
+- Preferred metals: ${stylePrefs.preferred_metals?.join(", ") || "not specified"}
+- Aesthetics: ${stylePrefs.aesthetics?.join(", ") || "not specified"}
+- Favorite jewelry types: ${stylePrefs.favorite_jewelry_types?.join(", ") || "not specified"}
+- Frequent occasions: ${stylePrefs.frequent_occasions?.join(", ") || "not specified"}
+` : "";
+
+      // Specific item context if user selected one
+      const itemContext = selectedChatItem ? `
+The user is specifically asking about this item:
+- Name: ${selectedChatItem.name}
+- Type: ${selectedChatItem.type}
+- Color: ${selectedChatItem.color || 'N/A'}
+- Material: ${selectedChatItem.material || selectedChatItem.metal_type || 'N/A'}
+- Brand: ${selectedChatItem.brand || 'N/A'}
+${selectedChatItem.gemstone_type ? `- Gemstone: ${selectedChatItem.gemstone_type}` : ''}
+` : "";
+
+      // Build conversation history for context
+      const recentHistory = chatHistory.slice(-6).map(m => 
+        `${m.role === 'user' ? 'User' : 'Stylist'}: ${m.content}`
+      ).join("\n");
       
-      User question: ${userMessage}
-      
-      Provide helpful, personalized styling advice. Be conversational and specific. If relevant, reference items from their wardrobe.`;
+      const prompt = `You are an expert personal fashion stylist with deep knowledge of jewelry, clothing, and style coordination. You provide personalized, context-aware advice.
+
+${prefsContext}
+
+USER'S WARDROBE:
+
+Clothing Items:
+${clothingContext || "No clothing items added yet"}
+
+Jewelry Items:
+${jewelryContext || "No jewelry items added yet"}
+
+${itemContext}
+
+CONVERSATION HISTORY:
+${recentHistory || "This is the start of the conversation."}
+
+USER'S QUESTION: ${userMessage}
+
+INSTRUCTIONS:
+1. Provide personalized advice that references SPECIFIC items from their wardrobe when relevant
+2. Consider their style preferences and aesthetics
+3. Suggest complete outfit combinations when appropriate
+4. Be conversational, warm, and encouraging
+5. If they ask about a specific item, provide detailed styling suggestions for that piece
+6. Include occasion-based recommendations when relevant
+7. Keep responses concise but helpful (2-4 paragraphs max)
+8. Use emojis sparingly for a friendly tone`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt
       });
       
       setChatHistory(prev => [...prev, { role: "assistant", content: response }]);
+      setSelectedChatItem(null);
     } catch (error) {
       console.error("Failed to get styling advice", error);
-      setChatHistory(prev => [...prev, { role: "assistant", content: "Sorry, I couldn't process your question. Please try again." }]);
+      setChatHistory(prev => [...prev, { role: "assistant", content: "I'm sorry, I couldn't process your question. Please try again!" }]);
     } finally {
       setLoadingChat(false);
     }
@@ -426,54 +513,235 @@ export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems =
             </AnimatePresence>
           </TabsContent>
           
-          {/* Chat Tab */}
+          {/* Enhanced Chat Tab */}
           <TabsContent value="chat" className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto space-y-3 mb-4 p-2 bg-neutral-50 rounded-lg min-h-[200px]">
-              {chatHistory.length === 0 ? (
-                <div className="text-center text-neutral-400 py-8">
-                  <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">Ask me anything about styling!</p>
-                  <p className="text-xs mt-1">e.g. "What should I wear to a summer wedding?"</p>
-                </div>
-              ) : (
-                chatHistory.map((msg, i) => (
-                  <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
-                      msg.role === 'user' 
-                        ? 'bg-purple-600 text-white rounded-br-sm' 
-                        : 'bg-white border border-neutral-200 rounded-bl-sm'
-                    }`}>
-                      {msg.content}
+            {/* Chat Messages */}
+            <ScrollArea className="flex-1 pr-2 mb-3">
+              <div className="space-y-4 min-h-[280px] p-2">
+                {chatHistory.length === 0 ? (
+                  <div className="text-center py-6 space-y-4">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
+                      <Bot className="w-8 h-8 text-purple-500" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-neutral-800">Your Personal Style Assistant</p>
+                      <p className="text-sm text-neutral-500 mt-1">
+                        Ask me anything about styling your wardrobe items!
+                      </p>
+                    </div>
+                    
+                    {/* Suggested Questions */}
+                    <div className="space-y-2 pt-2">
+                      <p className="text-xs text-neutral-400 uppercase tracking-wide">Try asking:</p>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {suggestedQuestions.slice(0, 3).map((q, i) => (
+                          <button
+                            key={i}
+                            onClick={() => askStyleQuestion(q)}
+                            className="text-xs bg-white border border-neutral-200 rounded-full px-3 py-1.5 hover:border-purple-300 hover:bg-purple-50 transition-colors text-left"
+                          >
+                            {q}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                ))
-              )}
-              {loadingChat && (
-                <div className="flex justify-start">
-                  <div className="bg-white border border-neutral-200 rounded-2xl rounded-bl-sm px-4 py-2">
-                    <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
-                  </div>
-                </div>
-              )}
-            </div>
+                ) : (
+                  chatHistory.map((msg, i) => (
+                    <motion.div 
+                      key={i} 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      {msg.role === 'assistant' && (
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0">
+                          <Bot className="w-4 h-4 text-white" />
+                        </div>
+                      )}
+                      
+                      <div className={`max-w-[80%] space-y-2`}>
+                        {/* Item context badge */}
+                        {msg.item && (
+                          <div className="flex justify-end">
+                            <Badge variant="secondary" className="text-[10px] gap-1 bg-purple-100 text-purple-700">
+                              {msg.item.type === 'jewelry' ? <Gem className="w-3 h-3" /> : <Shirt className="w-3 h-3" />}
+                              {msg.item.name}
+                            </Badge>
+                          </div>
+                        )}
+                        
+                        <div className={`rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${
+                          msg.role === 'user' 
+                            ? 'bg-purple-600 text-white rounded-br-sm' 
+                            : 'bg-white border border-neutral-200 rounded-bl-sm shadow-sm'
+                        }`}>
+                          {msg.content}
+                        </div>
+                      </div>
+                      
+                      {msg.role === 'user' && (
+                        <div className="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center shrink-0">
+                          <User className="w-4 h-4 text-neutral-600" />
+                        </div>
+                      )}
+                    </motion.div>
+                  ))
+                )}
+                
+                {loadingChat && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex gap-2 justify-start"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0">
+                      <Bot className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="bg-white border border-neutral-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
+                      <div className="flex gap-1">
+                        <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+            </ScrollArea>
             
+            {/* Item Picker */}
+            <AnimatePresence>
+              {showItemPicker && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-2 overflow-hidden"
+                >
+                  <div className="bg-neutral-50 rounded-lg p-3 border">
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="text-xs font-medium text-neutral-600">Select an item to ask about:</p>
+                      <button onClick={() => setShowItemPicker(false)} className="text-neutral-400 hover:text-neutral-600">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    
+                    <div className="flex gap-2 mb-2">
+                      <Badge variant="outline" className="text-[10px]">
+                        <Shirt className="w-3 h-3 mr-1" /> Clothing
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px]">
+                        <Gem className="w-3 h-3 mr-1" /> Jewelry
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+                      {clothingItems.slice(0, 10).map(item => (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            setSelectedChatItem({ ...item, itemType: 'clothing' });
+                            setShowItemPicker(false);
+                          }}
+                          className={`flex items-center gap-1 px-2 py-1 rounded-full text-[11px] border transition-all ${
+                            selectedChatItem?.id === item.id 
+                              ? 'bg-purple-100 border-purple-300 text-purple-700' 
+                              : 'bg-white hover:border-purple-200'
+                          }`}
+                        >
+                          <Shirt className="w-3 h-3" />
+                          {item.name}
+                        </button>
+                      ))}
+                      {jewelryItems.slice(0, 10).map(item => (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            setSelectedChatItem({ ...item, itemType: 'jewelry' });
+                            setShowItemPicker(false);
+                          }}
+                          className={`flex items-center gap-1 px-2 py-1 rounded-full text-[11px] border transition-all ${
+                            selectedChatItem?.id === item.id 
+                              ? 'bg-amber-100 border-amber-300 text-amber-700' 
+                              : 'bg-white hover:border-amber-200'
+                          }`}
+                        >
+                          <Gem className="w-3 h-3" />
+                          {item.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            
+            {/* Selected Item Badge */}
+            {selectedChatItem && !showItemPicker && (
+              <div className="mb-2 flex items-center gap-2">
+                <Badge className="bg-purple-100 text-purple-700 gap-1">
+                  {selectedChatItem.itemType === 'jewelry' ? <Gem className="w-3 h-3" /> : <Shirt className="w-3 h-3" />}
+                  Asking about: {selectedChatItem.name}
+                  <button onClick={() => setSelectedChatItem(null)} className="ml-1 hover:text-purple-900">
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              </div>
+            )}
+            
+            {/* Chat Input */}
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowItemPicker(!showItemPicker)}
+                className={`shrink-0 ${showItemPicker ? 'bg-purple-50 border-purple-200' : ''}`}
+                title="Select an item to ask about"
+              >
+                {selectedChatItem?.itemType === 'jewelry' ? <Gem className="w-4 h-4" /> : <Shirt className="w-4 h-4" />}
+              </Button>
+              
               <Input
                 value={styleQuestion}
                 onChange={(e) => setStyleQuestion(e.target.value)}
-                placeholder="Ask a styling question..."
-                onKeyDown={(e) => e.key === 'Enter' && askStyleQuestion()}
+                placeholder={selectedChatItem ? `Ask about ${selectedChatItem.name}...` : "Ask a styling question..."}
+                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && askStyleQuestion()}
                 className="flex-1"
               />
+              
               <Button 
-                onClick={askStyleQuestion}
+                onClick={() => askStyleQuestion()}
                 disabled={!styleQuestion.trim() || loadingChat}
                 size="icon"
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-purple-600 hover:bg-purple-700 shrink-0"
               >
                 <Send className="w-4 h-4" />
               </Button>
             </div>
+            
+            {/* Quick Actions */}
+            {chatHistory.length > 0 && (
+              <div className="flex gap-2 mt-2 pt-2 border-t border-neutral-100">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-neutral-500 h-7"
+                  onClick={() => setChatHistory([])}
+                >
+                  Clear chat
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-neutral-500 h-7 ml-auto"
+                  onClick={() => setShowItemPicker(true)}
+                >
+                  <Lightbulb className="w-3 h-3 mr-1" /> Ask about specific item
+                </Button>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </DialogContent>
