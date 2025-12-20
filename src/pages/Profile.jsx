@@ -7,10 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, User, Heart, Clock, Save, Gem, Bookmark } from "lucide-react";
+import { Loader2, User, Heart, Clock, Save, Gem, Bookmark, Package, Box } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import StyleProfileEditor from '@/components/profile/StyleProfileEditor';
+import OrderList from '@/components/profile/OrderList';
+import JewelryCollection from '@/components/profile/JewelryCollection';
 
 export default function Profile() {
   const { t } = useLanguage();
@@ -170,7 +172,13 @@ export default function Profile() {
           <TabsTrigger value="wishlist" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
             <Bookmark className="w-4 h-4 mr-2" /> {t.profile.wishlist || "Wishlist"}
           </TabsTrigger>
-          </TabsList>
+          <TabsTrigger value="collection" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
+            <Box className="w-4 h-4 mr-2" /> Collection
+          </TabsTrigger>
+          <TabsTrigger value="orders" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
+            <Package className="w-4 h-4 mr-2" /> Orders
+          </TabsTrigger>
+        </TabsList>
 
         {/* Personal Info Tab */}
         <TabsContent value="info">
@@ -314,6 +322,28 @@ export default function Profile() {
               </div>
             )}
           </motion.div>
+        </TabsContent>
+
+        {/* Collection Tab */}
+        <TabsContent value="collection">
+           <motion.div 
+             initial={{ opacity: 0, y: 10 }}
+             animate={{ opacity: 1, y: 0 }}
+             className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm"
+           >
+              <JewelryCollection />
+           </motion.div>
+        </TabsContent>
+
+        {/* Orders Tab */}
+        <TabsContent value="orders">
+           <motion.div 
+             initial={{ opacity: 0, y: 10 }}
+             animate={{ opacity: 1, y: 0 }}
+             className="bg-white p-6 rounded-3xl border border-neutral-100 shadow-sm"
+           >
+              <OrderList />
+           </motion.div>
         </TabsContent>
       </Tabs>
     </div>
