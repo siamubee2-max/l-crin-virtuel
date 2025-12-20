@@ -12,6 +12,7 @@ import Stylists from './pages/Stylists';
 import StylistProfile from './pages/StylistProfile';
 import Lookbook from './pages/Lookbook';
 import SearchResults from './pages/SearchResults';
+import ProductDetail from './pages/ProductDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -30,6 +31,7 @@ export const PAGES = {
     "StylistProfile": StylistProfile,
     "Lookbook": Lookbook,
     "SearchResults": SearchResults,
+    "ProductDetail": ProductDetail,
 }
 
 export const pagesConfig = {
