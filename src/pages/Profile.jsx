@@ -272,11 +272,16 @@ export default function Profile() {
                          </div>
                       </div>
                       <div className="p-4">
-                         <h3 className="font-medium text-neutral-900 truncate">{item.name}</h3>
-                         <p className="text-xs text-neutral-500">{item.brand || item.type}</p>
+                       <h3 className="font-medium text-neutral-900 truncate">{item.name}</h3>
+                       <p className="text-xs text-neutral-500">{item.brand || item.type}</p>
+                       <Link to={createPageUrl("JewelryBox") + `?item=${item.id}`}>
+                         <Button variant="outline" size="sm" className="w-full mt-3 text-xs">
+                            View Item
+                         </Button>
+                       </Link>
                       </div>
-                   </div>
-                 ))}
+                      </div>
+                      ))}
               </div>
             )}
           </motion.div>

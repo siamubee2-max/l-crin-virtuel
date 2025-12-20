@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, ArrowRight, Lightbulb, TrendingUp } from "lucide-react";
+import { Loader2, Sparkles, ArrowRight, Lightbulb, TrendingUp, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import { Link } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { createPageUrl } from '@/utils';
 
 export default function StyleFeed() {
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [dailyTip, setDailyTip] = useState(null);
   const [tipLoading, setTipLoading] = useState(true);
 
@@ -30,6 +31,27 @@ export default function StyleFeed() {
     queryKey: ['clothingItems'],
     queryFn: () => base44.entities.ClothingItem.list(),
   });
+
+  // Fetch Wishlist for toggle status
+  const { data: myWishlist } = useQuery({
+    queryKey: ['myWishlist'],
+    queryFn: () => base44.entities.WishlistItem.list()
+  });
+
+  const toggleWishlist = async (e, itemId) => {
+    e.preventDefault(); 
+    e.stopPropagation();
+    const existing = myWishlist?.find(w => w.jewelry_item_id === itemId);
+    
+    if (existing) {
+      await base44.entities.WishlistItem.delete(existing.id);
+    } else {
+      await base44.entities.WishlistItem.create({ jewelry_item_id: itemId });
+    }
+    queryClient.invalidateQueries({ queryKey: ['myWishlist'] });
+  };
+
+  const isWishlisted = (itemId) => myWishlist?.some(w => w.jewelry_item_id === itemId);
 
   // 3. Generate AI Daily Tip
   useEffect(() => {
@@ -181,6 +203,12 @@ export default function StyleFeed() {
               >
                 <div className="aspect-square bg-neutral-50 relative overflow-hidden">
                   <img src={item.image_url} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <button
+                    onClick={(e) => toggleWishlist(e, item.id)}
+                    className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white text-neutral-400 hover:text-red-500 transition-colors shadow-sm"
+                  >
+                    <Heart className={`w-4 h-4 ${isWishlisted(item.id) ? "fill-red-500 text-red-500" : ""}`} />
+                  </button>
                 </div>
                 <div className="p-4">
                   <h3 className="font-medium text-neutral-900 truncate">{item.name}</h3>
