@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useCart } from '@/components/cart/CartProvider';
-import ReviewSection from '@/components/reviews/ReviewSection';
+import ReviewSection from '@/components/reviews/ProductReviewSection';
 
 export default function ProductDetail() {
   const navigate = useNavigate();
