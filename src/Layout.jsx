@@ -44,13 +44,14 @@ function LayoutContent({ children }) {
     { label: t.nav.wardrobe, icon: User, path: "/Wardrobe" },
     { label: t.nav.closet, icon: Shirt, path: "/Closet" },
     { label: t.nav.jewelryBox, icon: Box, path: "/JewelryBox" },
+    { label: "Brands", icon: Star, path: "/BrandPartnerships" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
     { label: "Orders", icon: Package, path: "/Orders" },
-    { label: "Stylists", icon: Star, path: "/Stylists" },
   ];
 
   if (currentUser?.role === 'admin') {
     navItems.push({ label: "Admin", icon: ShieldCheck, path: "/AdminOrders" });
+    navItems.push({ label: "Partnerships", icon: Star, path: "/AdminPartnerships" });
   }
 
   const languages = [

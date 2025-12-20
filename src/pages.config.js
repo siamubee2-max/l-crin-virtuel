@@ -13,6 +13,9 @@ import StylistProfile from './pages/StylistProfile';
 import Lookbook from './pages/Lookbook';
 import SearchResults from './pages/SearchResults';
 import ProductDetail from './pages/ProductDetail';
+import BrandPartnerships from './pages/BrandPartnerships';
+import ShopTheLook from './pages/ShopTheLook';
+import AdminPartnerships from './pages/AdminPartnerships';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +35,9 @@ export const PAGES = {
     "Lookbook": Lookbook,
     "SearchResults": SearchResults,
     "ProductDetail": ProductDetail,
+    "BrandPartnerships": BrandPartnerships,
+    "ShopTheLook": ShopTheLook,
+    "AdminPartnerships": AdminPartnerships,
 }
 
 export const pagesConfig = {
