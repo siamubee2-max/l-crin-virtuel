@@ -1076,10 +1076,30 @@ export const LanguageProvider = ({ children }) => {
     }
   };
 
+  // Persistent User Preferences (for non-logged in users or local settings)
+  const [preferences, setPreferencesState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('user_preferences');
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) {
+      return {};
+    }
+  });
+
+  const setPreference = (key, value) => {
+    setPreferencesState(prev => {
+      const newPrefs = { ...prev, [key]: value };
+      try {
+        localStorage.setItem('user_preferences', JSON.stringify(newPrefs));
+      } catch (e) {}
+      return newPrefs;
+    });
+  };
+
   const t = translations[language];
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, preferences, setPreference }}>
       {children}
     </LanguageContext.Provider>
   );
