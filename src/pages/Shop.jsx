@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
-import { Loader2, ShoppingBag, Heart, Eye } from "lucide-react";
+import { Loader2, ShoppingBag, Heart, Eye, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import SalesBadge from '@/components/jewelry/SalesBadge';
@@ -179,13 +179,23 @@ export default function Shop() {
                            <span className="font-bold text-neutral-900">${item.price}</span>
                         )}
                      </div>
-                     <Button 
-                        size="sm" 
-                        className="bg-neutral-900 text-white hover:bg-neutral-800 rounded-full h-8 px-4"
-                        onClick={(e) => { e.stopPropagation(); addToCart(item); }}
-                     >
-                        <ShoppingBag className="w-3 h-3 mr-2" /> {t.common?.add || "Ajouter"}
-                     </Button>
+                     {item.affiliate_url ? (
+                       <Button 
+                          size="sm" 
+                          className="bg-amber-600 text-white hover:bg-amber-700 rounded-full h-8 px-4"
+                          onClick={(e) => { e.stopPropagation(); window.open(item.affiliate_url, '_blank'); }}
+                       >
+                          <ExternalLink className="w-3 h-3 mr-2" /> {t.common?.visit || "Voir"}
+                       </Button>
+                     ) : (
+                       <Button 
+                          size="sm" 
+                          className="bg-neutral-900 text-white hover:bg-neutral-800 rounded-full h-8 px-4"
+                          onClick={(e) => { e.stopPropagation(); addToCart(item); }}
+                       >
+                          <ShoppingBag className="w-3 h-3 mr-2" /> {t.common?.add || "Ajouter"}
+                       </Button>
+                     )}
                   </div>
                 </div>
               </motion.div>
@@ -240,12 +250,29 @@ export default function Shop() {
                    </div>
 
                    <div className="flex gap-3 pt-4">
-                      <Button 
-                        className="flex-1 bg-neutral-900 text-white h-12 text-lg"
-                        onClick={() => { addToCart(detailItem); setDetailItem(null); }}
-                      >
-                        <ShoppingBag className="w-5 h-5 mr-2" /> Ajouter au panier
-                      </Button>
+                      {detailItem.affiliate_url ? (
+                        <Button 
+                          className="flex-1 bg-amber-600 hover:bg-amber-700 text-white h-12 text-lg"
+                          onClick={() => window.open(detailItem.affiliate_url, '_blank')}
+                        >
+                          <ExternalLink className="w-5 h-5 mr-2" /> Acheter sur {detailItem.brand || "le site partenaire"}
+                        </Button>
+                      ) : (
+                        <>
+                          <Button 
+                            className="flex-1 bg-neutral-900 text-white h-12 text-lg"
+                            onClick={() => { addToCart(detailItem); setDetailItem(null); }}
+                          >
+                            <ShoppingBag className="w-5 h-5 mr-2" /> Ajouter au panier
+                          </Button>
+                          <Button 
+                            className="flex-1 bg-white text-neutral-900 border border-neutral-200 h-12 text-lg"
+                            onClick={handleBuyNow}
+                          >
+                            Acheter maintenant
+                          </Button>
+                        </>
+                      )}
                       <Button
                         variant="outline"
                         size="icon"
