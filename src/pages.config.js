@@ -10,6 +10,7 @@ import AdminOrders from './pages/AdminOrders';
 import Checkout from './pages/Checkout';
 import Shop from './pages/Shop';
 import StyleAdvisor from './pages/StyleAdvisor';
+import OutfitStudio from './pages/OutfitStudio';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +27,7 @@ export const PAGES = {
     "Checkout": Checkout,
     "Shop": Shop,
     "StyleAdvisor": StyleAdvisor,
+    "OutfitStudio": OutfitStudio,
 }
 
 export const pagesConfig = {
