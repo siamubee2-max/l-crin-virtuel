@@ -499,25 +499,40 @@ export default function JewelryBox() {
          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
            <DialogHeader>
              <div className="flex items-center justify-between pr-8">
-               <DialogTitle className="font-serif text-2xl">{detailItem?.name}</DialogTitle>
-               {detailItem && (
-                 <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => toggleWishlist(e, detailItem.id)}
-                    className="text-neutral-500 hover:text-red-500 hover:bg-red-50"
-                  >
-                    <Heart className={`w-6 h-6 ${isWishlisted(detailItem.id) ? "fill-red-500 text-red-500" : ""}`} />
-                  </Button>
-               )}
+               <DialogTitle className="font-serif text-2xl">{isEditing ? "Edit Item" : detailItem?.name}</DialogTitle>
+               <div className="flex gap-2">
+                 {!isEditing && detailItem && (
+                   <>
+                     <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setEditItemData({...detailItem});
+                          setIsEditing(true);
+                        }}
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => toggleWishlist(e, detailItem.id)}
+                        className="text-neutral-500 hover:text-red-500 hover:bg-red-50"
+                      >
+                        <Heart className={`w-6 h-6 ${isWishlisted(detailItem.id) ? "fill-red-500 text-red-500" : ""}`} />
+                      </Button>
+                   </>
+                 )}
+               </div>
              </div>
            </DialogHeader>
 
-           {detailItem && (
+           {detailItem && !isEditing ? (
              <div className="grid md:grid-cols-2 gap-8 py-4">
                 <div className="space-y-4">
-                  <div className="aspect-square bg-neutral-50 rounded-xl overflow-hidden">
+                  <div className="aspect-square bg-neutral-50 rounded-xl overflow-hidden relative">
                      <img src={detailItem.image_url} alt={detailItem.name} className="w-full h-full object-cover" />
+                     <SalesBadge price={detailItem.price} salePrice={detailItem.sale_price} endDate={detailItem.sale_end_date} />
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {detailItem.tags?.map((tag, i) => (
@@ -527,6 +542,26 @@ export default function JewelryBox() {
                 </div>
 
                 <div className="space-y-6">
+                   <div className="bg-neutral-50 p-4 rounded-xl">
+                      <div className="flex items-end gap-2 mb-2">
+                         {detailItem.sale_price && detailItem.sale_price < detailItem.price ? (
+                           <>
+                             <span className="text-2xl font-bold text-red-600">${detailItem.sale_price}</span>
+                             <span className="text-sm text-neutral-400 line-through">${detailItem.price}</span>
+                           </>
+                         ) : detailItem.price ? (
+                           <span className="text-2xl font-bold">${detailItem.price}</span>
+                         ) : (
+                           <span className="text-sm text-neutral-400 italic">Price not set</span>
+                         )}
+                      </div>
+                      {detailItem.sale_end_date && detailItem.sale_price && (
+                         <p className="text-xs text-amber-600 flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> Sale ends: {format(new Date(detailItem.sale_end_date), "PPP")}
+                         </p>
+                      )}
+                   </div>
+
                    <div>
                       <h4 className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-1">Details</h4>
                       <div className="space-y-2 text-sm">
@@ -581,7 +616,75 @@ export default function JewelryBox() {
                    </div>
                 </div>
              </div>
-           )}
+           ) : isEditing && editItemData ? (
+             <div className="space-y-6 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                     <Label>Name</Label>
+                     <Input value={editItemData.name} onChange={(e) => setEditItemData({...editItemData, name: e.target.value})} />
+                   </div>
+                   <div className="space-y-2">
+                     <Label>Brand</Label>
+                     <Input value={editItemData.brand} onChange={(e) => setEditItemData({...editItemData, brand: e.target.value})} />
+                   </div>
+                </div>
+
+                {/* Sales Management Section */}
+                <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 space-y-4">
+                   <h3 className="font-medium text-amber-800 flex items-center gap-2"><Percent className="w-4 h-4" /> Sales Management</h3>
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                         <Label>Regular Price ($)</Label>
+                         <Input 
+                           type="number"
+                           value={editItemData.price || ""}
+                           onChange={(e) => setEditItemData({...editItemData, price: parseFloat(e.target.value)})}
+                         />
+                      </div>
+                      <div className="space-y-2">
+                         <Label>Sale Price ($)</Label>
+                         <Input 
+                           type="number"
+                           value={editItemData.sale_price || ""}
+                           onChange={(e) => setEditItemData({...editItemData, sale_price: parseFloat(e.target.value)})}
+                         />
+                      </div>
+                   </div>
+                   <div className="space-y-2">
+                      <Label>Sale End Date</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className="w-full justify-start text-left font-normal bg-white"
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {editItemData.sale_end_date ? format(new Date(editItemData.sale_end_date), "PPP") : <span>Pick a date</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={editItemData.sale_end_date ? new Date(editItemData.sale_end_date) : undefined}
+                            onSelect={(date) => setEditItemData({...editItemData, sale_end_date: date ? date.toISOString() : ""})}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                   </div>
+                </div>
+
+                <div className="space-y-2">
+                   <Label>Description</Label>
+                   <Textarea value={editItemData.description} onChange={(e) => setEditItemData({...editItemData, description: e.target.value})} />
+                </div>
+
+                <div className="flex gap-2 justify-end">
+                   <Button variant="ghost" onClick={() => setIsEditing(false)}>Cancel</Button>
+                   <Button onClick={() => updateMutation.mutate({ id: detailItem.id, data: editItemData })}>Save Changes</Button>
+                </div>
+             </div>
+           ) : null}
          </DialogContent>
       </Dialog>
 
