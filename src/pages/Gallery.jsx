@@ -148,7 +148,7 @@ export default function Gallery() {
                     className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-neutral-100 flex flex-col"
                   >
                     {/* Image Container */}
-                    <div className="relative aspect-[4/5] overflow-hidden bg-neutral-100">
+                    <div className="relative aspect-square overflow-hidden bg-neutral-100">
                       <img 
                         src={creation.result_image_url} 
                         alt="Creation result"
