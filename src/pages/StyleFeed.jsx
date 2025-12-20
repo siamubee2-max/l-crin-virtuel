@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
 export default function StyleFeed() {
-  const { t } = useLanguage();
+  const { t, preferences, setPreference } = useLanguage();
   const queryClient = useQueryClient();
   const [dailyTip, setDailyTip] = useState(null);
   const [tipLoading, setTipLoading] = useState(true);
@@ -53,33 +53,42 @@ export default function StyleFeed() {
 
   const isWishlisted = (itemId) => myWishlist?.some(w => w.jewelry_item_id === itemId);
 
-  // 3. Generate AI Daily Tip
+  // 3. Generate AI Daily Tip with Caching
   useEffect(() => {
     const generateTip = async () => {
-      if (!user) return;
-      
-      const prefs = user.style_preferences || {};
-      const colors = prefs.favorite_colors?.join(", ") || "neutrals";
-      const occasions = prefs.frequent_occasions?.join(", ") || "everyday life";
-      const types = prefs.favorite_jewelry_types?.join(", ") || "jewelry";
-      
-      const aesthetics = prefs.aesthetics?.join(", ") || "general";
-      const styleType = prefs.jewelry_preference_type || "balanced";
-      const metals = prefs.preferred_metals?.join(", ") || "any metal";
+      const today = new Date().toDateString();
+      const cached = preferences.daily_tip;
+
+      // Use cache if valid and matches today (and user matches if logged in, but simple date check is fine for feed)
+      if (cached && cached.date === today && cached.content) {
+        setDailyTip(cached.content);
+        setTipLoading(false);
+        return;
+      }
+
+      // Determine context (User or Local)
+      const context = user?.style_preferences || preferences.style_context || {
+        favorite_colors: ["Classic"],
+        aesthetics: ["Timeless"],
+        jewelry_preference_type: "Elegant"
+      };
 
       const prompt = `
         You are a high-end fashion editor.
         User Profile:
-        - Favorite Colors: ${colors}
-        - Occasions: ${occasions}
-        - Loves: ${types}
-        - Aesthetics: ${aesthetics}
-        - Preference: ${styleType}
-        - Metals: ${metals}
-        - Bio: ${user.bio || "Fashion enthusiast"}
+        - Colors: ${context.favorite_colors?.join(", ") || "neutral"}
+        - Aesthetics: ${context.aesthetics?.join(", ") || "chic"}
+        - Vibe: ${context.jewelry_preference_type || "balanced"}
 
-        Generate a short, inspiring "Daily Style Tip" (max 2 sentences) and a "Trend Alert" (1 sentence) relevant to this user's specific aesthetics and style.
-        Format as JSON: { "tip": "...", "trend": "..." }
+        1. Generate a "Daily Style Tip" (max 2 sentences).
+        2. Generate a "Trend Alert" (1 sentence).
+        3. Suggest 3 specific visual keywords/attributes for items to wear (e.g. "gold hoop", "red silk", "chunky silver").
+
+        Format as JSON: { 
+          "tip": "...", 
+          "trend": "...",
+          "keywords": ["...", "...", "..."]
+        }
       `;
 
       try {
@@ -89,16 +98,22 @@ export default function StyleFeed() {
             type: "object",
             properties: {
               tip: { type: "string" },
-              trend: { type: "string" }
+              trend: { type: "string" },
+              keywords: { type: "array", items: { type: "string" } }
             }
           }
         });
-        setDailyTip(response);
+        
+        if (response) {
+          setDailyTip(response);
+          setPreference('daily_tip', { date: today, content: response });
+        }
       } catch (err) {
         console.error("Tip generation failed", err);
         setDailyTip({
           tip: "Elegance is the only beauty that never fades.",
-          trend: "Gold layering is back in season."
+          trend: "Gold layering is back in season.",
+          keywords: ["gold", "classic", "minimalist"]
         });
       } finally {
         setTipLoading(false);
@@ -106,34 +121,47 @@ export default function StyleFeed() {
     };
 
     generateTip();
-  }, [user]);
+  }, [user, preferences.daily_tip?.date]);
 
   // Recommendation Logic
-  const getRecommendedJewelry = () => {
-    if (!jewelryItems || !user) return [];
-    const prefs = user.style_preferences || {};
-    const favTypes = prefs.favorite_jewelry_types || [];
-    const favColors = prefs.favorite_colors || [];
+  const scoreItem = (item) => {
+    let score = 0;
+    const text = `${item.name} ${item.description || ''} ${item.tags?.join(" ") || ''} ${item.material || ''} ${item.color || ''}`.toLowerCase();
+    
+    // Keyword match from AI
+    dailyTip?.keywords?.forEach(k => {
+      if (text.includes(k.toLowerCase())) score += 3;
+    });
 
-    // Simple matching algorithm
-    return jewelryItems.filter(item => {
-      if (favTypes.length === 0) return true; // Show all if no prefs
-      // Check type match
-      const typeMatch = favTypes.some(t => 
-        t.toLowerCase().includes(item.type) || 
-        (item.type === 'necklace' && t.includes('Colliers')) ||
-        (item.type === 'earrings' && t.includes('Boucles')) ||
-        (item.type === 'ring' && t.includes('Bagues')) ||
-        (item.type === 'bracelet' && t.includes('Bracelets'))
-      );
-      return typeMatch;
-    }).slice(0, 4); // Limit to 4
+    // User preference match (if logged in)
+    if (user?.style_preferences) {
+      const prefs = user.style_preferences;
+      if (prefs.favorite_colors?.some(c => text.includes(c.toLowerCase()))) score += 1;
+      if (item.type && prefs.favorite_jewelry_types?.some(t => t.toLowerCase().includes(item.type))) score += 2;
+    }
+
+    // Affiliate Boost
+    if (item.affiliate_link) score += 5;
+
+    return score;
+  };
+
+  const getRecommendedJewelry = () => {
+    if (!jewelryItems) return [];
+    return [...jewelryItems]
+      .map(item => ({ item, score: scoreItem(item) }))
+      .sort((a, b) => b.score - a.score)
+      .map(x => x.item)
+      .slice(0, 4);
   };
 
   const getRecommendedClothing = () => {
-    if (!clothingItems || !user) return [];
-    // Just return some random items for now if no specific clothing logic is defined
-    return clothingItems.slice(0, 4);
+    if (!clothingItems) return [];
+    return [...clothingItems]
+      .map(item => ({ item, score: scoreItem(item) }))
+      .sort((a, b) => b.score - a.score)
+      .map(x => x.item)
+      .slice(0, 4);
   };
 
   const recommendedJewelry = getRecommendedJewelry();
@@ -205,19 +233,42 @@ export default function StyleFeed() {
                   <img src={item.image_url} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <button
                     onClick={(e) => toggleWishlist(e, item.id)}
-                    className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white text-neutral-400 hover:text-red-500 transition-colors shadow-sm"
+                    className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white text-neutral-400 hover:text-red-500 transition-colors shadow-sm z-10"
                   >
                     <Heart className={`w-4 h-4 ${isWishlisted(item.id) ? "fill-red-500 text-red-500" : ""}`} />
                   </button>
+                  {item.affiliate_link && (
+                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex justify-center">
+                       <a 
+                          href={item.affiliate_link} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="w-full"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Button size="sm" className="w-full bg-white text-neutral-900 hover:bg-neutral-100 font-medium">
+                            Shop Now
+                          </Button>
+                        </a>
+                    </div>
+                  )}
                 </div>
                 <div className="p-4">
                   <h3 className="font-medium text-neutral-900 truncate">{item.name}</h3>
                   <p className="text-xs text-neutral-500 capitalize mb-3">{item.type}</p>
-                  <Link to={createPageUrl("Studio")}>
-                    <Button size="sm" className="w-full bg-neutral-900 text-white hover:bg-neutral-800">
-                      {t.feed.viewItem}
-                    </Button>
-                  </Link>
+                  {!item.affiliate_link ? (
+                    <Link to={createPageUrl("Studio")}>
+                      <Button size="sm" className="w-full bg-neutral-900 text-white hover:bg-neutral-800">
+                        {t.feed.viewItem}
+                      </Button>
+                    </Link>
+                  ) : (
+                    <div className="flex gap-2">
+                       <Link to={createPageUrl("Studio")} className="flex-1">
+                          <Button size="sm" variant="outline" className="w-full">Try On</Button>
+                       </Link>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -248,13 +299,29 @@ export default function StyleFeed() {
                       {item.brand || "Brand"}
                     </Badge>
                   </div>
+                  {item.affiliate_link && (
+                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                      <a 
+                        href={item.affiliate_link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full block"
+                      >
+                         <Button size="sm" className="w-full bg-white text-neutral-900 hover:bg-neutral-100 font-medium">
+                            Buy Now
+                         </Button>
+                      </a>
+                    </div>
+                  )}
                 </div>
                 <div className="p-4">
                   <h3 className="font-medium text-neutral-900 truncate">{item.name}</h3>
                   <p className="text-xs text-neutral-500 capitalize mb-3">{item.type} • {item.color}</p>
-                  <Button variant="outline" size="sm" className="w-full">
-                    Suggérer un look
-                  </Button>
+                  {!item.affiliate_link && (
+                    <Button variant="outline" size="sm" className="w-full">
+                      Suggérer un look
+                    </Button>
+                  )}
                 </div>
               </motion.div>
             ))}
