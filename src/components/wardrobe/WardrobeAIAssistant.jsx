@@ -9,12 +9,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sparkles, Shirt, MessageCircle, Loader2, Send, WashingMachine, CheckCircle2, AlertTriangle, Info, Wand2, Gem, User, Bot, Lightbulb, X, ChevronDown } from "lucide-react";
+import { Sparkles, Shirt, MessageCircle, Loader2, Send, WashingMachine, CheckCircle2, AlertTriangle, Info, Wand2, Gem, User, Bot, Lightbulb, X, ChevronDown, ShoppingBag, ExternalLink, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { useCart } from '@/components/cart/CartProvider';
 
 export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems = [] }) {
   const { t } = useLanguage();
+  const { addToCart } = useCart();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("outfits");
   const chatEndRef = useRef(null);
@@ -23,6 +27,17 @@ export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems =
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me().catch(() => null),
+  });
+  
+  // Fetch all available products for recommendations
+  const { data: allJewelry } = useQuery({
+    queryKey: ['allJewelryForReco'],
+    queryFn: () => base44.entities.JewelryItem.list('-created_date'),
+  });
+  
+  const { data: allClothing } = useQuery({
+    queryKey: ['allClothingForReco'],
+    queryFn: () => base44.entities.ClothingItem.list('-created_date'),
   });
   
   // Outfit suggestions state
@@ -78,20 +93,55 @@ export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems =
         `${item.name} (${item.type}, ${item.color || ''} ${item.material || ''} ${item.brand || ''})`
       ).join(", ");
       
+      // Get user style preferences
+      const stylePrefs = user?.style_preferences;
+      const prefsContext = stylePrefs ? `
+User Style Preferences:
+- Favorite colors: ${stylePrefs.favorite_colors?.join(", ") || "not specified"}
+- Preferred metals: ${stylePrefs.preferred_metals?.join(", ") || "not specified"}
+- Aesthetics: ${stylePrefs.aesthetics?.join(", ") || "not specified"}
+- Favorite jewelry types: ${stylePrefs.favorite_jewelry_types?.join(", ") || "not specified"}
+` : "";
+
+      // Build available products context for matching
+      const availableJewelry = allJewelry?.slice(0, 20).map(j => 
+        `ID:${j.id}|${j.name}|${j.type}|${j.metal_type || ''}|${j.gemstone_type || ''}|$${j.sale_price || j.price || 0}`
+      ).join("\n") || "";
+      
+      const availableClothing = allClothing?.slice(0, 20).map(c => 
+        `ID:${c.id}|${c.name}|${c.type}|${c.color || ''}|${c.material || ''}|$${c.price || 0}`
+      ).join("\n") || "";
+      
       const prompt = `You are a professional fashion stylist. Based on these wardrobe items: ${itemDescriptions}
       
-      Occasion: ${occasion || "general everyday wear"}
+Occasion: ${occasion || "general everyday wear"}
+
+${prefsContext}
+
+AVAILABLE PRODUCTS TO RECOMMEND (format: ID|Name|Type|Details|Price):
+
+Jewelry:
+${availableJewelry || "None available"}
+
+Clothing:
+${availableClothing || "None available"}
       
-      Provide styling advice in JSON format:
-      {
-        "outfit_rating": 1-10 rating for how well these items work together,
-        "styling_tips": "2-3 specific tips on how to style these items together",
-        "missing_pieces": ["list of 2-3 items that would complete this look"],
-        "color_advice": "advice on color coordination",
-        "accessories": ["2-3 jewelry or accessory suggestions"],
-        "weather_suitability": "what weather/season this outfit is best for",
-        "do_not": "one thing to avoid with this combination"
-      }`;
+Provide styling advice in JSON format. For recommended_products, ONLY use actual product IDs from the lists above:
+{
+  "outfit_rating": 1-10 rating for how well these items work together,
+  "styling_tips": "2-3 specific tips on how to style these items together",
+  "complete_outfit": {
+    "description": "Description of the complete outfit vision",
+    "clothing_suggestions": ["specific clothing pieces to add"],
+    "jewelry_suggestions": ["specific jewelry pieces to add"]
+  },
+  "recommended_products": [
+    {"id": "actual_product_id_from_list", "type": "jewelry or clothing", "reason": "why this matches"}
+  ],
+  "color_advice": "advice on color coordination based on user preferences",
+  "weather_suitability": "what weather/season this outfit is best for",
+  "do_not": "one thing to avoid with this combination"
+}`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
@@ -100,14 +150,41 @@ export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems =
           properties: {
             outfit_rating: { type: "number" },
             styling_tips: { type: "string" },
-            missing_pieces: { type: "array", items: { type: "string" } },
+            complete_outfit: { 
+              type: "object",
+              properties: {
+                description: { type: "string" },
+                clothing_suggestions: { type: "array", items: { type: "string" } },
+                jewelry_suggestions: { type: "array", items: { type: "string" } }
+              }
+            },
+            recommended_products: { 
+              type: "array", 
+              items: { 
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  type: { type: "string" },
+                  reason: { type: "string" }
+                }
+              } 
+            },
             color_advice: { type: "string" },
-            accessories: { type: "array", items: { type: "string" } },
             weather_suitability: { type: "string" },
             do_not: { type: "string" }
           }
         }
       });
+      
+      // Match recommended product IDs to actual products
+      if (response.recommended_products) {
+        response.matched_products = response.recommended_products.map(rec => {
+          const product = rec.type === 'jewelry' 
+            ? allJewelry?.find(j => j.id === rec.id)
+            : allClothing?.find(c => c.id === rec.id);
+          return product ? { ...product, itemType: rec.type, reason: rec.reason } : null;
+        }).filter(Boolean);
+      }
       
       setOutfitSuggestion(response);
     } catch (error) {
@@ -219,6 +296,12 @@ ${selectedChatItem.gemstone_type ? `- Gemstone: ${selectedChatItem.gemstone_type
         `${m.role === 'user' ? 'User' : 'Stylist'}: ${m.content}`
       ).join("\n");
       
+      // Available products for purchase recommendations
+      const availableProducts = [
+        ...(allJewelry?.slice(0, 10).map(j => `[JEWELRY:${j.id}] ${j.name} - ${j.type}, $${j.sale_price || j.price || 0}`) || []),
+        ...(allClothing?.slice(0, 10).map(c => `[CLOTHING:${c.id}] ${c.name} - ${c.type}, $${c.price || 0}`) || [])
+      ].join("\n");
+      
       const prompt = `You are an expert personal fashion stylist with deep knowledge of jewelry, clothing, and style coordination. You provide personalized, context-aware advice.
 
 ${prefsContext}
@@ -233,6 +316,9 @@ ${jewelryContext || "No jewelry items added yet"}
 
 ${itemContext}
 
+AVAILABLE PRODUCTS FOR PURCHASE RECOMMENDATIONS:
+${availableProducts || "No products available"}
+
 CONVERSATION HISTORY:
 ${recentHistory || "This is the start of the conversation."}
 
@@ -246,13 +332,37 @@ INSTRUCTIONS:
 5. If they ask about a specific item, provide detailed styling suggestions for that piece
 6. Include occasion-based recommendations when relevant
 7. Keep responses concise but helpful (2-4 paragraphs max)
-8. Use emojis sparingly for a friendly tone`;
+8. Use emojis sparingly for a friendly tone
+9. When suggesting items to purchase, mention them by name with the format "Check out [Product Name]" so we can link them
+10. If the question relates to completing an outfit, recommend specific purchasable items that would complement their wardrobe`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt
       });
       
-      setChatHistory(prev => [...prev, { role: "assistant", content: response }]);
+      // Parse response for product recommendations
+      const productMatches = [];
+      const jewelryIdPattern = /\[JEWELRY:([^\]]+)\]/g;
+      const clothingIdPattern = /\[CLOTHING:([^\]]+)\]/g;
+      
+      let match;
+      while ((match = jewelryIdPattern.exec(response)) !== null) {
+        const product = allJewelry?.find(j => j.id === match[1]);
+        if (product) productMatches.push({ ...product, itemType: 'jewelry' });
+      }
+      while ((match = clothingIdPattern.exec(response)) !== null) {
+        const product = allClothing?.find(c => c.id === match[1]);
+        if (product) productMatches.push({ ...product, itemType: 'clothing' });
+      }
+      
+      // Clean response of ID tags
+      const cleanedResponse = response.replace(/\[(JEWELRY|CLOTHING):[^\]]+\]/g, '');
+      
+      setChatHistory(prev => [...prev, { 
+        role: "assistant", 
+        content: cleanedResponse,
+        products: productMatches.length > 0 ? productMatches : undefined
+      }]);
       setSelectedChatItem(null);
     } catch (error) {
       console.error("Failed to get styling advice", error);
@@ -377,28 +487,78 @@ INSTRUCTIONS:
                       <p className="text-neutral-600">{outfitSuggestion.styling_tips}</p>
                     </div>
                     
+                    {outfitSuggestion.complete_outfit && (
+                      <div className="bg-white rounded-lg p-3 border border-purple-100">
+                        <p className="font-medium text-purple-700 mb-2">👗 Complete Outfit Vision</p>
+                        <p className="text-neutral-600 text-xs mb-2">{outfitSuggestion.complete_outfit.description}</p>
+                        
+                        {outfitSuggestion.complete_outfit.clothing_suggestions?.length > 0 && (
+                          <div className="mb-2">
+                            <p className="text-xs text-neutral-500 mb-1">Add clothing:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {outfitSuggestion.complete_outfit.clothing_suggestions.map((s, i) => (
+                                <span key={i} className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs">{s}</span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {outfitSuggestion.complete_outfit.jewelry_suggestions?.length > 0 && (
+                          <div>
+                            <p className="text-xs text-neutral-500 mb-1">Add jewelry:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {outfitSuggestion.complete_outfit.jewelry_suggestions.map((s, i) => (
+                                <span key={i} className="bg-amber-50 text-amber-700 px-2 py-0.5 rounded text-xs">{s}</span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
                     <div>
                       <p className="font-medium text-purple-700 mb-1">🎨 Color Advice</p>
                       <p className="text-neutral-600">{outfitSuggestion.color_advice}</p>
                     </div>
                     
-                    <div>
-                      <p className="font-medium text-purple-700 mb-1">💎 Accessories</p>
-                      <div className="flex flex-wrap gap-1">
-                        {outfitSuggestion.accessories?.map((acc, i) => (
-                          <span key={i} className="bg-white px-2 py-1 rounded-full text-xs border">{acc}</span>
-                        ))}
+                    {/* Recommended Products to Purchase */}
+                    {outfitSuggestion.matched_products?.length > 0 && (
+                      <div className="bg-white rounded-lg p-3 border border-green-100">
+                        <p className="font-medium text-green-700 mb-3 flex items-center gap-1">
+                          <ShoppingBag className="w-4 h-4" /> Shop Similar Items
+                        </p>
+                        <div className="space-y-2">
+                          {outfitSuggestion.matched_products.map((product, i) => (
+                            <div key={i} className="flex items-center gap-3 p-2 bg-neutral-50 rounded-lg">
+                              <div className="w-12 h-12 rounded-md overflow-hidden bg-white border flex-shrink-0">
+                                <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-xs truncate">{product.name}</p>
+                                <p className="text-[10px] text-neutral-500 truncate">{product.reason}</p>
+                                <p className="text-xs font-bold text-green-600">
+                                  ${product.sale_price || product.price || 0}
+                                </p>
+                              </div>
+                              <div className="flex flex-col gap-1">
+                                <Link to={createPageUrl(`ProductDetail?id=${product.id}&type=${product.itemType}`)}>
+                                  <Button size="sm" variant="outline" className="h-7 text-[10px] px-2">
+                                    <ExternalLink className="w-3 h-3 mr-1" /> View
+                                  </Button>
+                                </Link>
+                                <Button 
+                                  size="sm" 
+                                  className="h-7 text-[10px] px-2 bg-green-600 hover:bg-green-700"
+                                  onClick={() => addToCart(product)}
+                                >
+                                  <ShoppingBag className="w-3 h-3 mr-1" /> Add
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div>
-                      <p className="font-medium text-purple-700 mb-1">🛍️ Missing Pieces</p>
-                      <div className="flex flex-wrap gap-1">
-                        {outfitSuggestion.missing_pieces?.map((piece, i) => (
-                          <span key={i} className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">{piece}</span>
-                        ))}
-                      </div>
-                    </div>
+                    )}
                     
                     <div className="flex gap-4 pt-2 border-t border-purple-100">
                       <div className="flex items-center gap-1 text-xs text-neutral-500">
@@ -578,6 +738,42 @@ INSTRUCTIONS:
                         }`}>
                           {msg.content}
                         </div>
+                        
+                        {/* Product Recommendations in Chat */}
+                        {msg.products && msg.products.length > 0 && (
+                          <div className="bg-green-50 border border-green-100 rounded-xl p-3 mt-2">
+                            <p className="text-xs font-medium text-green-700 mb-2 flex items-center gap-1">
+                              <ShoppingBag className="w-3 h-3" /> Recommended Products
+                            </p>
+                            <div className="space-y-2">
+                              {msg.products.slice(0, 3).map((product, pi) => (
+                                <div key={pi} className="flex items-center gap-2 bg-white rounded-lg p-2">
+                                  <div className="w-10 h-10 rounded overflow-hidden bg-neutral-100 flex-shrink-0">
+                                    <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-xs font-medium truncate">{product.name}</p>
+                                    <p className="text-[10px] text-green-600 font-bold">${product.sale_price || product.price || 0}</p>
+                                  </div>
+                                  <div className="flex gap-1">
+                                    <Link to={createPageUrl(`ProductDetail?id=${product.id}&type=${product.itemType}`)}>
+                                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                        <ExternalLink className="w-3 h-3" />
+                                      </Button>
+                                    </Link>
+                                    <Button 
+                                      size="sm" 
+                                      className="h-6 w-6 p-0 bg-green-600 hover:bg-green-700"
+                                      onClick={() => addToCart(product)}
+                                    >
+                                      <ShoppingBag className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                       
                       {msg.role === 'user' && (
