@@ -528,6 +528,7 @@ export default function JewelryBox() {
           </DialogContent>
         </Dialog>
       </div>
+      </div>
 
       {/* Detail View Dialog */}
       <Dialog open={!!detailItem} onOpenChange={(open) => {
