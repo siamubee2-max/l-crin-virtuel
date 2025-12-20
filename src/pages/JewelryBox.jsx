@@ -22,12 +22,18 @@ export default function JewelryBox() {
   const [analyzing, setAnalyzing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [metalFilter, setMetalFilter] = useState("all");
+  const [gemstoneFilter, setGemstoneFilter] = useState("all");
 
   const [newItem, setNewItem] = useState({
     name: "",
     type: "necklace",
     brand: "",
     material: "",
+    metal_type: "",
+    gemstone_type: "",
+    collection_name: "",
+    material_options: [],
     image_url: "",
     description: "",
     tags: []
@@ -88,6 +94,10 @@ export default function JewelryBox() {
         type: "necklace",
         brand: "",
         material: "",
+        metal_type: "",
+        gemstone_type: "",
+        collection_name: "",
+        material_options: [],
         image_url: "",
         description: "",
         tags: []
@@ -121,11 +131,13 @@ export default function JewelryBox() {
         response_json_schema: {
           type: "object",
           properties: {
-            name: { type: "string" },
-            type: { type: "string" },
-            material: { type: "string" },
-            tags: { type: "array", items: { type: "string" } },
-            description: { type: "string" }
+          name: { type: "string" },
+          type: { type: "string" },
+          material: { type: "string" },
+          metal_type: { type: "string" },
+          gemstone_type: { type: "string" },
+          tags: { type: "array", items: { type: "string" } },
+          description: { type: "string" }
           }
         }
       });
@@ -136,6 +148,8 @@ export default function JewelryBox() {
           name: response.name || prev.name,
           type: response.type || prev.type,
           material: response.material || prev.material,
+          metal_type: response.metal_type || prev.metal_type,
+          gemstone_type: response.gemstone_type || prev.gemstone_type,
           tags: response.tags || [],
           description: response.description || prev.description,
           image_url: imageUrl
@@ -168,11 +182,14 @@ export default function JewelryBox() {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           item.material?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           item.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          item.collection_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           item.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+
     const matchesType = typeFilter === "all" || item.type === typeFilter;
-    
-    return matchesSearch && matchesType;
+    const matchesMetal = metalFilter === "all" || item.metal_type === metalFilter;
+    const matchesGemstone = gemstoneFilter === "all" || (gemstoneFilter === "none" ? !item.gemstone_type : item.gemstone_type?.toLowerCase().includes(gemstoneFilter.toLowerCase()));
+
+    return matchesSearch && matchesType && matchesMetal && matchesGemstone;
   });
 
   return (
@@ -272,12 +289,49 @@ export default function JewelryBox() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>{t.jewelryBox?.fields?.material || "Matière"}</Label>
+                  <Label>Collection</Label>
                   <Input 
-                    value={newItem.material}
-                    onChange={(e) => setNewItem({...newItem, material: e.target.value})}
+                    value={newItem.collection_name}
+                    onChange={(e) => setNewItem({...newItem, collection_name: e.target.value})}
+                    placeholder="e.g. Summer 2024"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                   <Label>Metal Type</Label>
+                   <Select 
+                      value={newItem.metal_type}
+                      onValueChange={(val) => setNewItem({...newItem, metal_type: val})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select metal" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {["Gold", "Silver", "Platinum", "Rose Gold", "White Gold", "Other"].map(m => (
+                          <SelectItem key={m} value={m}>{m}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                </div>
+                <div className="space-y-2">
+                   <Label>Gemstone</Label>
+                   <Input 
+                      value={newItem.gemstone_type}
+                      onChange={(e) => setNewItem({...newItem, gemstone_type: e.target.value})}
+                      placeholder="e.g. Diamond, Ruby"
+                    />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Material Options (comma separated)</Label>
+                <Input 
+                  value={newItem.material_options?.join(", ")}
+                  onChange={(e) => setNewItem({...newItem, material_options: e.target.value.split(",").map(s => s.trim()).filter(Boolean)})}
+                  placeholder="e.g. 18k Gold, Sterling Silver"
+                />
               </div>
 
               <div className="space-y-2">
@@ -375,6 +429,30 @@ export default function JewelryBox() {
                             <span className="text-neutral-500">Material</span>
                             <span className="font-medium">{detailItem.material || "-"}</span>
                          </div>
+                         {detailItem.metal_type && (
+                            <div className="flex justify-between border-b border-neutral-100 pb-1">
+                               <span className="text-neutral-500">Metal</span>
+                               <span className="font-medium">{detailItem.metal_type}</span>
+                            </div>
+                         )}
+                         {detailItem.gemstone_type && (
+                            <div className="flex justify-between border-b border-neutral-100 pb-1">
+                               <span className="text-neutral-500">Gemstone</span>
+                               <span className="font-medium">{detailItem.gemstone_type}</span>
+                            </div>
+                         )}
+                         {detailItem.collection_name && (
+                            <div className="flex justify-between border-b border-neutral-100 pb-1">
+                               <span className="text-neutral-500">Collection</span>
+                               <span className="font-medium">{detailItem.collection_name}</span>
+                            </div>
+                         )}
+                         {detailItem.material_options?.length > 0 && (
+                            <div className="flex justify-between border-b border-neutral-100 pb-1">
+                               <span className="text-neutral-500">Available In</span>
+                               <span className="font-medium text-right">{detailItem.material_options.join(", ")}</span>
+                            </div>
+                         )}
                          <div className="flex justify-between border-b border-neutral-100 pb-1">
                             <span className="text-neutral-500">Type</span>
                             <span className="font-medium capitalize">{detailItem.type}</span>
@@ -399,17 +477,50 @@ export default function JewelryBox() {
       </Dialog>
 
       {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-neutral-100 shadow-sm">
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-          <Input 
-            placeholder={t.jewelryBox?.searchPlaceholder || "Rechercher..."}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border-neutral-200"
-          />
+      <div className="bg-white p-4 rounded-xl border border-neutral-100 shadow-sm space-y-4">
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="relative w-full md:w-96">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+            <Input 
+              placeholder={t.jewelryBox?.searchPlaceholder || "Rechercher..."}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 border-neutral-200"
+            />
+          </div>
+
+          {/* Advanced Filters */}
+          <div className="flex gap-2 flex-wrap">
+             <Select value={metalFilter} onValueChange={setMetalFilter}>
+                <SelectTrigger className="w-[140px] h-9 text-sm">
+                  <SelectValue placeholder="Metal" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Metals</SelectItem>
+                  {["Gold", "Silver", "Platinum", "Rose Gold", "White Gold"].map(m => (
+                    <SelectItem key={m} value={m}>{m}</SelectItem>
+                  ))}
+                </SelectContent>
+             </Select>
+
+             <Select value={gemstoneFilter} onValueChange={setGemstoneFilter}>
+                <SelectTrigger className="w-[140px] h-9 text-sm">
+                  <SelectValue placeholder="Gemstone" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Gems</SelectItem>
+                  <SelectItem value="Diamond">Diamond</SelectItem>
+                  <SelectItem value="Pearl">Pearl</SelectItem>
+                  <SelectItem value="Ruby">Ruby</SelectItem>
+                  <SelectItem value="Sapphire">Sapphire</SelectItem>
+                  <SelectItem value="Emerald">Emerald</SelectItem>
+                  <SelectItem value="none">No Gemstone</SelectItem>
+                </SelectContent>
+             </Select>
+          </div>
         </div>
-        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+
+        <div className="flex gap-2 overflow-x-auto pb-1">
           {[
             { id: "all", label: "Tout" },
             { id: "necklace", label: "Colliers" },

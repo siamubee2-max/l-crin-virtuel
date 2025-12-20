@@ -47,9 +47,17 @@ export default function Studio() {
     queryFn: () => base44.entities.BodyPart.list(),
   });
 
+  const [metalFilter, setMetalFilter] = useState("all");
+
   const { data: catalogItems } = useQuery({
     queryKey: ['jewelryItems'],
     queryFn: () => base44.entities.JewelryItem.list(),
+  });
+
+  const filteredCatalogItems = catalogItems?.filter(item => {
+    const typeMatch = item.type === jewelryType;
+    const metalMatch = metalFilter === "all" || item.metal_type === metalFilter;
+    return typeMatch && metalMatch;
   });
 
   const handleJewelryUpload = async (e) => {
@@ -343,23 +351,39 @@ export default function Studio() {
                         )}
                       </div>
                     ) : (
-                      <div className="flex-1 overflow-y-auto max-h-[300px] border rounded-xl p-2 bg-neutral-50">
+                      <div className="flex-1 overflow-y-auto max-h-[350px] border rounded-xl p-3 bg-neutral-50 flex flex-col gap-3">
+                        <div className="flex gap-2">
+                            <Select value={metalFilter} onValueChange={setMetalFilter}>
+                                <SelectTrigger className="h-8 text-xs w-[130px] bg-white">
+                                    <SelectValue placeholder="Metal" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Metals</SelectItem>
+                                    <SelectItem value="Gold">Gold</SelectItem>
+                                    <SelectItem value="Silver">Silver</SelectItem>
+                                    <SelectItem value="Rose Gold">Rose Gold</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {catalogItems?.filter(i => i.type === jewelryType).map(item => (
+                          {filteredCatalogItems?.map(item => (
                             <div 
                               key={item.id} 
                               className={`bg-white p-2 rounded-lg border cursor-pointer transition-all ${jewelryImage === item.image_url ? 'ring-2 ring-amber-500 border-transparent' : 'hover:border-amber-300'}`}
                               onClick={() => setJewelryImage(item.image_url)}
                             >
-                              <div className="aspect-square rounded-md overflow-hidden bg-neutral-100 mb-2">
+                              <div className="aspect-square rounded-md overflow-hidden bg-neutral-100 mb-2 relative">
                                 <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                                {item.metal_type && <span className="absolute bottom-0 right-0 bg-black/50 text-white text-[10px] px-1">{item.metal_type}</span>}
                               </div>
                               <p className="text-xs font-medium truncate">{item.name}</p>
+                              {item.collection_name && <p className="text-[10px] text-neutral-500 truncate">{item.collection_name}</p>}
                             </div>
                           ))}
                         </div>
-                        {catalogItems?.filter(i => i.type === jewelryType).length === 0 && (
-                          <p className="text-center text-neutral-400 py-10">Aucun bijou de ce type dans votre écrin.</p>
+                        {filteredCatalogItems?.length === 0 && (
+                          <p className="text-center text-neutral-400 py-10">Aucun bijou trouvé.</p>
                         )}
                       </div>
                     )}
