@@ -281,61 +281,157 @@ export default function AdminPartnerships() {
         </TabsContent>
 
         {/* Creators Tab */}
-        <TabsContent value="creators" className="space-y-4">
-          <Card>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Creator</TableHead>
-                  <TableHead>Specialties</TableHead>
-                  <TableHead>Commission</TableHead>
-                  <TableHead>Earnings</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {creators?.map(creator => (
-                  <TableRow key={creator.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-neutral-100 overflow-hidden">
-                          {creator.profile_image ? <img src={creator.profile_image} className="w-full h-full object-cover" /> : creator.display_name?.[0]}
+        <TabsContent value="creators" className="space-y-6">
+          {/* Pending Applications Alert */}
+          {creators?.filter(c => c.status === 'pending').length > 0 && (
+            <Card className="bg-amber-50 border-amber-200">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                      <Users className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-amber-800">
+                        {creators.filter(c => c.status === 'pending').length} Pending Applications
+                      </p>
+                      <p className="text-sm text-amber-600">Review and approve creator applications</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Pending Applications Section */}
+          {creators?.filter(c => c.status === 'pending').length > 0 && (
+            <div className="space-y-4">
+              <h3 className="font-medium text-lg">Pending Review</h3>
+              <div className="grid gap-4">
+                {creators?.filter(c => c.status === 'pending').map(creator => (
+                  <Card key={creator.id} className="border-amber-200">
+                    <CardContent className="pt-6">
+                      <div className="flex flex-col md:flex-row gap-6">
+                        {/* Profile Info */}
+                        <div className="flex items-start gap-4 flex-1">
+                          <div className="w-16 h-16 rounded-full bg-neutral-100 overflow-hidden flex-shrink-0">
+                            {creator.profile_image ? (
+                              <img src={creator.profile_image} className="w-full h-full object-cover" alt="" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-xl font-medium text-neutral-400">
+                                {creator.display_name?.[0]}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-lg">{creator.display_name}</h4>
+                            <p className="text-sm text-neutral-500 mb-2">{creator.created_by}</p>
+                            {creator.bio && (
+                              <p className="text-sm text-neutral-600 line-clamp-2 mb-2">{creator.bio}</p>
+                            )}
+                            {creator.specialties?.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                {creator.specialties.map((s, i) => (
+                                  <Badge key={i} variant="secondary" className="text-xs">{s}</Badge>
+                                ))}
+                              </div>
+                            )}
+                            {creator.social_links && (
+                              <div className="flex gap-3 mt-3 text-xs text-neutral-500">
+                                {creator.social_links.instagram && <span>IG: @{creator.social_links.instagram}</span>}
+                                {creator.social_links.tiktok && <span>TT: @{creator.social_links.tiktok}</span>}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <span className="font-medium">{creator.display_name}</span>
-                        {creator.verified && <Badge className="bg-blue-500 text-white text-[8px]">✓</Badge>}
+                        
+                        {/* Actions */}
+                        <div className="flex md:flex-col gap-2 md:w-32">
+                          <Button 
+                            className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                            onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'approved' } })}
+                          >
+                            <CheckCircle2 className="w-4 h-4 mr-1" /> Approve
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                            onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'suspended' } })}
+                          >
+                            <XCircle className="w-4 h-4 mr-1" /> Reject
+                          </Button>
+                        </div>
                       </div>
-                    </TableCell>
-                    <TableCell>{creator.specialties?.slice(0, 2).join(', ')}</TableCell>
-                    <TableCell>{creator.commission_rate}%</TableCell>
-                    <TableCell>${creator.total_earnings?.toFixed(2) || '0.00'}</TableCell>
-                    <TableCell>
-                      <Badge className={creator.status === 'approved' ? 'bg-green-100 text-green-700' : creator.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}>
-                        {creator.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right space-x-1">
-                      {creator.status === 'pending' && (
-                        <>
-                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'approved' } })}>
-                            Approve
-                          </Button>
-                          <Button size="sm" variant="ghost" className="h-7 text-xs text-red-500" onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'suspended' } })}>
-                            Reject
-                          </Button>
-                        </>
-                      )}
-                      {creator.status === 'approved' && (
-                        <Button size="sm" variant="ghost" className="h-7" onClick={() => updateCreator.mutate({ id: creator.id, data: { verified: !creator.verified } })}>
-                          {creator.verified ? 'Unverify' : 'Verify'}
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
+                    </CardContent>
+                  </Card>
                 ))}
-              </TableBody>
-            </Table>
-          </Card>
+              </div>
+            </div>
+          )}
+
+          {/* All Creators Table */}
+          <div className="space-y-4">
+            <h3 className="font-medium text-lg">All Creators</h3>
+            <Card>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Creator</TableHead>
+                    <TableHead>Specialties</TableHead>
+                    <TableHead>Commission</TableHead>
+                    <TableHead>Earnings</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {creators?.map(creator => (
+                    <TableRow key={creator.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-neutral-100 overflow-hidden">
+                            {creator.profile_image ? <img src={creator.profile_image} className="w-full h-full object-cover" alt="" /> : creator.display_name?.[0]}
+                          </div>
+                          <span className="font-medium">{creator.display_name}</span>
+                          {creator.verified && <Badge className="bg-blue-500 text-white text-[8px]">✓</Badge>}
+                        </div>
+                      </TableCell>
+                      <TableCell>{creator.specialties?.slice(0, 2).join(', ') || '-'}</TableCell>
+                      <TableCell>{creator.commission_rate || 10}%</TableCell>
+                      <TableCell>${creator.total_earnings?.toFixed(2) || '0.00'}</TableCell>
+                      <TableCell>
+                        <Badge className={creator.status === 'approved' ? 'bg-green-100 text-green-700' : creator.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}>
+                          {creator.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right space-x-1">
+                        {creator.status === 'pending' && (
+                          <>
+                            <Button size="sm" variant="outline" className="h-7 text-xs text-green-600" onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'approved' } })}>
+                              Approve
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs text-red-500" onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'suspended' } })}>
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                        {creator.status === 'approved' && (
+                          <Button size="sm" variant="ghost" className="h-7" onClick={() => updateCreator.mutate({ id: creator.id, data: { verified: !creator.verified } })}>
+                            {creator.verified ? 'Unverify' : 'Verify'}
+                          </Button>
+                        )}
+                        {creator.status === 'suspended' && (
+                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'approved' } })}>
+                            Reinstate
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* Collections Tab */}

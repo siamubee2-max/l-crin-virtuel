@@ -16,6 +16,7 @@ import ProductDetail from './pages/ProductDetail';
 import BrandPartnerships from './pages/BrandPartnerships';
 import ShopTheLook from './pages/ShopTheLook';
 import AdminPartnerships from './pages/AdminPartnerships';
+import CreatorOnboarding from './pages/CreatorOnboarding';
 import __Layout from './Layout.jsx';
 
 
@@ -38,6 +39,7 @@ export const PAGES = {
     "BrandPartnerships": BrandPartnerships,
     "ShopTheLook": ShopTheLook,
     "AdminPartnerships": AdminPartnerships,
+    "CreatorOnboarding": CreatorOnboarding,
 }
 
 export const pagesConfig = {
