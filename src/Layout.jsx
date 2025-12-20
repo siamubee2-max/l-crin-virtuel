@@ -41,6 +41,7 @@ function LayoutContent({ children }) {
     { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
     { label: "AI Advisor", icon: Lightbulb, path: "/StyleAdvisor" },
     { label: "Community", icon: Users, path: "/Community" },
+    { label: "Stylists", icon: Sparkles, path: "/Stylists" },
     { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
     { label: t.nav.gallery, icon: Gem, path: "/" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
