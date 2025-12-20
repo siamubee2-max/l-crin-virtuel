@@ -114,7 +114,7 @@ export default function Checkout() {
                     <Button onClick={() => navigate(createPageUrl('Orders'))} variant="outline" className="bg-white">
                       View Order
                     </Button>
-                    <Button onClick={() => navigate(createPageUrl('Shop'))} className="bg-green-700 hover:bg-green-800 text-white">
+                    <Button onClick={() => navigate(createPageUrl('Gallery'))} className="bg-green-700 hover:bg-green-800 text-white">
                       Continue Shopping
                     </Button>
                  </div>

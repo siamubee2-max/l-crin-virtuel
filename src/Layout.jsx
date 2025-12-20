@@ -37,11 +37,14 @@ function LayoutContent({ children }) {
   });
 
   const navItems = [
-    { label: t.nav.shop || "Boutique", icon: ShoppingBag, path: "/Shop" },
     { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
-    { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
     { label: t.nav.gallery, icon: Gem, path: "/" },
+    { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
+    { label: t.nav.wardrobe, icon: User, path: "/Wardrobe" },
+    { label: t.nav.closet, icon: Shirt, path: "/Closet" },
+    { label: t.nav.jewelryBox, icon: Box, path: "/JewelryBox" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
+    { label: "Orders", icon: Package, path: "/Orders" },
   ];
 
   if (currentUser?.role === 'admin') {
@@ -71,17 +74,12 @@ function LayoutContent({ children }) {
           
           {/* Logo */}
           <Link to={createPageUrl("Gallery")} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-amber-500 text-white flex items-center justify-center rounded-full font-serif text-xl">
-              M
+            <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center rounded-sm font-serif text-xl">
+              É
             </div>
-            <div className="flex flex-col -gap-1">
-              <span className="font-serif text-xl tracking-tight font-medium group-hover:text-amber-600 transition-colors">
-                Moni'attitude
-              </span>
-              <span className="text-[10px] text-neutral-400 tracking-widest uppercase hidden md:block">
-                Bijoux artisanaux uniques
-              </span>
-            </div>
+            <span className="font-serif text-xl tracking-tight font-medium group-hover:text-amber-600 transition-colors">
+              L'Écrin Virtuel
+            </span>
           </Link>
 
           {/* Desktop Menu */}

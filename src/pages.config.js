@@ -8,7 +8,6 @@ import StyleFeed from './pages/StyleFeed';
 import Orders from './pages/Orders';
 import AdminOrders from './pages/AdminOrders';
 import Checkout from './pages/Checkout';
-import Shop from './pages/Shop';
 import __Layout from './Layout.jsx';
 
 
@@ -23,7 +22,6 @@ export const PAGES = {
     "Orders": Orders,
     "AdminOrders": AdminOrders,
     "Checkout": Checkout,
-    "Shop": Shop,
 }
 
 export const pagesConfig = {

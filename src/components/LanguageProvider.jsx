@@ -3,7 +3,6 @@ import React, { createContext, useState, useContext } from 'react';
 const translations = {
   fr: {
     nav: {
-      shop: "Boutique",
       gallery: "Galerie",
       studio: "L'Atelier",
       wardrobe: "Ma Bibliothèque",
@@ -12,11 +11,6 @@ const translations = {
       profile: "Mon Profil",
       feed: "Style Feed"
       },
-    shop: {
-      title: "La Boutique",
-      subtitle: "Découvrez nos créations uniques faites main.",
-      addToCart: "Ajouter au panier"
-    },
       profile: {
       title: "Mon Profil",
       subtitle: "Gérez vos informations personnelles et vos préférences de style.",
@@ -37,7 +31,7 @@ const translations = {
       noCreations: "Vous n'avez pas encore créé d'essayages."
       },
       common: {
-      footer: "Moni'attitude © 2025 — Bijoux artisanaux uniques & Ateliers",
+      footer: "L'Écrin Virtuel © 2024 — Luxe & Technologie",
       loading: "Chargement...",
       save: "Enregistrer",
       saving: "Enregistrement...",
@@ -240,7 +234,6 @@ const translations = {
         },
   en: {
     nav: {
-      shop: "Shop",
       gallery: "Gallery",
       studio: "The Studio",
       wardrobe: "My Wardrobe",
@@ -248,11 +241,6 @@ const translations = {
       jewelryBox: "My Jewelry Box",
       feed: "Style Feed"
       },
-    shop: {
-      title: "The Boutique",
-      subtitle: "Discover our unique handcrafted creations.",
-      addToCart: "Add to cart"
-    },
     profile: {
       title: "My Profile",
       subtitle: "Manage your personal information and style preferences.",
@@ -273,7 +261,7 @@ const translations = {
       noCreations: "You haven't created any try-ons yet."
     },
     common: {
-      footer: "Moni'attitude © 2025 — Unique Handcrafted Jewelry & Workshops",
+      footer: "The Virtual Jewelry Box © 2024 — Luxury & Technology",
       loading: "Loading...",
       save: "Save",
       saving: "Saving...",
