@@ -12,6 +12,8 @@ import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/LanguageProvider';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
+import TryOnEditor from '@/components/studio/TryOnEditor';
+import { Pencil } from 'lucide-react';
 
 const STEPS = {
   UPLOAD: 0,
@@ -37,6 +39,8 @@ export default function Studio() {
   const [stylistData, setStylistData] = useState(null);
   const [analyzingStyle, setAnalyzingStyle] = useState(false);
   const [isARMode, setIsARMode] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentCreationId, setCurrentCreationId] = useState(null);
 
   const { data: bodyParts } = useQuery({
     queryKey: ['bodyParts'],
@@ -147,13 +151,17 @@ export default function Studio() {
         setResultImage(response.url);
         
         // Save the creation
-        await base44.entities.Creation.create({
+        const newCreation = await base44.entities.Creation.create({
           jewelry_image_url: jewelryImage,
           result_image_url: response.url,
           body_part_id: selectedBodyPartId,
           description: notes,
           jewelry_type: jewelryType
         });
+        
+        if (newCreation) {
+          setCurrentCreationId(newCreation.id);
+        }
         
         setStep(STEPS.RESULT);
       }
@@ -163,6 +171,22 @@ export default function Studio() {
       setStep(STEPS.SELECT_BODY);
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleEditorSave = async (newUrl) => {
+    setResultImage(newUrl);
+    setIsEditing(false);
+    
+    // Update the existing creation record
+    if (currentCreationId) {
+      try {
+        await base44.entities.Creation.update(currentCreationId, {
+          result_image_url: newUrl
+        });
+      } catch (err) {
+        console.error("Failed to update creation record", err);
+      }
     }
   };
 
@@ -184,6 +208,13 @@ export default function Studio() {
            jewelryImage={jewelryImage} 
            onBack={() => setIsARMode(false)} 
          />
+      ) : isEditing ? (
+        <TryOnEditor 
+          bodyImage={bodyParts?.find(p => p.id === selectedBodyPartId)?.image_url}
+          jewelryImage={jewelryImage}
+          onSave={handleEditorSave}
+          onCancel={() => setIsEditing(false)}
+        />
       ) : (
         <div>
           <div className="mb-12 text-center">
@@ -524,6 +555,13 @@ export default function Studio() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
+                      <Button 
+                        variant="secondary" 
+                        className="w-full bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border-0"
+                        onClick={() => setIsEditing(true)}
+                      >
+                        <Pencil className="w-4 h-4 mr-2" /> Ajuster / Edit
+                      </Button>
                       <Button 
                         variant="outline" 
                         className="w-full"
