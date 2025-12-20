@@ -9,7 +9,6 @@ import Orders from './pages/Orders';
 import AdminOrders from './pages/AdminOrders';
 import Checkout from './pages/Checkout';
 import Shop from './pages/Shop';
-import MoniImporter from './pages/MoniImporter';
 import __Layout from './Layout.jsx';
 
 
@@ -25,7 +24,6 @@ export const PAGES = {
     "AdminOrders": AdminOrders,
     "Checkout": Checkout,
     "Shop": Shop,
-    "MoniImporter": MoniImporter,
 }
 
 export const pagesConfig = {
