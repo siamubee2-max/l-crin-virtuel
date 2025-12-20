@@ -9,10 +9,6 @@ import Orders from './pages/Orders';
 import AdminOrders from './pages/AdminOrders';
 import Checkout from './pages/Checkout';
 import Shop from './pages/Shop';
-import StyleAdvisor from './pages/StyleAdvisor';
-import OutfitStudio from './pages/OutfitStudio';
-import Community from './pages/Community';
-import Stylists from './pages/Stylists';
 import __Layout from './Layout.jsx';
 
 
@@ -28,10 +24,6 @@ export const PAGES = {
     "AdminOrders": AdminOrders,
     "Checkout": Checkout,
     "Shop": Shop,
-    "StyleAdvisor": StyleAdvisor,
-    "OutfitStudio": OutfitStudio,
-    "Community": Community,
-    "Stylists": Stylists,
 }
 
 export const pagesConfig = {

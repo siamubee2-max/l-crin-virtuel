@@ -78,11 +78,11 @@ export default function Gallery() {
         <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=2075&auto=format&fit=crop')] bg-cover bg-center" />
         <div className="relative z-10 max-w-xl space-y-6">
           <h1 className="text-4xl md:text-5xl font-serif leading-tight">
-            L'Écrin Virtuel <br />
-            <span className="text-amber-400 italic">Révélez votre éclat</span>
+            Moni'attitude <br />
+            <span className="text-amber-400 italic">Bijoux Uniques</span>
           </h1>
           <p className="text-neutral-300 text-lg">
-            La première plateforme d'essayage virtuel haute couture. Explorez, essayez et trouvez le bijou parfait grâce à notre IA de pointe.
+            Découvrez nos créations artisanales en résine, pâte polymère et pierres semi-précieuses. Essayez-les virtuellement avant de craquer.
           </p>
           <div className="flex flex-col gap-6 mt-4">
             <Link to={createPageUrl("Studio")}>
