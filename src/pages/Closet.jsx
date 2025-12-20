@@ -8,10 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Loader2, Camera, Shirt, Trash2, Sparkles, Link as LinkIcon, X, CheckSquare, Square } from "lucide-react";
+import { Plus, Search, Loader2, Camera, Shirt, Trash2, Sparkles, Link as LinkIcon, X, CheckSquare, Square, Video } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import ClothingFilters from '@/components/clothing/ClothingFilters';
+import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 
 export default function Closet() {
   const { t } = useLanguage();
@@ -40,6 +41,10 @@ export default function Closet() {
   const [occasionPrompt, setOccasionPrompt] = useState("");
   const [aiSuggestion, setAiSuggestion] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
+  
+  // AR Try-On State
+  const [isARMode, setIsARMode] = useState(false);
+  const [selectedClothingForAR, setSelectedClothingForAR] = useState(null);
 
   const [newItem, setNewItem] = useState({
     name: "",
@@ -239,6 +244,19 @@ export default function Closet() {
     });
   };
 
+  if (isARMode && selectedClothingForAR) {
+    return (
+      <ARLiveTryOn 
+        clothingImage={selectedClothingForAR.image_url}
+        mode="clothing"
+        onBack={() => {
+          setIsARMode(false);
+          setSelectedClothingForAR(null);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
@@ -426,6 +444,16 @@ export default function Closet() {
                 {/* Actions Overlay (only if not selecting) */}
                 {!selectionMode && (
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
+                     <Button 
+                        size="sm" 
+                        className="bg-white text-neutral-900 hover:bg-amber-50"
+                        onClick={() => {
+                          setSelectedClothingForAR(item);
+                          setIsARMode(true);
+                        }}
+                     >
+                       <Video className="w-3 h-3 mr-2 text-blue-500" /> AR Try-On
+                     </Button>
                      <Button 
                         size="sm" 
                         className="bg-white text-neutral-900 hover:bg-amber-50"

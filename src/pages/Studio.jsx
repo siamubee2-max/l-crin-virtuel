@@ -229,8 +229,15 @@ export default function Studio() {
     <div className="max-w-4xl mx-auto">
       {isARMode ? (
          <ARLiveTryOn 
-           jewelryImage={jewelryImage} 
-           onBack={() => setIsARMode(false)} 
+           jewelryImage={jewelryImage}
+           jewelryType={jewelryType}
+           mode="jewelry"
+           onBack={() => setIsARMode(false)}
+           onSaveToGallery={(url) => {
+             setResultImage(url);
+             setIsARMode(false);
+             setStep(STEPS.RESULT);
+           }}
          />
       ) : isEditing ? (
         <TryOnEditor 
