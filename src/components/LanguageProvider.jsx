@@ -207,7 +207,8 @@ const translations = {
       studio: "The Studio",
       wardrobe: "My Wardrobe",
       closet: "My Closet",
-      jewelryBox: "My Jewelry Box"
+      jewelryBox: "My Jewelry Box",
+      feed: "Style Feed"
       },
     common: {
       footer: "The Virtual Jewelry Box © 2024 — Luxury & Technology",
@@ -331,6 +332,18 @@ const translations = {
       suggestions: "Styling Suggestions",
       advice: "Color & Occasion",
       compatible: "Complete the Look"
+    },
+    feed: {
+      title: "Style Feed",
+      subtitle: "Daily inspiration, trends, and personalized suggestions just for you.",
+      dailyTip: "Daily Tip",
+      loadingTip: "Stylist is thinking...",
+      recommendedJewelry: "Recommended Jewelry",
+      recommendedClothing: "Fashion Pieces",
+      matchYourStyle: "Matches your style",
+      basedOn: "Based on preferences:",
+      trendAlert: "Trend Alert",
+      viewItem: "View Details"
     }
     },
   es: {
@@ -339,7 +352,8 @@ const translations = {
       studio: "El Taller",
       wardrobe: "Mi Armario",
       closet: "Mi Vestidor",
-      jewelryBox: "Mi Joyero"
+      jewelryBox: "Mi Joyero",
+      feed: "Feed de Estilo"
       },
     common: {
       footer: "El Joyero Virtual © 2024 — Lujo y Tecnología",
@@ -463,6 +477,18 @@ const translations = {
       suggestions: "Sugerencias de Estilo",
       advice: "Color y Ocasión",
       compatible: "Completar el Look"
+    },
+    feed: {
+      title: "Feed de Estilo",
+      subtitle: "Inspiración diaria, tendencias y sugerencias personalizadas para ti.",
+      dailyTip: "Consejo Diario",
+      loadingTip: "El estilista está pensando...",
+      recommendedJewelry: "Joyas Recomendadas",
+      recommendedClothing: "Piezas de Moda",
+      matchYourStyle: "Coincide con tu estilo",
+      basedOn: "Basado en preferencias:",
+      trendAlert: "Alerta de Tendencia",
+      viewItem: "Ver Detalles"
     }
     },
   de: {
@@ -471,7 +497,8 @@ const translations = {
       studio: "Das Atelier",
       wardrobe: "Meine Garderobe",
       closet: "Mein Kleiderschrank",
-      jewelryBox: "Mein Schmuckkästchen"
+      jewelryBox: "Mein Schmuckkästchen",
+      feed: "Style-Feed"
       },
     common: {
       footer: "Das Virtuelle Schmuckkästchen © 2024 — Luxus & Technologie",
@@ -595,6 +622,18 @@ const translations = {
       suggestions: "Styling-Vorschläge",
       advice: "Farbe & Anlass",
       compatible: "Den Look vervollständigen"
+    },
+    feed: {
+      title: "Style-Feed",
+      subtitle: "Tägliche Inspiration, Trends und personalisierte Vorschläge nur für Sie.",
+      dailyTip: "Tipp des Tages",
+      loadingTip: "Der Stylist denkt nach...",
+      recommendedJewelry: "Empfohlener Schmuck",
+      recommendedClothing: "Modestücke",
+      matchYourStyle: "Passt zu Ihrem Stil",
+      basedOn: "Basierend auf Vorlieben:",
+      trendAlert: "Trend-Alarm",
+      viewItem: "Details ansehen"
     }
     },
   it: {
@@ -603,7 +642,8 @@ const translations = {
       studio: "L'Atelier",
       wardrobe: "Il Mio Guardaroba",
       closet: "Il Mio Armadio",
-      jewelryBox: "Il Mio Scrigno"
+      jewelryBox: "Il Mio Scrigno",
+      feed: "Feed di Stile"
       },
     common: {
       footer: "Lo Scrigno Virtuale © 2024 — Lusso & Tecnologia",
@@ -727,6 +767,18 @@ const translations = {
       suggestions: "Suggerimenti di Stile",
       advice: "Colore e Occasione",
       compatible: "Completa il Look"
+    },
+    feed: {
+      title: "Feed di Stile",
+      subtitle: "Ispirazione quotidiana, tendenze e suggerimenti personalizzati solo per te.",
+      dailyTip: "Consiglio del Giorno",
+      loadingTip: "Lo stilista sta pensando...",
+      recommendedJewelry: "Gioielli Consigliati",
+      recommendedClothing: "Capi di Moda",
+      matchYourStyle: "Corrisponde al tuo stile",
+      basedOn: "Basato sulle preferenze:",
+      trendAlert: "Allerta Tendenza",
+      viewItem: "Vedi Dettagli"
     }
     },
   pt: {
@@ -735,7 +787,8 @@ const translations = {
       studio: "O Estúdio",
       wardrobe: "Meu Guarda-Roupa",
       closet: "Meu Vestuário",
-      jewelryBox: "Meu Porta-Joias"
+      jewelryBox: "Meu Porta-Joias",
+      feed: "Feed de Estilo"
       },
     common: {
       footer: "O Porta-Joias Virtual © 2024 — Luxo & Tecnologia",
@@ -859,6 +912,18 @@ const translations = {
       suggestions: "Sugestões de Estilo",
       advice: "Cor e Ocasião",
       compatible: "Completar o Look"
+    },
+    feed: {
+      title: "Feed de Estilo",
+      subtitle: "Inspiração diária, tendências e sugestões personalizadas só para você.",
+      dailyTip: "Dica do Dia",
+      loadingTip: "O estilista está pensando...",
+      recommendedJewelry: "Joias Recomendadas",
+      recommendedClothing: "Peças de Moda",
+      matchYourStyle: "Combina com seu estilo",
+      basedOn: "Baseado nas preferências:",
+      trendAlert: "Alerta de Tendência",
+      viewItem: "Ver Detalhes"
     }
     }
 };
