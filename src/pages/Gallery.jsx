@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Plus, ArrowRight, Download, Calendar, Filter } from "lucide-react";
+import { Loader2, Plus, ArrowRight, Download, Calendar, Filter, Trash2 } from "lucide-react";
 import ShareButton from "@/components/common/ShareButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
