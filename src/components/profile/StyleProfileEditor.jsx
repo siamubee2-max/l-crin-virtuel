@@ -11,9 +11,9 @@ const AESTHETICS = [
   { id: "minimalist", label: "Minimalist", image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=2070&auto=format&fit=crop" },
   { id: "boho", label: "Bohemian", image: "https://images.unsplash.com/photo-1540483761890-a1f7be05d99f?q=80&w=2000&auto=format&fit=crop" },
   { id: "glam", label: "Glamour", image: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?q=80&w=2070&auto=format&fit=crop" },
-  { id: "classic", label: "Classic", image: "https://images.unsplash.com/photo-1599643478518-17488fbbcd75?q=80&w=1974&auto=format&fit=crop" },
+  { id: "classic", label: "Classic", image: "https://images.unsplash.com/photo-1611085583191-a3b181a88401?q=80&w=2070&auto=format&fit=crop" },
   { id: "vintage", label: "Vintage", image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1974&auto=format&fit=crop" },
-  { id: "edgy", label: "Edgy/Rock", image: "https://images.unsplash.com/photo-1621252179027-94459d27d3ee?q=80&w=2070&auto=format&fit=crop" }
+  { id: "edgy", label: "Edgy/Rock", image: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=2070&auto=format&fit=crop" }
 ];
 
 const METALS = ["Yellow Gold", "White Gold", "Rose Gold", "Silver", "Platinum", "Mixed Metals"];
