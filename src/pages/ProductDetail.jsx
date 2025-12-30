@@ -273,14 +273,7 @@ export default function ProductDetail() {
             </Button>
           </div>
           
-          {/* AR Try-On CTA */}
-          <Button
-            onClick={() => setShowARTryOn(true)}
-            variant="outline"
-            className="w-full h-11 border-purple-200 text-purple-700 hover:bg-purple-50"
-          >
-            <Camera className="w-4 h-4 mr-2" /> Essayer en Réalité Augmentée
-          </Button>
+
 
           {/* Affiliate Link */}
           {product.affiliate_link && (
