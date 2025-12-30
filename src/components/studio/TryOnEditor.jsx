@@ -122,14 +122,14 @@ export default function TryOnEditor({ bodyImage, jewelryImage, onSave, onCancel 
              <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm font-medium text-neutral-600">
-                    <span className="flex items-center gap-2"><Maximize2 className="w-4 h-4" /> Size</span>
-                    <span>{Math.round(scale[0] * 100)}%</span>
+                    <span className="flex items-center gap-2"><Maximize2 className="w-4 h-4" /> Taille du bijou</span>
+                    <span>{Math.round(jewelryScale[0] * 100)}%</span>
                   </div>
                   <Slider 
-                    value={scale} 
-                    onValueChange={setScale} 
+                    value={jewelryScale} 
+                    onValueChange={setJewelryScale} 
                     min={0.1} 
-                    max={2} 
+                    max={3} 
                     step={0.05} 
                   />
                 </div>
@@ -137,11 +137,11 @@ export default function TryOnEditor({ bodyImage, jewelryImage, onSave, onCancel 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm font-medium text-neutral-600">
                     <span className="flex items-center gap-2"><RotateCw className="w-4 h-4" /> Rotation</span>
-                    <span>{rotation[0]}°</span>
+                    <span>{jewelryRotation[0]}°</span>
                   </div>
                   <Slider 
-                    value={rotation} 
-                    onValueChange={setRotation} 
+                    value={jewelryRotation} 
+                    onValueChange={setJewelryRotation} 
                     min={-180} 
                     max={180} 
                     step={1} 
@@ -153,10 +153,14 @@ export default function TryOnEditor({ bodyImage, jewelryImage, onSave, onCancel 
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => { setScale([1]); setRotation([0]); }}
+                  onClick={() => { 
+                    setJewelryScale([1]); 
+                    setJewelryRotation([0]); 
+                    setJewelryPosition({ x: 0, y: 0 }); 
+                  }}
                   className="text-neutral-500"
                 >
-                  <Undo2 className="w-4 h-4 mr-2" /> Reset
+                  <Undo2 className="w-4 h-4 mr-2" /> Réinitialiser
                 </Button>
              </div>
           </div>
