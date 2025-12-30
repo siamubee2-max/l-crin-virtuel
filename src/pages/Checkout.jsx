@@ -212,81 +212,23 @@ function CheckoutContent() {
                        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
                          <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                          <div>
-                           <p className="font-medium text-red-800">Payment Failed</p>
+                           <p className="font-medium text-red-800">Paiement échoué</p>
                            <p className="text-sm text-red-600">{paymentError}</p>
                          </div>
                        </div>
                      )}
-                     
-                     <RadioGroup value={formData.paymentMethod} onValueChange={v => setFormData({...formData, paymentMethod: v})}>
-                        <div className={`flex items-center space-x-2 border p-4 rounded-lg cursor-pointer hover:bg-neutral-50 ${formData.paymentMethod === 'card' ? 'border-neutral-900 bg-neutral-50' : ''}`}>
-                           <RadioGroupItem value="card" id="card" />
-                           <Label htmlFor="card" className="flex-1 cursor-pointer">Credit / Debit Card</Label>
-                           <div className="flex gap-1">
-                             <div className="w-8 h-5 bg-blue-600 rounded text-white text-[8px] flex items-center justify-center font-bold">VISA</div>
-                             <div className="w-8 h-5 bg-red-500 rounded text-white text-[8px] flex items-center justify-center font-bold">MC</div>
-                           </div>
-                        </div>
-                        <div className={`flex items-center space-x-2 border p-4 rounded-lg cursor-pointer hover:bg-neutral-50 ${formData.paymentMethod === 'paypal' ? 'border-neutral-900 bg-neutral-50' : ''}`}>
-                           <RadioGroupItem value="paypal" id="paypal" />
-                           <Label htmlFor="paypal" className="flex-1 cursor-pointer">PayPal</Label>
-                           <div className="w-16 h-5 bg-blue-700 rounded text-white text-[8px] flex items-center justify-center font-bold">PayPal</div>
-                        </div>
-                     </RadioGroup>
 
-                     <AnimatePresence>
-                       {formData.paymentMethod === 'card' && (
-                         <motion.div 
-                           initial={{ opacity: 0, height: 0 }}
-                           animate={{ opacity: 1, height: 'auto' }}
-                           exit={{ opacity: 0, height: 0 }}
-                           className="space-y-4 pt-2 overflow-hidden"
-                         >
-                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
-                              <p className="font-medium">🧪 Test Mode</p>
-                              <p className="text-xs mt-1">Use card <code className="bg-amber-100 px-1 rounded">4242 4242 4242 4242</code> for success</p>
-                              <p className="text-xs">Use card <code className="bg-amber-100 px-1 rounded">4000 0000 0000 0000</code> to test failure</p>
-                            </div>
-                            
-                            <div className="space-y-2">
-                               <Label>Card Number</Label>
-                               <div className="relative">
-                                 <Input 
-                                   value={formData.cardNumber}
-                                   onChange={e => setFormData({...formData, cardNumber: formatCardNumber(e.target.value)})}
-                                   placeholder="0000 0000 0000 0000" 
-                                   className="pr-10"
-                                 />
-                                 <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                               </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                               <div className="space-y-2">
-                                  <Label>Expiry Date</Label>
-                                  <Input 
-                                    value={formData.expiry}
-                                    onChange={e => setFormData({...formData, expiry: formatExpiry(e.target.value)})}
-                                    placeholder="MM/YY" 
-                                  />
-                               </div>
-                               <div className="space-y-2">
-                                  <Label>CVC</Label>
-                                  <Input 
-                                    value={formData.cvc}
-                                    onChange={e => setFormData({...formData, cvc: e.target.value.replace(/\D/g, '').slice(0, 4)})}
-                                    placeholder="123" 
-                                    type="password"
-                                  />
-                               </div>
-                            </div>
-                         </motion.div>
-                       )}
-                     </AnimatePresence>
-                     
-                     <div className="flex items-center gap-2 text-xs text-neutral-500 pt-2">
-                       <Shield className="w-4 h-4" />
-                       Your payment info is encrypted and secure
+                     <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+                       <p className="font-medium">🧪 Mode Test</p>
+                       <p className="text-xs mt-1">Utilisez la carte <code className="bg-amber-100 px-1 rounded">4242 4242 4242 4242</code> pour tester</p>
                      </div>
+                     
+                     <StripePaymentForm 
+                       amount={cartTotal}
+                       onSuccess={handleStripeSuccess}
+                       onError={handleStripeError}
+                       disabled={createOrderMutation.isPending}
+                     />
                   </CardContent>
                 </Card>
               )}
