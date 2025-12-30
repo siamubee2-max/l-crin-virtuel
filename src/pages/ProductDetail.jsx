@@ -119,43 +119,34 @@ export default function ProductDetail() {
       </Button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        {/* Product Image */}
+        {/* Product Image Gallery */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="relative"
         >
-          <div className="aspect-square bg-neutral-100 rounded-2xl overflow-hidden">
-            <img 
-              src={product.image_url} 
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          
           {/* Sale Badge */}
           {isOnSale && (
-            <Badge className="absolute top-4 left-4 bg-red-500 text-white text-sm px-3 py-1">
+            <Badge className="absolute top-4 left-4 z-10 bg-red-500 text-white text-sm px-3 py-1">
               -{discountPercent}% OFF
             </Badge>
           )}
 
-          {/* Try On Buttons */}
-          <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-            <Button
-              onClick={() => setShowARTryOn(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
-            >
-              <Camera className="w-4 h-4 mr-2" /> Essai AR Live
-            </Button>
-            <Button
-              onClick={() => navigate(createPageUrl('Studio'))}
-              variant="secondary"
-              className="bg-white/90 backdrop-blur-sm text-neutral-900 hover:bg-white shadow-lg"
-            >
-              <Sparkles className="w-4 h-4 mr-2" /> Studio IA
-            </Button>
-          </div>
+          <ProductImageGallery
+            mainImage={product.image_url}
+            additionalImages={product.additional_images || []}
+            productName={product.name}
+            onARTryOn={() => setShowARTryOn(true)}
+          />
+
+          {/* Studio IA Button */}
+          <Button
+            onClick={() => navigate(createPageUrl('Studio'))}
+            variant="secondary"
+            className="w-full mt-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-900"
+          >
+            <Sparkles className="w-4 h-4 mr-2" /> Essayer dans le Studio IA
+          </Button>
         </motion.div>
 
         {/* Product Info */}
