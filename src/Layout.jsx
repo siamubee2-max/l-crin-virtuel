@@ -200,9 +200,10 @@ function LayoutContent({ children }) {
       </main>
 
       {/* Simple Footer */}
-      <footer className="border-t border-neutral-100 py-8 text-center text-xs tracking-widest uppercase">
-        <span className="accent-shimmer font-medium">{t.common.footer}</span>
-      </footer>
+      <footer className="border-t border-neutral-100 py-8 text-center">
+                    <span className="accent-shimmer font-medium text-xs tracking-widest uppercase">{t.common.footer}</span>
+                    <p className="mt-2 text-[10px] text-neutral-400">Powered by <a href="https://inferencevision.store" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">Inferencevision.store</a></p>
+                  </footer>
     </div>
   );
 }
