@@ -22,29 +22,25 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
     setSaving(true);
     
     try {
-      // Capture the composition
       const canvas = await html2canvas(containerRef.current, {
         useCORS: true,
         allowTaint: true,
-        backgroundColor: null,
-        scale: 2 // High quality capture
+        backgroundColor: '#171717',
+        scale: 2
       });
 
-      // Convert to blob
       canvas.toBlob(async (blob) => {
         if (!blob) {
           throw new Error("Canvas to Blob failed");
         }
         
-        // Upload the new image
-        // We need to pass a File object usually, but the integration might accept blob if we name it
         const file = new File([blob], "edited-tryon.png", { type: "image/png" });
-        
         const result = await base44.integrations.Core.UploadFile({ file });
         
         if (result && result.file_url) {
           onSave(result.file_url);
         }
+        setSaving(false);
       }, 'image/png');
       
     } catch (error) {
