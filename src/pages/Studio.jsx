@@ -656,7 +656,7 @@ export default function Studio() {
                         className="w-full bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border-0"
                         onClick={() => setIsEditing(true)}
                       >
-                        <Pencil className="w-4 h-4 mr-2" /> Ajuster / Edit
+                        <Pencil className="w-4 h-4 mr-2" /> {t.studio.step4?.adjust || "Ajuster"}
                       </Button>
                       <Button 
                         variant="outline" 
