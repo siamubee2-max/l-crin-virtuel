@@ -100,6 +100,9 @@ export default function AdminPartnerships() {
       <div>
         <h1 className="text-3xl font-serif">Partnership Management</h1>
         <p className="text-neutral-500">Manage brands, creators, and affiliate performance</p>
+        <p className="text-sm text-neutral-400 mt-1">
+          Pour toute demande de partenariat : <a href="mailto:inferencevision@inference.store" className="text-amber-600 hover:underline">inferencevision@inference.store</a>
+        </p>
       </div>
 
       {/* Stats Cards */}
