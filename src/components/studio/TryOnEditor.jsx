@@ -55,54 +55,43 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
       <div className="w-full max-w-4xl bg-white rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl h-[80vh]">
         
         {/* Editor Canvas */}
-        <div className="flex-1 bg-neutral-100 relative overflow-hidden flex items-center justify-center select-none">
+        <div className="flex-1 bg-neutral-900 relative overflow-hidden flex items-center justify-center select-none">
           <div 
             ref={containerRef}
-            className="relative w-full h-full flex items-center justify-center bg-neutral-900"
+            className="relative w-full h-full flex items-center justify-center bg-neutral-900 overflow-hidden"
           >
-            <img 
-              src={bodyImage} 
-              alt="Body" 
-              className="w-full h-full object-contain pointer-events-none"
+            <motion.img 
+              src={resultImage} 
+              alt="Result" 
+              className="max-w-full max-h-full object-contain cursor-move"
               crossOrigin="anonymous"
-            />
-            
-            <motion.div
               drag
               dragMomentum={false}
-              className="absolute cursor-move touch-none"
-              style={{ 
-                left: `calc(50% + ${jewelryPosition.x}px)`, 
-                top: `calc(50% + ${jewelryPosition.y}px)`,
-                transform: `translate(-50%, -50%) scale(${jewelryScale[0]}) rotate(${jewelryRotation[0]}deg)`
-              }}
               onDragEnd={(event, info) => {
-                setJewelryPosition(prev => ({
+                setPosition(prev => ({
                   x: prev.x + info.offset.x,
                   y: prev.y + info.offset.y
                 }));
               }}
-            >
-              <img 
-                src={jewelryImage} 
-                alt="Jewelry" 
-                className="w-48 drop-shadow-xl filter brightness-105"
-                draggable={false}
-                crossOrigin="anonymous"
-              />
-              <div className="absolute -inset-2 border-2 border-amber-500/50 rounded-lg border-dashed opacity-50 pointer-events-none" />
-            </motion.div>
+              style={{ 
+                x: position.x,
+                y: position.y,
+                scale: zoom[0],
+                filter: `brightness(${brightness[0]}%) contrast(${contrast[0]}%)`
+              }}
+              draggable={false}
+            />
           </div>
 
           <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-3 py-1 rounded-full backdrop-blur-md pointer-events-none">
-             Editor Mode
+             Mode Édition
           </div>
         </div>
 
         {/* Controls Sidebar */}
         <div className="w-full md:w-80 bg-white border-l border-neutral-100 p-6 flex flex-col gap-6 z-10">
           <div className="flex items-center justify-between">
-            <h3 className="font-serif text-xl">Adjustments</h3>
+            <h3 className="font-serif text-xl">Ajustements</h3>
             <Button variant="ghost" size="icon" onClick={onCancel}>
               <X className="w-5 h-5" />
             </Button>
@@ -113,19 +102,19 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
                <div className="flex items-center gap-2 font-medium mb-1">
                  <Move className="w-4 h-4" /> Position
                </div>
-               Drag the jewelry directly on the image to place it perfectly.
+               Glissez l'image pour la repositionner.
              </div>
 
              <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm font-medium text-neutral-600">
-                    <span className="flex items-center gap-2"><Maximize2 className="w-4 h-4" /> Taille du bijou</span>
-                    <span>{Math.round(jewelryScale[0] * 100)}%</span>
+                    <span className="flex items-center gap-2"><ZoomIn className="w-4 h-4" /> Zoom</span>
+                    <span>{Math.round(zoom[0] * 100)}%</span>
                   </div>
                   <Slider 
-                    value={jewelryScale} 
-                    onValueChange={setJewelryScale} 
-                    min={0.1} 
+                    value={zoom} 
+                    onValueChange={setZoom} 
+                    min={0.5} 
                     max={3} 
                     step={0.05} 
                   />
@@ -133,14 +122,28 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm font-medium text-neutral-600">
-                    <span className="flex items-center gap-2"><RotateCw className="w-4 h-4" /> Rotation</span>
-                    <span>{jewelryRotation[0]}°</span>
+                    <span className="flex items-center gap-2"><Sun className="w-4 h-4" /> Luminosité</span>
+                    <span>{brightness[0]}%</span>
                   </div>
                   <Slider 
-                    value={jewelryRotation} 
-                    onValueChange={setJewelryRotation} 
-                    min={-180} 
-                    max={180} 
+                    value={brightness} 
+                    onValueChange={setBrightness} 
+                    min={50} 
+                    max={150} 
+                    step={1} 
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm font-medium text-neutral-600">
+                    <span className="flex items-center gap-2"><Contrast className="w-4 h-4" /> Contraste</span>
+                    <span>{contrast[0]}%</span>
+                  </div>
+                  <Slider 
+                    value={contrast} 
+                    onValueChange={setContrast} 
+                    min={50} 
+                    max={150} 
                     step={1} 
                   />
                 </div>
@@ -151,9 +154,10 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
                   variant="outline" 
                   size="sm" 
                   onClick={() => { 
-                    setJewelryScale([1]); 
-                    setJewelryRotation([0]); 
-                    setJewelryPosition({ x: 0, y: 0 }); 
+                    setZoom([1]); 
+                    setBrightness([100]); 
+                    setContrast([100]); 
+                    setPosition({ x: 0, y: 0 }); 
                   }}
                   className="text-neutral-500"
                 >
@@ -170,7 +174,7 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
               disabled={saving}
             >
               {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              {saving ? "Processing..." : "Save Changes"}
+              {saving ? "Traitement..." : "Enregistrer"}
             </Button>
           </div>
         </div>
