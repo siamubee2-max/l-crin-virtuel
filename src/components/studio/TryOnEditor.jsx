@@ -74,16 +74,22 @@ export default function TryOnEditor({ bodyImage, jewelryImage, onSave, onCancel 
               drag
               dragMomentum={false}
               className="absolute cursor-move touch-none"
-              style={{ x: "-50%", y: "-50%", left: "50%", top: "50%" }}
-              animate={{ 
-                scale: scale[0], 
-                rotate: rotation[0] 
+              style={{ 
+                left: `calc(50% + ${jewelryPosition.x}px)`, 
+                top: `calc(50% + ${jewelryPosition.y}px)`,
+                transform: `translate(-50%, -50%) scale(${jewelryScale[0]}) rotate(${jewelryRotation[0]}deg)`
+              }}
+              onDragEnd={(event, info) => {
+                setJewelryPosition(prev => ({
+                  x: prev.x + info.offset.x,
+                  y: prev.y + info.offset.y
+                }));
               }}
             >
               <img 
                 src={jewelryImage} 
                 alt="Jewelry" 
-                className="w-48 drop-shadow-xl filter brightness-105" // Base width
+                className="w-48 drop-shadow-xl filter brightness-105"
                 draggable={false}
                 crossOrigin="anonymous"
               />
