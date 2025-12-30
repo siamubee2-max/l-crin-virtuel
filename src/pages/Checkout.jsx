@@ -315,3 +315,11 @@ function CheckoutContent() {
     </div>
   );
 }
+
+export default function Checkout() {
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutContent />
+    </Elements>
+  );
+}
