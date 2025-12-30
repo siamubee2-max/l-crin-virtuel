@@ -25,7 +25,7 @@ const STEPS = {
   SUCCESS: 3
 };
 
-export default function Checkout() {
+function CheckoutContent() {
   const { items, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
   const { t } = useLanguage();
