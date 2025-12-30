@@ -67,6 +67,13 @@ export default function Gallery() {
     return bodyParts?.find(bp => bp.id === id)?.name || "Modèle";
   };
 
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Creation.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['creations'] });
+    }
+  });
+
   // Pagination Logic
   const totalItems = creations?.length || 0;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
