@@ -14,7 +14,8 @@ import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/LanguageProvider';
 import { motion, AnimatePresence } from 'framer-motion';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, useStripe, useElements } from '@stripe/react-stripe-js';
+import StripePaymentForm from '@/components/checkout/StripePaymentForm';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
