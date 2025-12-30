@@ -223,6 +223,14 @@ export default function Gallery() {
                           <Button variant="ghost" size="icon" onClick={() => window.open(creation.result_image_url, '_blank')} className="text-neutral-400 hover:text-amber-600">
                             <Download className="w-5 h-5" />
                           </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => deleteMutation.mutate(creation.id)} 
+                            className="text-neutral-400 hover:text-red-600"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </Button>
                         </div>
                         </div>
                       
