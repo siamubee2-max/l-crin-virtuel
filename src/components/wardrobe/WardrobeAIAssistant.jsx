@@ -14,11 +14,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { useCart } from '@/components/cart/CartProvider';
 
 export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems = [] }) {
   const { t, language } = useLanguage();
-  const { addToCart } = useCart();
   
   // Language instructions for AI
   const languageNames = {
@@ -563,13 +561,6 @@ INSTRUCTIONS:
                                     <ExternalLink className="w-3 h-3 mr-1" /> View
                                   </Button>
                                 </Link>
-                                <Button 
-                                  size="sm" 
-                                  className="h-7 text-[10px] px-2 bg-green-600 hover:bg-green-700"
-                                  onClick={() => addToCart(product)}
-                                >
-                                  <ShoppingBag className="w-3 h-3 mr-1" /> Add
-                                </Button>
                               </div>
                             </div>
                           ))}
@@ -772,20 +763,11 @@ INSTRUCTIONS:
                                     <p className="text-xs font-medium truncate">{product.name}</p>
                                     <p className="text-[10px] text-green-600 font-bold">${product.sale_price || product.price || 0}</p>
                                   </div>
-                                  <div className="flex gap-1">
-                                    <Link to={createPageUrl(`ProductDetail?id=${product.id}&type=${product.itemType}`)}>
-                                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-                                        <ExternalLink className="w-3 h-3" />
-                                      </Button>
-                                    </Link>
-                                    <Button 
-                                      size="sm" 
-                                      className="h-6 w-6 p-0 bg-green-600 hover:bg-green-700"
-                                      onClick={() => addToCart(product)}
-                                    >
-                                      <ShoppingBag className="w-3 h-3" />
+                                  <Link to={createPageUrl(`ProductDetail?id=${product.id}&type=${product.itemType}`)}>
+                                    <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                                      <ExternalLink className="w-3 h-3" />
                                     </Button>
-                                  </div>
+                                  </Link>
                                 </div>
                               ))}
                             </div>
