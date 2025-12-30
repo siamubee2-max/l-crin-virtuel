@@ -84,14 +84,14 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
           </div>
 
           <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-3 py-1 rounded-full backdrop-blur-md pointer-events-none">
-             Mode Édition
+             {editor.editMode || "Mode Édition"}
           </div>
         </div>
 
         {/* Controls Sidebar */}
         <div className="w-full md:w-80 bg-white border-l border-neutral-100 p-6 flex flex-col gap-6 z-10">
           <div className="flex items-center justify-between">
-            <h3 className="font-serif text-xl">Ajustements</h3>
+            <h3 className="font-serif text-xl">{editor.title || "Ajustements"}</h3>
             <Button variant="ghost" size="icon" onClick={onCancel}>
               <X className="w-5 h-5" />
             </Button>
@@ -100,15 +100,15 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
           <div className="space-y-6 flex-1">
              <div className="bg-amber-50 p-4 rounded-xl text-sm text-amber-800 border border-amber-100">
                <div className="flex items-center gap-2 font-medium mb-1">
-                 <Move className="w-4 h-4" /> Position
+                 <Move className="w-4 h-4" /> {editor.position || "Position"}
                </div>
-               Glissez l'image pour la repositionner.
+               {editor.positionDesc || "Glissez l'image pour la repositionner."}
              </div>
 
              <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm font-medium text-neutral-600">
-                    <span className="flex items-center gap-2"><ZoomIn className="w-4 h-4" /> Zoom</span>
+                    <span className="flex items-center gap-2"><ZoomIn className="w-4 h-4" /> {editor.zoom || "Zoom"}</span>
                     <span>{Math.round(zoom[0] * 100)}%</span>
                   </div>
                   <Slider 
@@ -116,13 +116,14 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
                     onValueChange={setZoom} 
                     min={0.5} 
                     max={3} 
-                    step={0.05} 
+                    step={0.05}
+                    className="[&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm font-medium text-neutral-600">
-                    <span className="flex items-center gap-2"><Sun className="w-4 h-4" /> Luminosité</span>
+                    <span className="flex items-center gap-2"><Sun className="w-4 h-4" /> {editor.brightness || "Luminosité"}</span>
                     <span>{brightness[0]}%</span>
                   </div>
                   <Slider 
@@ -130,13 +131,14 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
                     onValueChange={setBrightness} 
                     min={50} 
                     max={150} 
-                    step={1} 
+                    step={1}
+                    className="[&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm font-medium text-neutral-600">
-                    <span className="flex items-center gap-2"><Contrast className="w-4 h-4" /> Contraste</span>
+                    <span className="flex items-center gap-2"><Contrast className="w-4 h-4" /> {editor.contrast || "Contraste"}</span>
                     <span>{contrast[0]}%</span>
                   </div>
                   <Slider 
@@ -144,7 +146,8 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
                     onValueChange={setContrast} 
                     min={50} 
                     max={150} 
-                    step={1} 
+                    step={1}
+                    className="[&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
                   />
                 </div>
              </div>
@@ -161,7 +164,7 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
                   }}
                   className="text-neutral-500"
                 >
-                  <Undo2 className="w-4 h-4 mr-2" /> Réinitialiser
+                  <Undo2 className="w-4 h-4 mr-2" /> {editor.reset || "Réinitialiser"}
                 </Button>
              </div>
           </div>
@@ -174,7 +177,7 @@ export default function TryOnEditor({ resultImage, onSave, onCancel }) {
               disabled={saving}
             >
               {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              {saving ? "Traitement..." : "Enregistrer"}
+              {saving ? (editor.processing || "Traitement...") : (editor.save || "Enregistrer")}
             </Button>
           </div>
         </div>
