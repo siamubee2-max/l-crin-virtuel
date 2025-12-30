@@ -166,16 +166,7 @@ export default function JewelryFilters({
             </PopoverContent>
          </Popover>
 
-         {/* Sale Toggle */}
-         <Button
-            variant={saleFilter ? "default" : "outline"}
-            size="sm"
-            className={`h-9 text-xs justify-start ${saleFilter ? "bg-red-500 hover:bg-red-600 text-white border-red-500" : "text-red-500 border-red-200 hover:bg-red-50"}`}
-            onClick={() => setSaleFilter(!saleFilter)}
-         >
-            <Percent className="w-3 h-3 mr-2" />
-            On Sale
-         </Button>
+
       </div>
 
       {/* Active Filters Summary / Reset */}
