@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Camera, RefreshCw, X, Maximize2, RotateCw, Move, Loader2, Check, Sparkles, Eye, EyeOff, Gem, Shirt, Scan, Zap, Sun, Contrast } from "lucide-react";
+import { Camera, RefreshCw, X, Maximize2, RotateCw, Move, Loader2, Check, Sparkles, Eye, EyeOff, Gem, Shirt, Scan, Zap, Sun, Contrast, Share2, Link as LinkIcon, Download, Instagram, Facebook } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import { useQueryClient } from '@tanstack/react-query';
@@ -38,6 +38,9 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
   const [facingMode, setFacingMode] = useState("user");
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [savedImageUrl, setSavedImageUrl] = useState(null);
+  const [showSharePanel, setShowSharePanel] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [showGuides, setShowGuides] = useState(true);
   
   // Face detection state
@@ -255,8 +258,29 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
         ctx.restore();
       }
       
+      // Add watermark
+      const watermarkText = "L'Écrin Virtuel";
+      ctx.save();
+      ctx.font = `bold ${Math.max(16, canvas.width * 0.025)}px serif`;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.3)";
+      ctx.lineWidth = 2;
+      const textMetrics = ctx.measureText(watermarkText);
+      const padding = 20;
+      const textX = canvas.width - textMetrics.width - padding;
+      const textY = canvas.height - padding;
+      ctx.strokeText(watermarkText, textX, textY);
+      ctx.fillText(watermarkText, textX, textY);
+      
+      // Add small logo icon (É)
+      ctx.font = `bold ${Math.max(20, canvas.width * 0.03)}px serif`;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+      const logoX = textX - 30;
+      ctx.fillText("É", logoX, textY);
+      ctx.restore();
+      
       // Convert to blob and upload
-      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
       const file = new File([blob], `ar-tryon-${Date.now()}.jpg`, { type: 'image/jpeg' });
       
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
@@ -272,12 +296,9 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
       // Invalidate gallery query
       queryClient.invalidateQueries({ queryKey: ['creations'] });
       
+      setSavedImageUrl(file_url);
       setSavedSuccess(true);
-      setTimeout(() => setSavedSuccess(false), 2000);
-      
-      if (onSaveToGallery) {
-        onSaveToGallery(file_url);
-      }
+      setShowSharePanel(true);
       
     } catch (err) {
       console.error("Capture failed:", err);
@@ -516,22 +537,121 @@ export default function ARLiveTryOn({ jewelryImage, jewelryType = "necklace", cl
               )}
             </AnimatePresence>
             
-            {/* Success Overlay */}
+            {/* Share Panel Overlay */}
             <AnimatePresence>
-              {savedSuccess && (
+              {showSharePanel && savedImageUrl && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  className="absolute inset-0 bg-black/60 flex items-center justify-center z-30"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-black/80 flex items-center justify-center z-30 p-4"
                 >
-                  <div className="bg-white rounded-2xl p-8 text-center shadow-2xl">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Check className="w-8 h-8 text-green-600" />
+                  <motion.div
+                    initial={{ scale: 0.9, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.9, y: 20 }}
+                    className="bg-white rounded-2xl p-6 text-center shadow-2xl max-w-sm w-full"
+                  >
+                    {/* Preview Image */}
+                    <div className="relative mb-4 rounded-xl overflow-hidden aspect-[3/4] bg-neutral-100">
+                      <img src={savedImageUrl} alt="Your try-on" className="w-full h-full object-cover" />
+                      <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+                        L'Écrin Virtuel
+                      </div>
                     </div>
-                    <p className="font-medium text-lg">Saved to Gallery!</p>
-                    <p className="text-sm text-neutral-500 mt-1">View it in your creations</p>
-                  </div>
+                    
+                    {/* Success Message */}
+                    <div className="flex items-center justify-center gap-2 text-green-600 mb-4">
+                      <Check className="w-5 h-5" />
+                      <span className="font-medium">Saved to Gallery!</span>
+                    </div>
+                    
+                    {/* Share Title */}
+                    <h3 className="font-serif text-lg mb-4">Share your look</h3>
+                    
+                    {/* Social Share Buttons */}
+                    <div className="grid grid-cols-4 gap-3 mb-4">
+                      <button
+                        onClick={() => {
+                          const url = `https://www.instagram.com/`;
+                          navigator.clipboard.writeText(`Check out my virtual try-on! ${savedImageUrl}`);
+                          window.open(url, '_blank');
+                        }}
+                        className="flex flex-col items-center gap-1 p-3 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white hover:opacity-90 transition-opacity"
+                      >
+                        <Instagram className="w-5 h-5" />
+                        <span className="text-[10px]">Instagram</span>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(savedImageUrl)}`;
+                          window.open(shareUrl, '_blank', 'width=600,height=400');
+                        }}
+                        className="flex flex-col items-center gap-1 p-3 rounded-xl bg-[#1877F2] text-white hover:opacity-90 transition-opacity"
+                      >
+                        <Facebook className="w-5 h-5" />
+                        <span className="text-[10px]">Facebook</span>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          const shareUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(savedImageUrl)}&description=${encodeURIComponent("My virtual try-on from L'Écrin Virtuel")}`;
+                          window.open(shareUrl, '_blank', 'width=600,height=400');
+                        }}
+                        className="flex flex-col items-center gap-1 p-3 rounded-xl bg-[#E60023] text-white hover:opacity-90 transition-opacity"
+                      >
+                        <span className="font-bold text-lg">P</span>
+                        <span className="text-[10px]">Pinterest</span>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(savedImageUrl);
+                          setLinkCopied(true);
+                          setTimeout(() => setLinkCopied(false), 2000);
+                        }}
+                        className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${linkCopied ? 'bg-green-500 text-white' : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'}`}
+                      >
+                        {linkCopied ? <Check className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
+                        <span className="text-[10px]">{linkCopied ? 'Copied!' : 'Copy Link'}</span>
+                      </button>
+                    </div>
+                    
+                    {/* Download Button */}
+                    <Button
+                      variant="outline"
+                      className="w-full mb-3"
+                      onClick={() => window.open(savedImageUrl, '_blank')}
+                    >
+                      <Download className="w-4 h-4 mr-2" /> Download Image
+                    </Button>
+                    
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        className="flex-1"
+                        onClick={() => {
+                          setShowSharePanel(false);
+                          setSavedSuccess(false);
+                          setSavedImageUrl(null);
+                        }}
+                      >
+                        Take Another
+                      </Button>
+                      <Button
+                        className="flex-1 bg-amber-600 hover:bg-amber-700"
+                        onClick={() => {
+                          if (onSaveToGallery) {
+                            onSaveToGallery(savedImageUrl);
+                          }
+                        }}
+                      >
+                        View in Gallery
+                      </Button>
+                    </div>
+                  </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
