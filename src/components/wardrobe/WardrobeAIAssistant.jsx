@@ -17,8 +17,19 @@ import { createPageUrl } from '@/utils';
 import { useCart } from '@/components/cart/CartProvider';
 
 export default function WardrobeAIAssistant({ clothingItems = [], jewelryItems = [] }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { addToCart } = useCart();
+  
+  // Language instructions for AI
+  const languageNames = {
+    fr: 'French',
+    en: 'English',
+    es: 'Spanish',
+    de: 'German',
+    it: 'Italian',
+    pt: 'Portuguese'
+  };
+  const languageInstruction = `IMPORTANT: You MUST respond entirely in ${languageNames[language] || 'English'}. All text, tips, and suggestions must be in ${languageNames[language] || 'English'}.`;
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("outfits");
   const chatEndRef = useRef(null);
@@ -112,7 +123,9 @@ User Style Preferences:
         `ID:${c.id}|${c.name}|${c.type}|${c.color || ''}|${c.material || ''}|$${c.price || 0}`
       ).join("\n") || "";
       
-      const prompt = `You are a professional fashion stylist. Based on these wardrobe items: ${itemDescriptions}
+      const prompt = `You are a professional fashion stylist. ${languageInstruction}
+      
+Based on these wardrobe items: ${itemDescriptions}
       
 Occasion: ${occasion || "general everyday wear"}
 
@@ -201,7 +214,9 @@ Provide styling advice in JSON format. For recommended_products, ONLY use actual
     setCareInstructions(null);
     
     try {
-      const prompt = `You are a fabric care expert. Provide detailed care instructions for this clothing item:
+      const prompt = `You are a fabric care expert. ${languageInstruction}
+      
+Provide detailed care instructions for this clothing item:
       
       Item: ${selectedItemForCare.name}
       Type: ${selectedItemForCare.type}
@@ -303,6 +318,8 @@ ${selectedChatItem.gemstone_type ? `- Gemstone: ${selectedChatItem.gemstone_type
       ].join("\n");
       
       const prompt = `You are an expert personal fashion stylist with deep knowledge of jewelry, clothing, and style coordination. You provide personalized, context-aware advice.
+
+${languageInstruction}
 
 ${prefsContext}
 
