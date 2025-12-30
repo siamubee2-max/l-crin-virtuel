@@ -5,14 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Crown, Sparkles, ExternalLink, Search, Heart, ShoppingBag, Eye, Bookmark, ChevronRight, Star, TrendingUp, Users } from "lucide-react";
+import { Loader2, Crown, Sparkles, ExternalLink, Search, Heart, Eye, Bookmark, ChevronRight, Star, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { useCart } from '@/components/cart/CartProvider';
 
 export default function BrandPartnerships() {
-  const { addToCart } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("featured");
 
