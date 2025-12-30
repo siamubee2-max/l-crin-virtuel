@@ -1,45 +1,41 @@
-import Wardrobe from './pages/Wardrobe';
-import Studio from './pages/Studio';
+import AdminPartnerships from './pages/AdminPartnerships';
+import BrandPartnerships from './pages/BrandPartnerships';
+import Checkout from './pages/Checkout';
+import Closet from './pages/Closet';
+import CreatorOnboarding from './pages/CreatorOnboarding';
 import Gallery from './pages/Gallery';
 import JewelryBox from './pages/JewelryBox';
-import Closet from './pages/Closet';
-import Profile from './pages/Profile';
-import StyleFeed from './pages/StyleFeed';
-import Orders from './pages/Orders';
-import AdminOrders from './pages/AdminOrders';
-import Checkout from './pages/Checkout';
-import Stylists from './pages/Stylists';
-import StylistProfile from './pages/StylistProfile';
 import Lookbook from './pages/Lookbook';
-import SearchResults from './pages/SearchResults';
 import ProductDetail from './pages/ProductDetail';
-import BrandPartnerships from './pages/BrandPartnerships';
+import Profile from './pages/Profile';
+import SearchResults from './pages/SearchResults';
 import ShopTheLook from './pages/ShopTheLook';
-import AdminPartnerships from './pages/AdminPartnerships';
-import CreatorOnboarding from './pages/CreatorOnboarding';
+import Studio from './pages/Studio';
+import StyleFeed from './pages/StyleFeed';
+import StylistProfile from './pages/StylistProfile';
+import Stylists from './pages/Stylists';
+import Wardrobe from './pages/Wardrobe';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Wardrobe": Wardrobe,
-    "Studio": Studio,
+    "AdminPartnerships": AdminPartnerships,
+    "BrandPartnerships": BrandPartnerships,
+    "Checkout": Checkout,
+    "Closet": Closet,
+    "CreatorOnboarding": CreatorOnboarding,
     "Gallery": Gallery,
     "JewelryBox": JewelryBox,
-    "Closet": Closet,
-    "Profile": Profile,
-    "StyleFeed": StyleFeed,
-    "Orders": Orders,
-    "AdminOrders": AdminOrders,
-    "Checkout": Checkout,
-    "Stylists": Stylists,
-    "StylistProfile": StylistProfile,
     "Lookbook": Lookbook,
-    "SearchResults": SearchResults,
     "ProductDetail": ProductDetail,
-    "BrandPartnerships": BrandPartnerships,
+    "Profile": Profile,
+    "SearchResults": SearchResults,
     "ShopTheLook": ShopTheLook,
-    "AdminPartnerships": AdminPartnerships,
-    "CreatorOnboarding": CreatorOnboarding,
+    "Studio": Studio,
+    "StyleFeed": StyleFeed,
+    "StylistProfile": StylistProfile,
+    "Stylists": Stylists,
+    "Wardrobe": Wardrobe,
 }
 
 export const pagesConfig = {

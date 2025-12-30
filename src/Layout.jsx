@@ -46,12 +46,10 @@ function LayoutContent({ children }) {
     { label: t.nav.jewelryBox, icon: Box, path: "/JewelryBox" },
     { label: "Brands", icon: Star, path: "/BrandPartnerships" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
-    { label: "Orders", icon: Package, path: "/Orders" },
-  ];
+    ];
 
-  if (currentUser?.role === 'admin') {
-    navItems.push({ label: "Admin", icon: ShieldCheck, path: "/AdminOrders" });
-    navItems.push({ label: "Partnerships", icon: Star, path: "/AdminPartnerships" });
+    if (currentUser?.role === 'admin') {
+      navItems.push({ label: "Partnerships", icon: Star, path: "/AdminPartnerships" });
   }
 
   const languages = [
