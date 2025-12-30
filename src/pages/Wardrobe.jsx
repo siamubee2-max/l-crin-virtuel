@@ -235,7 +235,7 @@ export default function Wardrobe() {
                     </Button>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent pt-12">
-                    <p className="text-white font-medium">{part.name}</p>
+
                     <p className="text-white/80 text-xs uppercase tracking-wider">
                       {BODY_TYPES.find(t => t.value === part.type)?.label || part.type}
                     </p>
