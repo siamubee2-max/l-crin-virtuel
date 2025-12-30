@@ -45,9 +45,7 @@ function CheckoutContent() {
     cvc: ""
   });
   
-  const [paymentProgress, setPaymentProgress] = useState(0);
   const [paymentError, setPaymentError] = useState(null);
-
   const [stripePaymentData, setStripePaymentData] = useState(null);
 
   const createOrderMutation = useMutation({
