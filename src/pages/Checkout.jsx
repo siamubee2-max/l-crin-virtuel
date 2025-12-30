@@ -48,38 +48,7 @@ function CheckoutContent() {
   const [paymentProgress, setPaymentProgress] = useState(0);
   const [paymentError, setPaymentError] = useState(null);
 
-  // Simulate payment gateway processing
-  const simulatePaymentGateway = async () => {
-    setPaymentError(null);
-    
-    // Simulate card validation
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setPaymentProgress(20);
-    
-    // Simulate connecting to payment gateway
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setPaymentProgress(40);
-    
-    // Simulate authorization
-    await new Promise(resolve => setTimeout(resolve, 600));
-    setPaymentProgress(60);
-    
-    // Test card number validation (4242... is test success, 4000... is test failure)
-    const cleanCardNumber = formData.cardNumber.replace(/\s/g, '');
-    if (cleanCardNumber.startsWith('4000')) {
-      throw new Error('Card declined. Please try a different card.');
-    }
-    
-    // Simulate processing
-    await new Promise(resolve => setTimeout(resolve, 700));
-    setPaymentProgress(80);
-    
-    // Simulate completion
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setPaymentProgress(100);
-    
-    return { success: true, transactionId: `TXN-${Date.now()}` };
-  };
+  const [stripePaymentData, setStripePaymentData] = useState(null);
 
   const createOrderMutation = useMutation({
     mutationFn: async () => {
