@@ -10,8 +10,9 @@ import { useLanguage } from '@/components/LanguageProvider';
 
 export default function TryOnEditor({ bodyImage, jewelryImage, onSave, onCancel }) {
   const { t } = useLanguage();
-  const [scale, setScale] = useState([1]);
-  const [rotation, setRotation] = useState([0]);
+  const [jewelryScale, setJewelryScale] = useState([1]);
+  const [jewelryRotation, setJewelryRotation] = useState([0]);
+  const [jewelryPosition, setJewelryPosition] = useState({ x: 0, y: 0 });
   const [saving, setSaving] = useState(false);
   const containerRef = useRef(null);
 
