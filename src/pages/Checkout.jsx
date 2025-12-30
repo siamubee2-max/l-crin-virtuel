@@ -249,24 +249,20 @@ function CheckoutContent() {
                 </Card>
               )}
 
-              {step !== STEPS.PROCESSING && (
-                <div className="flex justify-between pt-4">
-                  {step > STEPS.SHIPPING && step < STEPS.PROCESSING ? (
-                    <Button variant="outline" onClick={() => setStep(step - 1)}>Back</Button>
-                  ) : (
-                     <div />
-                  )}
+              {step === STEPS.SHIPPING && (
+                <div className="flex justify-end pt-4">
                   <Button 
                      onClick={handleNext} 
                      className="bg-neutral-900 text-white min-w-[180px] h-12"
-                     disabled={createOrderMutation.isPending}
                   >
-                     {step === STEPS.PAYMENT ? (
-                       <><Lock className="w-4 h-4 mr-2" /> Pay ${cartTotal.toFixed(2)}</>
-                     ) : (
-                       "Continue to Payment"
-                     )}
+                     Continuer vers le paiement
                   </Button>
+                </div>
+              )}
+
+              {step === STEPS.PAYMENT && (
+                <div className="flex justify-start pt-4">
+                  <Button variant="outline" onClick={() => setStep(STEPS.SHIPPING)}>Retour</Button>
                 </div>
               )}
             </div>
