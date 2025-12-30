@@ -64,7 +64,7 @@ function LayoutContent({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 font-sans text-neutral-900 selection:bg-amber-100">
+    <div className="min-h-screen gradient-luxury font-sans text-neutral-900 selection:bg-amber-100">
       {/* Top Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-neutral-100 z-50">
         <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between gap-4">
@@ -74,7 +74,7 @@ function LayoutContent({ children }) {
             <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center rounded-sm font-serif text-xl">
               É
             </div>
-            <span className="font-serif text-xl tracking-tight font-medium group-hover:text-amber-600 transition-colors">
+            <span className="font-serif text-xl tracking-tight font-medium accent-shimmer">
               L'Écrin Virtuel
             </span>
           </Link>
@@ -98,8 +98,8 @@ function LayoutContent({ children }) {
                 to={createPageUrl(item.path === "/" ? "Gallery" : item.path.substring(1))}
                 className={`flex items-center gap-2 text-sm font-medium tracking-wide transition-all duration-300 ${
                   isActive(item.path)
-                    ? "text-amber-600"
-                    : "text-neutral-500 hover:text-neutral-900"
+                    ? "text-gold"
+                    : "text-neutral-400 hover:text-neutral-900"
                 }`}
               >
                 <item.icon className={`w-4 h-4 ${isActive(item.path) ? "fill-amber-100" : ""}`} />
@@ -200,8 +200,8 @@ function LayoutContent({ children }) {
       </main>
 
       {/* Simple Footer */}
-      <footer className="border-t border-neutral-200 py-8 text-center text-neutral-400 text-xs tracking-widest uppercase">
-        {t.common.footer}
+      <footer className="border-t border-neutral-100 py-8 text-center text-xs tracking-widest uppercase">
+        <span className="accent-shimmer font-medium">{t.common.footer}</span>
       </footer>
     </div>
   );
@@ -210,6 +210,34 @@ function LayoutContent({ children }) {
 export default function Layout({ children }) {
   return (
     <LanguageProvider>
+      <style>{`
+        :root {
+          --gold: #C9A962;
+          --gold-light: #E8D9B5;
+          --silver: #A8A9AD;
+          --silver-light: #E5E5E7;
+        }
+        .text-gold { color: var(--gold); }
+        .text-silver { color: var(--silver); }
+        .bg-gold { background-color: var(--gold); }
+        .bg-gold-light { background-color: var(--gold-light); }
+        .bg-silver-light { background-color: var(--silver-light); }
+        .border-gold { border-color: var(--gold); }
+        .border-silver { border-color: var(--silver); }
+        .gradient-luxury {
+          background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 50%, #fafafa 100%);
+        }
+        .accent-shimmer {
+          background: linear-gradient(90deg, var(--gold) 0%, var(--silver) 50%, var(--gold) 100%);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer {
+          to { background-position: 200% center; }
+        }
+      `}</style>
       <LayoutContent>
          {children}
       </LayoutContent>
