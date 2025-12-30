@@ -41,7 +41,7 @@ export default function Studio() {
   const [jewelryImage, setJewelryImage] = useState("");
   const [jewelryType, setJewelryType] = useState("necklace");
   const [selectedBodyPartId, setSelectedBodyPartId] = useState("");
-  const [notes, setNotes] = useState("");
+
   const [resultImage, setResultImage] = useState("");
   const [stylistData, setStylistData] = useState(null);
   const [analyzingStyle, setAnalyzingStyle] = useState(false);
@@ -67,6 +67,44 @@ export default function Studio() {
     return typeMatch && metalMatch;
   });
 
+  const [detectingType, setDetectingType] = useState(false);
+
+  const detectJewelryType = async (imageUrl) => {
+    setDetectingType(true);
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this jewelry image and identify its category.
+        Respond ONLY with one of these exact values: earrings, necklace, ring, bracelet, anklet, set
+        
+        Rules:
+        - If it's a pair of earrings or single earring: "earrings"
+        - If it's a necklace, pendant, or choker: "necklace"
+        - If it's a ring: "ring"
+        - If it's a bracelet or bangle: "bracelet"
+        - If it's an anklet: "anklet"
+        - If it contains multiple jewelry pieces (e.g., matching set): "set"`,
+        file_urls: [imageUrl],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            jewelry_type: { 
+              type: "string",
+              enum: ["earrings", "necklace", "ring", "bracelet", "anklet", "set"]
+            }
+          }
+        }
+      });
+      
+      if (response?.jewelry_type) {
+        setJewelryType(response.jewelry_type);
+      }
+    } catch (error) {
+      console.error("Jewelry type detection failed", error);
+    } finally {
+      setDetectingType(false);
+    }
+  };
+
   const handleJewelryUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -75,6 +113,8 @@ export default function Studio() {
     try {
       const result = await base44.integrations.Core.UploadFile({ file });
       setJewelryImage(result.file_url);
+      // Auto-detect jewelry type
+      detectJewelryType(result.file_url);
     } catch (error) {
       console.error("Upload failed", error);
     } finally {
@@ -146,24 +186,34 @@ export default function Studio() {
     try {
       const bodyPart = bodyParts.find(p => p.id === selectedBodyPartId);
       
-      // Construct a detailed prompt for the AI
+      // Construct a detailed prompt for the AI with natural placement instructions
       const prompt = `
         A professional, photorealistic fashion photography shot.
-        The goal is to show a person wearing a specific piece of jewelry.
+        The goal is to show a person wearing a specific piece of jewelry naturally and realistically.
         
         Input 1 (Base Image): A photo of a ${bodyPart.type} (the user).
         Input 2 (Jewelry Reference): A photo of a ${jewelryType}.
         
-        Task: seamlessley composite and generate the jewelry onto the body part.
+        Task: Seamlessly composite and generate the jewelry onto the body part with NATURAL PLACEMENT.
         
-        Details:
-        - The jewelry should be realistically sized and positioned for a ${jewelryType}.
-        - If the type is 'set', identify all components (necklace, earrings, rings, bracelets) and place them appropriately.
-        - IMPORTANT: If the user provides a 'set', look for hands/wrists in the base image to place rings/bracelets if present in the jewelry image.
-        - Lighting and shadows must match the skin texture of the body part.
-        - High fashion aesthetic, elegant, clean.
-        - Maintain the identity and skin tone of the person in the base image.
-        - Additional instructions: ${notes}
+        CRITICAL PLACEMENT RULES:
+        - ALWAYS maintain the exact proportions of the jewelry relative to the body part size.
+        - Position the jewelry according to GRAVITY and natural physics:
+          * Necklaces: Should follow the curve of the neck/collarbone, hanging naturally with gravity
+          * Earrings: Should dangle naturally, respecting the ear angle and head tilt
+          * Rings: Should wrap around fingers at natural angles
+          * Bracelets: Should rest on wrists following arm position and gravity
+          * Anklets: Should sit naturally on the ankle bone
+        - ADAPT to body part INCLINATION: If the head is tilted, earrings should hang accordingly
+        - SCALE appropriately: Match jewelry size to the body part (e.g., small earrings for small ears)
+        - Consider the DEPTH and PERSPECTIVE of the base image
+        
+        Technical Details:
+        - The jewelry should cast subtle, realistic shadows on the skin
+        - Lighting and reflections must match the ambient light of the base photo
+        - High fashion aesthetic, elegant, clean
+        - Maintain the identity and skin tone of the person in the base image
+        - If the type is 'set', identify all components and place each piece appropriately on visible body parts
       `;
 
       const response = await base44.integrations.Core.GenerateImage({
@@ -179,7 +229,7 @@ export default function Studio() {
           jewelry_image_url: jewelryImage,
           result_image_url: response.url,
           body_part_id: selectedBodyPartId,
-          description: notes,
+          description: "",
           jewelry_type: jewelryType
         });
         
@@ -318,22 +368,29 @@ export default function Studio() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>{t.studio.step1.typeLabel}</Label>
-                        <Select value={jewelryType} onValueChange={setJewelryType}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="earrings">{t.studio.step1.types.earrings}</SelectItem>
-                            <SelectItem value="necklace">{t.studio.step1.types.necklace}</SelectItem>
-                            <SelectItem value="ring">{t.studio.step1.types.ring}</SelectItem>
-                            <SelectItem value="bracelet">{t.studio.step1.types.bracelet}</SelectItem>
-                            <SelectItem value="anklet">{t.studio.step1.types.anklet}</SelectItem>
-                            <SelectItem value="set">{t.studio.step1.types.set}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      {t.studio.step1.typeLabel}
+                      {detectingType && (
+                        <span className="text-xs text-amber-600 flex items-center gap-1">
+                          <Loader2 className="w-3 h-3 animate-spin" /> Détection IA...
+                        </span>
+                      )}
+                    </Label>
+                    <Select value={jewelryType} onValueChange={setJewelryType} disabled={detectingType}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="earrings">{t.studio.step1.types.earrings}</SelectItem>
+                        <SelectItem value="necklace">{t.studio.step1.types.necklace}</SelectItem>
+                        <SelectItem value="ring">{t.studio.step1.types.ring}</SelectItem>
+                        <SelectItem value="bracelet">{t.studio.step1.types.bracelet}</SelectItem>
+                        <SelectItem value="anklet">{t.studio.step1.types.anklet}</SelectItem>
+                        <SelectItem value="set">{t.studio.step1.types.set}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    </div>
                     </div>
 
                     <div className="flex gap-4 mb-4 justify-center">
@@ -467,14 +524,7 @@ export default function Studio() {
                       )}
                     </div>
 
-                    <div className="space-y-2">
-                      <Label>{t.studio.step2.notesLabel}</Label>
-                      <Input 
-                        placeholder={t.studio.step2.notesPlaceholder}
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                      />
-                    </div>
+
 
                     <div className="flex flex-col gap-4 pt-4">
                       <div className="relative">
