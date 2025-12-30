@@ -30,6 +30,7 @@ function LayoutContent({ children }) {
     { label: t.nav.jewelryBox, icon: Box, path: "/JewelryBox" },
     { label: "Brands", icon: Star, path: "/BrandPartnerships" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
+      { label: "Abonnement", icon: Star, path: "/Subscription" },
     ];
 
     if (currentUser?.role === 'admin') {
