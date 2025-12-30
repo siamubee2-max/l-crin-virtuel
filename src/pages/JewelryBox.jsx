@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Search, Loader2, Camera, Tag, Trash2, Filter, Star, Eye, Heart, DollarSign, Calendar as CalendarIcon, Edit2, Percent, ShoppingBag } from "lucide-react";
+import { Plus, Search, Loader2, Camera, Tag, Trash2, Filter, Star, Eye, Heart, DollarSign, Calendar as CalendarIcon, Edit2, Percent, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import StarRating from '@/components/reviews/StarRating';
@@ -17,7 +17,6 @@ import JewelryFilters from '@/components/jewelry/JewelryFilters';
 import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { useCart } from '@/components/cart/CartProvider';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -28,7 +27,6 @@ export default function JewelryBox() {
   const [detailItem, setDetailItem] = useState(null); // For detail view dialog
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
-  const { addToCart } = useCart();
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -105,11 +103,7 @@ export default function JewelryBox() {
 
   const isWishlisted = (itemId) => myWishlist?.some(w => w.jewelry_item_id === itemId);
 
-  const handleBuyNow = () => {
-     addToCart(detailItem);
-     setDetailItem(null);
-     navigate(createPageUrl('Checkout'));
-  };
+
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.JewelryItem.create(data),
@@ -645,21 +639,14 @@ export default function JewelryBox() {
                    )}
 
                    <div className="pt-4 border-t border-neutral-100 space-y-4">
-                      <div className="grid grid-cols-2 gap-3">
-                         <Button 
-                           className="w-full h-12 text-lg"
-                           variant="outline"
-                           onClick={() => addToCart(detailItem)}
-                         >
-                           <ShoppingBag className="w-4 h-4 mr-2" /> Add to Cart
-                         </Button>
-                         <Button 
-                           className="w-full bg-neutral-900 text-white h-12 text-lg"
-                           onClick={handleBuyNow}
-                         >
-                           Buy Now
-                         </Button>
-                      </div>
+                      <Button 
+                        className={`w-full h-12 text-lg ${isWishlisted(detailItem.id) ? 'bg-red-50 text-red-600 border-red-200' : 'bg-neutral-900 text-white'}`}
+                        variant={isWishlisted(detailItem.id) ? "outline" : "default"}
+                        onClick={(e) => toggleWishlist(e, detailItem.id)}
+                      >
+                        <Heart className={`w-5 h-5 mr-2 ${isWishlisted(detailItem.id) ? 'fill-red-500' : ''}`} />
+                        {isWishlisted(detailItem.id) ? 'Dans mes favoris' : 'Ajouter aux favoris'}
+                      </Button>
                    
                       <ReviewSection jewelryId={detailItem.id} />
                    </div>
