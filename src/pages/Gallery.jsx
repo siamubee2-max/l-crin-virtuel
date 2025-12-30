@@ -14,6 +14,7 @@ const ITEMS_PER_PAGE = 9;
 
 export default function Gallery() {
   const { t, setLanguage, language } = useLanguage();
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
 
   const languages = [
