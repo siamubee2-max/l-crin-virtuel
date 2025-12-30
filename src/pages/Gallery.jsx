@@ -113,9 +113,7 @@ export default function Gallery() {
 
       {/* Gallery Controls & Grid */}
       <section>
-        <div className="flex flex-col md:flex-row justify-between items-end gap-4 mb-8">
-  
-
+        <div className="flex flex-col md:flex-row justify-end items-end gap-4 mb-8">
           <div className="flex gap-3 w-full md:w-auto">
              <Select value={sortOrder} onValueChange={setSortOrder}>
                 <SelectTrigger className="w-[180px]">
