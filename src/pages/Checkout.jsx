@@ -241,17 +241,8 @@ function CheckoutContent() {
                         <Loader2 className="w-8 h-8 animate-spin text-neutral-600" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-medium mb-2">Processing Payment</h3>
-                        <p className="text-neutral-500 text-sm">Please wait while we securely process your payment...</p>
-                      </div>
-                      <div className="max-w-xs mx-auto space-y-2">
-                        <Progress value={paymentProgress} className="h-2" />
-                        <p className="text-xs text-neutral-400">
-                          {paymentProgress < 30 && "Validating card details..."}
-                          {paymentProgress >= 30 && paymentProgress < 60 && "Connecting to payment gateway..."}
-                          {paymentProgress >= 60 && paymentProgress < 90 && "Authorizing transaction..."}
-                          {paymentProgress >= 90 && "Finalizing order..."}
-                        </p>
+                        <h3 className="text-xl font-medium mb-2">Traitement en cours</h3>
+                        <p className="text-neutral-500 text-sm">Veuillez patienter pendant que nous finalisons votre commande...</p>
                       </div>
                     </div>
                   </CardContent>
