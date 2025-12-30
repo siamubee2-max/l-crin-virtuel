@@ -133,7 +133,20 @@ const translations = {
       step4: {
         title: "C'est prêt !",
         desc: "Voici votre essayage virtuel.",
-        goToGallery: "Aller à la Galerie"
+        goToGallery: "Aller à la Galerie",
+        adjust: "Ajuster"
+      },
+      editor: {
+        title: "Ajustements",
+        position: "Position",
+        positionDesc: "Glissez l'image pour la repositionner.",
+        zoom: "Zoom",
+        brightness: "Luminosité",
+        contrast: "Contraste",
+        reset: "Réinitialiser",
+        save: "Enregistrer",
+        processing: "Traitement...",
+        editMode: "Mode Édition"
       }
     },
     gallery: {
