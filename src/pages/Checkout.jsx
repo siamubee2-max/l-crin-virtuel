@@ -51,10 +51,7 @@ function CheckoutContent() {
   const [stripePaymentData, setStripePaymentData] = useState(null);
 
   const createOrderMutation = useMutation({
-    mutationFn: async () => {
-      // First, process payment
-      const paymentResult = await simulatePaymentGateway();
-      
+    mutationFn: async (paymentData) => {
       const user = await base44.auth.me().catch(() => ({ email: formData.email, full_name: formData.name }));
       const fullAddress = `${formData.address}, ${formData.city}, ${formData.zip}, ${formData.country}`;
       const groupID = Math.random().toString(36).substr(2, 9);
@@ -70,7 +67,7 @@ function CheckoutContent() {
           shipping_address: fullAddress,
           customer_email: user.email || formData.email,
           customer_name: user.full_name || formData.name,
-          tracking_number: `ORD-${groupID}-${paymentResult.transactionId}`
+          tracking_number: `ORD-${groupID}-${paymentData?.paymentMethodId || Date.now()}`
         });
       });
 
@@ -83,9 +80,18 @@ function CheckoutContent() {
     onError: (error) => {
       setPaymentError(error.message || 'Payment failed. Please try again.');
       setStep(STEPS.PAYMENT);
-      setPaymentProgress(0);
     }
   });
+
+  const handleStripeSuccess = (paymentData) => {
+    setStripePaymentData(paymentData);
+    setStep(STEPS.PROCESSING);
+    createOrderMutation.mutate(paymentData);
+  };
+
+  const handleStripeError = (errorMessage) => {
+    setPaymentError(errorMessage);
+  };
 
   const handleNext = () => {
     if (step === STEPS.SHIPPING) {
