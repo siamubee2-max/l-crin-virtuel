@@ -97,31 +97,7 @@ function CheckoutContent() {
     if (step === STEPS.SHIPPING) {
       if (!formData.name || !formData.email || !formData.address || !formData.city) return;
       setStep(STEPS.PAYMENT);
-    } else if (step === STEPS.PAYMENT) {
-      if (formData.paymentMethod === 'card' && (!formData.cardNumber || !formData.expiry || !formData.cvc)) {
-        setPaymentError('Please fill in all card details');
-        return;
-      }
-      setStep(STEPS.PROCESSING);
-      setPaymentProgress(0);
-      createOrderMutation.mutate();
     }
-  };
-  
-  // Format card number with spaces
-  const formatCardNumber = (value) => {
-    const cleaned = value.replace(/\D/g, '').slice(0, 16);
-    const groups = cleaned.match(/.{1,4}/g);
-    return groups ? groups.join(' ') : cleaned;
-  };
-  
-  // Format expiry date
-  const formatExpiry = (value) => {
-    const cleaned = value.replace(/\D/g, '').slice(0, 4);
-    if (cleaned.length >= 2) {
-      return cleaned.slice(0, 2) + '/' + cleaned.slice(2);
-    }
-    return cleaned;
   };
 
   if (items.length === 0 && step !== STEPS.SUCCESS && step !== STEPS.PROCESSING) {
