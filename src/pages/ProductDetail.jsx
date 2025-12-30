@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Heart, ShoppingBag, Star, Sparkles, ArrowLeft, Truck, Shield, RotateCcw, Check } from "lucide-react";
-import { motion } from "framer-motion";
+import { Loader2, Heart, Star, Sparkles, ArrowLeft, Truck, Shield, RotateCcw, Camera, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { useCart } from '@/components/cart/CartProvider';
 import ReviewSection from '@/components/reviews/ProductReviewSection';
+import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 
 export default function ProductDetail() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { addToCart } = useCart();
   const [selectedMaterial, setSelectedMaterial] = useState(null);
-  const [addedToCart, setAddedToCart] = useState(false);
+  const [showARTryOn, setShowARTryOn] = useState(false);
 
   // Get product ID and type from URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -63,17 +62,6 @@ export default function ProductDetail() {
     queryClient.invalidateQueries({ queryKey: ['myWishlist'] });
   };
 
-  const handleAddToCart = () => {
-    if (product) {
-      addToCart({
-        ...product,
-        selectedMaterial: selectedMaterial || product.material_options?.[0] || product.material
-      });
-      setAddedToCart(true);
-      setTimeout(() => setAddedToCart(false), 2000);
-    }
-  };
-
   // Calculate average rating
   const avgRating = reviews?.length > 0 
     ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
@@ -96,6 +84,24 @@ export default function ProductDetail() {
       <div className="text-center py-20">
         <p className="text-neutral-500">Product not found</p>
         <Button onClick={() => navigate(-1)} variant="outline" className="mt-4">Go Back</Button>
+      </div>
+    );
+  }
+
+  // AR Try-On Mode
+  if (showARTryOn) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black">
+        <ARLiveTryOn 
+          jewelryImage={product.image_url}
+          jewelryType={product.type}
+          mode={productType === 'clothing' ? 'clothing' : 'jewelry'}
+          onBack={() => setShowARTryOn(false)}
+          onSaveToGallery={(url) => {
+            setShowARTryOn(false);
+            // Could navigate to gallery or show success message
+          }}
+        />
       </div>
     );
   }
@@ -133,13 +139,22 @@ export default function ProductDetail() {
             </Badge>
           )}
 
-          {/* Try On Button */}
-          <Button
-            onClick={() => navigate(createPageUrl('Studio'))}
-            className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm text-neutral-900 hover:bg-white shadow-lg"
-          >
-            <Sparkles className="w-4 h-4 mr-2" /> Try On Virtually
-          </Button>
+          {/* Try On Buttons */}
+          <div className="absolute bottom-4 right-4 flex flex-col gap-2">
+            <Button
+              onClick={() => setShowARTryOn(true)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
+            >
+              <Camera className="w-4 h-4 mr-2" /> Essai AR Live
+            </Button>
+            <Button
+              onClick={() => navigate(createPageUrl('Studio'))}
+              variant="secondary"
+              className="bg-white/90 backdrop-blur-sm text-neutral-900 hover:bg-white shadow-lg"
+            >
+              <Sparkles className="w-4 h-4 mr-2" /> Studio IA
+            </Button>
+          </div>
         </motion.div>
 
         {/* Product Info */}
@@ -253,29 +268,27 @@ export default function ProductDetail() {
           {/* Action Buttons */}
           <div className="flex gap-3">
             <Button
-              onClick={handleAddToCart}
-              className={`flex-1 h-12 text-base transition-all ${
-                addedToCart 
-                  ? 'bg-green-600 hover:bg-green-700' 
-                  : 'bg-neutral-900 hover:bg-neutral-800'
-              }`}
-              disabled={addedToCart}
-            >
-              {addedToCart ? (
-                <><Check className="w-5 h-5 mr-2" /> Added to Cart</>
-              ) : (
-                <><ShoppingBag className="w-5 h-5 mr-2" /> Add to Cart</>
-              )}
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className={`h-12 w-12 ${isWishlisted ? 'text-red-500 border-red-200 bg-red-50' : ''}`}
               onClick={toggleWishlist}
+              className={`flex-1 h-12 text-base transition-all ${
+                isWishlisted 
+                  ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100' 
+                  : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+              }`}
+              variant={isWishlisted ? "outline" : "default"}
             >
-              <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-red-500' : ''}`} />
+              <Heart className={`w-5 h-5 mr-2 ${isWishlisted ? 'fill-red-500' : ''}`} />
+              {isWishlisted ? 'Dans mes favoris' : 'Ajouter aux favoris'}
             </Button>
           </div>
+          
+          {/* AR Try-On CTA */}
+          <Button
+            onClick={() => setShowARTryOn(true)}
+            variant="outline"
+            className="w-full h-11 border-purple-200 text-purple-700 hover:bg-purple-50"
+          >
+            <Camera className="w-4 h-4 mr-2" /> Essayer en Réalité Augmentée
+          </Button>
 
           {/* Affiliate Link */}
           {product.affiliate_link && (
