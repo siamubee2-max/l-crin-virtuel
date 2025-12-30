@@ -4,12 +4,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Heart, Star, Sparkles, ArrowLeft, Truck, Shield, RotateCcw, Camera, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Loader2, Heart, Star, Sparkles, ArrowLeft, Truck, Shield, RotateCcw } from "lucide-react";
+import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ReviewSection from '@/components/reviews/ProductReviewSection';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
+import ProductImageGallery from '@/components/product/ProductImageGallery';
 
 export default function ProductDetail() {
   const navigate = useNavigate();
