@@ -1,15 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Maximize2, RotateCw, Save, X, Undo2, Move, ZoomIn, Contrast, Sun } from "lucide-react";
+import { Save, X, Undo2, Move, ZoomIn, Contrast, Sun, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import html2canvas from 'html2canvas';
 import { base44 } from '@/api/base44Client';
-import { Loader2 } from "lucide-react";
 import { useLanguage } from '@/components/LanguageProvider';
 
 export default function TryOnEditor({ resultImage, onSave, onCancel }) {
   const { t } = useLanguage();
+  const editor = t.studio?.editor || {};
   const [zoom, setZoom] = useState([1]);
   const [brightness, setBrightness] = useState([100]);
   const [contrast, setContrast] = useState([100]);
