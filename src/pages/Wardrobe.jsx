@@ -218,11 +218,11 @@ export default function Wardrobe() {
                 animate={{ opacity: 1 }}
                 className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-neutral-100"
               >
-                <div className="aspect-[4/5] bg-neutral-100 relative overflow-hidden">
+                <div className="aspect-[3/4] bg-neutral-100 relative overflow-hidden">
                   <img 
                     src={part.image_url} 
                     alt={part.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute top-3 right-3">
                     <Button
