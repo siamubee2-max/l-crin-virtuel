@@ -291,8 +291,7 @@ export default function Studio() {
          />
       ) : isEditing ? (
         <TryOnEditor 
-          bodyImage={bodyParts?.find(p => p.id === selectedBodyPartId)?.image_url}
-          jewelryImage={jewelryImage}
+          resultImage={resultImage}
           onSave={handleEditorSave}
           onCancel={() => setIsEditing(false)}
         />
