@@ -31,11 +31,16 @@ function LayoutContent({ children }) {
     { label: "Brands", icon: Star, path: "/BrandPartnerships" },
     { label: t.nav.profile, icon: UserCircle, path: "/Profile" },
       { label: "Abonnement", icon: Star, path: "/Subscription" },
-    ];
+        ];
 
-    if (currentUser?.role === 'admin') {
-      navItems.push({ label: "Partnerships", icon: Star, path: "/AdminPartnerships" });
-  }
+        // Add Creator Dashboard for approved creators
+        if (currentUser) {
+          navItems.push({ label: "Dashboard", icon: UserCircle, path: "/CreatorDashboard" });
+        }
+
+        if (currentUser?.role === 'admin') {
+          navItems.push({ label: "Partnerships", icon: Star, path: "/AdminPartnerships" });
+      }
 
   const languages = [
     { code: 'fr', label: 'Français', flag: '🇫🇷' },
