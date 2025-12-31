@@ -18,10 +18,9 @@ export default function ReviewSection({ jewelryId }) {
   const [newRating, setNewRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sortBy, setSortBy] = useState("newest");
 
   // Fetch reviews for this item
-  // Note: Filtering client side or server side depends on SDK. 
-  // Assuming .filter({ jewelry_item_id: jewelryId }) works.
   const { data: reviews, isLoading } = useQuery({
     queryKey: ['reviews', jewelryId],
     queryFn: () => base44.entities.Review.filter({ jewelry_item_id: jewelryId }, '-created_date'),
@@ -31,6 +30,43 @@ export default function ReviewSection({ jewelryId }) {
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me().catch(() => null),
   });
+
+  // Check if user has an active subscription (simplified check)
+  const isSubscribed = !!user; // For now, any logged-in user can review
+
+  // Check if user has purchased this item
+  const { data: userOrders } = useQuery({
+    queryKey: ['userOrders', user?.email],
+    queryFn: () => base44.entities.Order.filter({ customer_email: user?.email }),
+    enabled: !!user?.email,
+  });
+
+  const hasPurchased = useMemo(() => {
+    return userOrders?.some(order => order.item_id === jewelryId && order.status !== 'cancelled');
+  }, [userOrders, jewelryId]);
+
+  // Check if user already reviewed
+  const hasAlreadyReviewed = useMemo(() => {
+    return reviews?.some(r => r.created_by === user?.email);
+  }, [reviews, user?.email]);
+
+  // Sort reviews
+  const sortedReviews = useMemo(() => {
+    if (!reviews) return [];
+    const sorted = [...reviews];
+    switch (sortBy) {
+      case "newest":
+        return sorted.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+      case "oldest":
+        return sorted.sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
+      case "highest":
+        return sorted.sort((a, b) => b.rating - a.rating);
+      case "lowest":
+        return sorted.sort((a, b) => a.rating - b.rating);
+      default:
+        return sorted;
+    }
+  }, [reviews, sortBy]);
 
   // Need to fetch the jewelry item to get the owner ID for notification
   const { data: jewelryItem } = useQuery({
