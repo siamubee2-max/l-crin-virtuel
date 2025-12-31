@@ -214,10 +214,44 @@ export default function AdminPartnerships() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="brands">Brands</TabsTrigger>
           <TabsTrigger value="creators">Creators</TabsTrigger>
           <TabsTrigger value="collections">Collections</TabsTrigger>
         </TabsList>
+
+        {/* Analytics Tab */}
+        <TabsContent value="analytics" className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            <RevenueChart data={chartData.timeSeries.map(d => ({ date: d.date, revenue: d.revenue }))} title="Revenus des Commissions" />
+            <ClicksChart data={chartData.timeSeries} title="Clics & Conversions" />
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            <CategoryPieChart data={chartData.pieData} title="Clics par Catégorie" />
+            <TopProductsWidget data={chartData.creatorData} title="Top Créateurs" />
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Performance par Marque</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {brands?.slice(0, 5).map((brand, idx) => (
+                    <div key={brand.id} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {brand.logo_url && (
+                          <img src={brand.logo_url} alt="" className="w-6 h-6 rounded object-contain" />
+                        )}
+                        <span className="text-sm font-medium">{brand.brand_name}</span>
+                      </div>
+                      <Badge variant="secondary">{brand.commission_rate}%</Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
         {/* Brands Tab */}
         <TabsContent value="brands" className="space-y-4">
