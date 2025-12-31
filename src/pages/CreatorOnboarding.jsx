@@ -225,14 +225,36 @@ export default function CreatorOnboarding() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* Progress Bar */}
+      {/* Progress Bar with Step Indicators */}
       {step > STEPS.WELCOME && step < STEPS.SUCCESS && (
         <div className="mb-8">
           <div className="flex justify-between text-sm text-neutral-500 mb-2">
-            <span>Step {step} of 4</span>
-            <span>{Math.round(progress)}% complete</span>
+            <span>Étape {currentStepNum} sur {totalSteps}</span>
+            <span>{Math.round(progress)}% complété</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-2 mb-4" />
+          
+          {/* Step Indicator Pills */}
+          <div className="flex justify-center gap-2 flex-wrap">
+            {Object.entries(stepTitles).map(([stepKey, title]) => {
+              const stepNum = parseInt(stepKey);
+              const isActive = step === stepNum;
+              const isCompleted = step > stepNum;
+              return (
+                <div
+                  key={stepKey}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                    isActive ? 'bg-neutral-900 text-white' :
+                    isCompleted ? 'bg-green-100 text-green-700' :
+                    'bg-neutral-100 text-neutral-400'
+                  }`}
+                >
+                  {isCompleted && <CheckCircle2 className="w-3 h-3 inline mr-1" />}
+                  {title}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
