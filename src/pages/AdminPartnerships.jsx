@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,13 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, Plus, Crown, Users, Package, TrendingUp, DollarSign, Edit, Trash2, CheckCircle2, XCircle, Eye } from "lucide-react";
+import { Loader2, Plus, Crown, Users, Package, TrendingUp, DollarSign, Edit, Trash2, CheckCircle2, XCircle, Eye, BarChart3, MousePointerClick } from "lucide-react";
+import { format, subDays, parseISO, isWithinInterval } from "date-fns";
+import StatsCard from '@/components/analytics/StatsCard';
+import { RevenueChart, ClicksChart, CategoryPieChart } from '@/components/analytics/AnalyticsCharts';
+import { TopProductsWidget, useWidgetConfig, WidgetConfigDialog } from '@/components/analytics/DashboardWidgets';
+import DateRangeSelector from '@/components/analytics/DateRangeSelector';
+import ExportButton from '@/components/analytics/ExportButton';
 
 export default function AdminPartnerships() {
   const queryClient = useQueryClient();
