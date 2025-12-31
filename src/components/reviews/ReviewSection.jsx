@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Loader2, MessageSquare, User } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, MessageSquare, User, BadgeCheck, Lock, ShoppingBag, ArrowUpDown } from "lucide-react";
 import StarRating from './StarRating';
 import { formatDistanceToNow } from 'date-fns';
-import { fr, enUS } from 'date-fns/locale'; // Assuming simple locale handling or default to en
+import { fr, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/components/LanguageProvider';
 
 export default function ReviewSection({ jewelryId }) {
