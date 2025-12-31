@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Loader2, Plus, Crown, Users, Package, TrendingUp, DollarSign, Edit, Trash2, CheckCircle2, XCircle, Eye, BarChart3, MousePointerClick } from "lucide-react";
+import { Loader2, Crown, Users, Package, TrendingUp, DollarSign, CheckCircle2, XCircle, BarChart3, MousePointerClick } from "lucide-react";
 import { format, subDays, parseISO, isWithinInterval } from "date-fns";
 import StatsCard from '@/components/analytics/StatsCard';
 import { RevenueChart, ClicksChart, CategoryPieChart } from '@/components/analytics/AnalyticsCharts';
