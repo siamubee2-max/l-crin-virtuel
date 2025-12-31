@@ -54,33 +54,10 @@ export default function AdminPartnerships() {
   });
 
   // Mutations
-  const saveBrand = useMutation({
-    mutationFn: (data) => editingBrand 
-      ? base44.entities.BrandPartnership.update(editingBrand.id, data)
-      : base44.entities.BrandPartnership.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allBrands'] });
-      setBrandDialog(false);
-      setEditingBrand(null);
-      setBrandForm({ brand_name: '', description: '', logo_url: '', website_url: '', commission_rate: 10, tier: 'basic', featured: false, contact_email: '', status: 'pending' });
-    }
-  });
-
-  const deleteBrand = useMutation({
-    mutationFn: (id) => base44.entities.BrandPartnership.delete(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['allBrands'] })
-  });
-
   const updateCreator = useMutation({
     mutationFn: ({ id, data }) => base44.entities.CreatorProfile.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['allCreators'] })
   });
-
-  const openEditBrand = (brand) => {
-    setEditingBrand(brand);
-    setBrandForm(brand);
-    setBrandDialog(true);
-  };
 
   // Filter clicks by date range
   const filteredClicks = useMemo(() => {
