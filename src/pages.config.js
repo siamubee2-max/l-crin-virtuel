@@ -16,6 +16,7 @@ import StylistProfile from './pages/StylistProfile';
 import Stylists from './pages/Stylists';
 import Wardrobe from './pages/Wardrobe';
 import Subscription from './pages/Subscription';
+import CreatorDashboard from './pages/CreatorDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -38,6 +39,7 @@ export const PAGES = {
     "Stylists": Stylists,
     "Wardrobe": Wardrobe,
     "Subscription": Subscription,
+    "CreatorDashboard": CreatorDashboard,
 }
 
 export const pagesConfig = {
