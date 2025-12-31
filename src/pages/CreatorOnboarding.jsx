@@ -9,10 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Loader2, ArrowRight, ArrowLeft, CheckCircle2, Sparkles, Camera, 
   DollarSign, TrendingUp, Users, Heart, ShoppingBag, Lightbulb,
-  Instagram, Youtube, Globe, Star, Bookmark, Eye
+  Instagram, Youtube, Globe, Star, Bookmark, Eye, AlertCircle, X, ImagePlus, Info
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
@@ -20,11 +21,13 @@ import { createPageUrl } from '@/utils';
 
 const STEPS = {
   WELCOME: 0,
-  PROFILE: 1,
-  COMMISSIONS: 2,
-  BEST_PRACTICES: 3,
-  REVIEW: 4,
-  SUCCESS: 5
+  PROFILE_IMAGES: 1,
+  PROFILE_INFO: 2,
+  SPECIALTIES: 3,
+  COMMISSIONS: 4,
+  BEST_PRACTICES: 5,
+  REVIEW: 6,
+  SUCCESS: 7
 };
 
 export default function CreatorOnboarding() {

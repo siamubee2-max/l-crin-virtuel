@@ -14,8 +14,8 @@ import Studio from './pages/Studio';
 import StyleFeed from './pages/StyleFeed';
 import StylistProfile from './pages/StylistProfile';
 import Stylists from './pages/Stylists';
-import Subscription from './pages/Subscription';
 import Wardrobe from './pages/Wardrobe';
+import Subscription from './pages/Subscription';
 import __Layout from './Layout.jsx';
 
 
@@ -36,8 +36,8 @@ export const PAGES = {
     "StyleFeed": StyleFeed,
     "StylistProfile": StylistProfile,
     "Stylists": Stylists,
-    "Subscription": Subscription,
     "Wardrobe": Wardrobe,
+    "Subscription": Subscription,
 }
 
 export const pagesConfig = {
