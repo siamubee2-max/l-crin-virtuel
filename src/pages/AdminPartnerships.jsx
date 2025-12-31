@@ -23,14 +23,8 @@ import ExportButton from '@/components/analytics/ExportButton';
 export default function AdminPartnerships() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("analytics");
-  const [brandDialog, setBrandDialog] = useState(false);
-  const [editingBrand, setEditingBrand] = useState(null);
   const [dateRange, setDateRange] = useState({ from: subDays(new Date(), 30), to: new Date() });
   const { widgets, toggleWidget, reorderWidgets, resetWidgets } = useWidgetConfig('admin_dashboard_widgets');
-  const [brandForm, setBrandForm] = useState({
-    brand_name: '', description: '', logo_url: '', website_url: '',
-    commission_rate: 10, tier: 'basic', featured: false, contact_email: '', status: 'pending'
-  });
 
   // Auth check
   const { data: user } = useQuery({
