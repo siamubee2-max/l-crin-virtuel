@@ -829,10 +829,10 @@ export default function CreatorOnboarding() {
 
             <div className="flex justify-between pt-6">
               <Button variant="ghost" onClick={() => setStep(STEPS.COMMISSIONS)}>
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                <ArrowLeft className="w-4 h-4 mr-2" /> Retour
               </Button>
               <Button onClick={() => setStep(STEPS.REVIEW)}>
-                Review & Submit <ArrowRight className="w-4 h-4 ml-2" />
+                Vérifier & Soumettre <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </motion.div>
