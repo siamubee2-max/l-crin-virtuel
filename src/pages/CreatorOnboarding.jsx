@@ -13,7 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   Loader2, ArrowRight, ArrowLeft, CheckCircle2, Sparkles, Camera, 
   DollarSign, TrendingUp, Users, Heart, ShoppingBag, Lightbulb,
-  Instagram, Youtube, Globe, Star, Bookmark, Eye, AlertCircle, X, ImagePlus, Info
+  Instagram, Youtube, Globe, Star, Bookmark, Eye, AlertCircle, X, ImagePlus, Info, Edit2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
