@@ -183,60 +183,33 @@ export default function AdminPartnerships() {
         </p>
       </div>
 
+      {/* Date Range & Export Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <DateRangeSelector value={dateRange} onChange={setDateRange} />
+        <div className="flex items-center gap-2">
+          <ExportButton data={exportData} filename="partnership_analytics" />
+          <WidgetConfigDialog 
+            widgets={widgets} 
+            onToggle={toggleWidget} 
+            onReorder={reorderWidgets} 
+            onReset={resetWidgets} 
+          />
+        </div>
+      </div>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                <Crown className="w-5 h-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{brands?.length || 0}</p>
-                <p className="text-xs text-neutral-500">Partner Brands</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <Users className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{creators?.length || 0}</p>
-                <p className="text-xs text-neutral-500">Creators</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{totalClicks}</p>
-                <p className="text-xs text-neutral-500">Affiliate Clicks</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-amber-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">${totalCommissions.toFixed(0)}</p>
-                <p className="text-xs text-neutral-500">Commissions</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <StatsCard title="Marques Partenaires" value={brands?.length || 0} icon={Crown} color="purple" />
+        <StatsCard title="Créateurs" value={creators?.length || 0} icon={Users} color="blue" />
+        <StatsCard title="Clics Affiliés" value={totalClicks} icon={MousePointerClick} color="green" change={8} />
+        <StatsCard title="Commissions" value={totalCommissions.toFixed(2)} prefix="$" icon={DollarSign} color="amber" change={12} />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatsCard title="Conversions" value={conversions} icon={TrendingUp} color="pink" />
+        <StatsCard title="Taux Conversion" value={conversionRate} suffix="%" icon={BarChart3} color="blue" />
+        <StatsCard title="Collections" value={collections?.length || 0} icon={Package} color="amber" />
+        <StatsCard title="Créateurs Approuvés" value={creators?.filter(c => c.status === 'approved').length || 0} icon={CheckCircle2} color="green" />
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
