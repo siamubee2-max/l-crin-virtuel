@@ -87,10 +87,76 @@ export default function CreatorOnboarding() {
     try {
       const result = await base44.integrations.Core.UploadFile({ file });
       setFormData(prev => ({ ...prev, [field]: result.file_url }));
+      setValidationErrors(prev => ({ ...prev, [field]: null }));
     } catch (error) {
       console.error('Upload failed', error);
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handlePortfolioUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (formData.portfolio_images.length >= 6) return;
+    setUploading(true);
+    try {
+      const result = await base44.integrations.Core.UploadFile({ file });
+      setFormData(prev => ({ 
+        ...prev, 
+        portfolio_images: [...prev.portfolio_images, result.file_url] 
+      }));
+    } catch (error) {
+      console.error('Upload failed', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removePortfolioImage = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      portfolio_images: prev.portfolio_images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const validateStep = (currentStep) => {
+    const errors = {};
+    
+    if (currentStep === STEPS.PROFILE_IMAGES) {
+      if (!formData.profile_image) {
+        errors.profile_image = "Une photo de profil est requise";
+      }
+    }
+    
+    if (currentStep === STEPS.PROFILE_INFO) {
+      if (!formData.display_name.trim()) {
+        errors.display_name = "Un nom d'affichage est requis";
+      }
+      if (formData.display_name.length < 2) {
+        errors.display_name = "Le nom doit contenir au moins 2 caractères";
+      }
+      if (!formData.bio.trim()) {
+        errors.bio = "Une biographie est requise";
+      }
+      if (formData.bio.length < 50) {
+        errors.bio = "La bio doit contenir au moins 50 caractères";
+      }
+    }
+    
+    if (currentStep === STEPS.SPECIALTIES) {
+      if (formData.specialties.length === 0) {
+        errors.specialties = "Sélectionnez au moins une spécialité";
+      }
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleNextStep = (nextStep) => {
+    if (validateStep(step)) {
+      setStep(nextStep);
     }
   };
 
