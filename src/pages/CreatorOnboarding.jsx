@@ -716,11 +716,11 @@ export default function CreatorOnboarding() {
             </div>
 
             <div className="flex justify-between pt-6">
-              <Button variant="ghost" onClick={() => setStep(STEPS.PROFILE)}>
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back
+              <Button variant="ghost" onClick={() => setStep(STEPS.SPECIALTIES)}>
+                <ArrowLeft className="w-4 h-4 mr-2" /> Retour
               </Button>
               <Button onClick={() => setStep(STEPS.BEST_PRACTICES)}>
-                Continue <ArrowRight className="w-4 h-4 ml-2" />
+                Continuer <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </motion.div>
