@@ -215,7 +215,6 @@ export default function AdminPartnerships() {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="brands">Brands</TabsTrigger>
           <TabsTrigger value="creators">Creators</TabsTrigger>
           <TabsTrigger value="collections">Collections</TabsTrigger>
         </TabsList>
