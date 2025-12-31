@@ -88,10 +88,80 @@ export default function AdminPartnerships() {
     setBrandDialog(true);
   };
 
+  // Filter clicks by date range
+  const filteredClicks = useMemo(() => {
+    if (!clicks) return [];
+    return clicks.filter(click => {
+      try {
+        const clickDate = parseISO(click.created_date);
+        return isWithinInterval(clickDate, { start: dateRange.from, end: dateRange.to });
+      } catch {
+        return false;
+      }
+    });
+  }, [clicks, dateRange]);
+
   // Stats
-  const totalClicks = clicks?.length || 0;
-  const conversions = clicks?.filter(c => c.converted).length || 0;
-  const totalCommissions = clicks?.reduce((sum, c) => sum + (c.commission_amount || 0), 0) || 0;
+  const totalClicks = filteredClicks.length;
+  const conversions = filteredClicks.filter(c => c.converted).length;
+  const totalCommissions = filteredClicks.reduce((sum, c) => sum + (c.commission_amount || 0), 0);
+  const conversionRate = totalClicks > 0 ? ((conversions / totalClicks) * 100).toFixed(1) : 0;
+
+  // Chart data
+  const chartData = useMemo(() => {
+    const clicksByDate = {};
+    filteredClicks.forEach(click => {
+      const date = format(parseISO(click.created_date), 'dd/MM');
+      if (!clicksByDate[date]) {
+        clicksByDate[date] = { date, clicks: 0, conversions: 0, revenue: 0 };
+      }
+      clicksByDate[date].clicks++;
+      if (click.converted) clicksByDate[date].conversions++;
+      clicksByDate[date].revenue += click.commission_amount || 0;
+    });
+    
+    const timeSeries = Object.values(clicksByDate).sort((a, b) => a.date.localeCompare(b.date));
+    
+    // By creator
+    const byCreator = {};
+    filteredClicks.forEach(click => {
+      const id = click.creator_id || 'unknown';
+      if (!byCreator[id]) byCreator[id] = { clicks: 0, revenue: 0 };
+      byCreator[id].clicks++;
+      byCreator[id].revenue += click.commission_amount || 0;
+    });
+    
+    const creatorData = Object.entries(byCreator).map(([id, data]) => {
+      const creator = creators?.find(c => c.id === id);
+      return { id, name: creator?.display_name || 'Inconnu', ...data };
+    }).sort((a, b) => b.revenue - a.revenue);
+
+    // Category breakdown
+    const categoryData = {};
+    filteredClicks.forEach(click => {
+      const type = click.item_type || 'other';
+      if (!categoryData[type]) categoryData[type] = 0;
+      categoryData[type]++;
+    });
+    const pieData = Object.entries(categoryData).map(([name, value]) => ({ name, value }));
+
+    return { timeSeries, creatorData, pieData };
+  }, [filteredClicks, creators]);
+
+  // Export data
+  const exportData = useMemo(() => {
+    return filteredClicks.map(click => {
+      const creator = creators?.find(c => c.id === click.creator_id);
+      return {
+        date: click.created_date,
+        creator: creator?.display_name || 'N/A',
+        item_id: click.item_id,
+        item_type: click.item_type,
+        converted: click.converted ? 'Oui' : 'Non',
+        commission: click.commission_amount || 0
+      };
+    });
+  }, [filteredClicks, creators]);
 
   if (user?.role !== 'admin') {
     return (
