@@ -124,42 +124,80 @@ export default function ReviewSection({ jewelryId }) {
 
   const locale = language === 'fr' ? fr : enUS;
 
+  // Calculate average rating
+  const avgRating = useMemo(() => {
+    if (!reviews || reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+    return sum / reviews.length;
+  }, [reviews]);
+
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-serif font-medium flex items-center gap-2">
-          <MessageSquare className="w-4 h-4" /> 
-          {language === 'fr' ? 'Avis Clients' : 'Customer Reviews'} 
-          <span className="text-neutral-400 text-sm font-sans">({reviews?.length || 0})</span>
-        </h3>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h3 className="text-lg font-serif font-medium flex items-center gap-2">
+            <MessageSquare className="w-4 h-4" /> 
+            {language === 'fr' ? 'Avis Clients' : 'Customer Reviews'} 
+            <span className="text-neutral-400 text-sm font-sans">({reviews?.length || 0})</span>
+          </h3>
+          {reviews?.length > 0 && (
+            <div className="flex items-center gap-2 mt-1">
+              <StarRating rating={avgRating} size={14} readonly />
+              <span className="text-sm text-neutral-600">{avgRating.toFixed(1)} / 5</span>
+            </div>
+          )}
+        </div>
+        
+        {reviews?.length > 1 && (
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[150px] h-8 text-xs">
+              <ArrowUpDown className="w-3 h-3 mr-1" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">{language === 'fr' ? 'Plus récents' : 'Newest'}</SelectItem>
+              <SelectItem value="oldest">{language === 'fr' ? 'Plus anciens' : 'Oldest'}</SelectItem>
+              <SelectItem value="highest">{language === 'fr' ? 'Meilleures notes' : 'Highest rated'}</SelectItem>
+              <SelectItem value="lowest">{language === 'fr' ? 'Notes les plus basses' : 'Lowest rated'}</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       {/* Review List */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         {isLoading ? (
           <div className="flex justify-center py-4"><Loader2 className="animate-spin text-neutral-300" /></div>
-        ) : reviews?.length === 0 ? (
+        ) : sortedReviews.length === 0 ? (
           <p className="text-neutral-500 text-sm italic">
             {language === 'fr' ? "Soyez le premier à donner votre avis." : "Be the first to leave a review."}
           </p>
         ) : (
-          <div className="space-y-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-            {reviews?.map((review) => (
-              <div key={review.id} className="flex gap-3 text-sm">
-                <Avatar className="w-8 h-8">
+          <div className="space-y-4 max-h-[350px] overflow-y-auto pr-2">
+            {sortedReviews.map((review) => (
+              <div key={review.id} className="flex gap-3 text-sm bg-white p-3 rounded-lg border border-neutral-100">
+                <Avatar className="w-9 h-9">
                   <AvatarFallback className="bg-amber-100 text-amber-700 text-xs">
                     {review.user_name?.charAt(0) || <User className="w-4 h-4" />}
                   </AvatarFallback>
                 </Avatar>
                 <div className="space-y-1 flex-1">
-                  <div className="flex justify-between items-start">
-                    <span className="font-medium text-neutral-900">{review.user_name || "Anonymous"}</span>
+                  <div className="flex justify-between items-start flex-wrap gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-neutral-900">{review.user_name || "Anonymous"}</span>
+                      {review.verified_purchase && (
+                        <span className="inline-flex items-center gap-1 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">
+                          <BadgeCheck className="w-3 h-3" /> 
+                          {language === 'fr' ? 'Achat vérifié' : 'Verified'}
+                        </span>
+                      )}
+                    </div>
                     <span className="text-xs text-neutral-400">
                       {formatDistanceToNow(new Date(review.created_date), { addSuffix: true, locale })}
                     </span>
                   </div>
                   <StarRating rating={review.rating} size={12} readonly />
-                  <p className="text-neutral-600 mt-1">{review.comment}</p>
+                  {review.comment && <p className="text-neutral-600 mt-1">{review.comment}</p>}
                 </div>
               </div>
             ))}
