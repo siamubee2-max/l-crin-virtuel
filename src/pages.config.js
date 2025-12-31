@@ -2,7 +2,6 @@ import AdminPartnerships from './pages/AdminPartnerships';
 import BrandPartnerships from './pages/BrandPartnerships';
 import Checkout from './pages/Checkout';
 import Closet from './pages/Closet';
-import CreatorDashboard from './pages/CreatorDashboard';
 import CreatorOnboarding from './pages/CreatorOnboarding';
 import Gallery from './pages/Gallery';
 import JewelryBox from './pages/JewelryBox';
@@ -25,7 +24,6 @@ export const PAGES = {
     "BrandPartnerships": BrandPartnerships,
     "Checkout": Checkout,
     "Closet": Closet,
-    "CreatorDashboard": CreatorDashboard,
     "CreatorOnboarding": CreatorOnboarding,
     "Gallery": Gallery,
     "JewelryBox": JewelryBox,
