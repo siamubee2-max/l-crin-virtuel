@@ -41,6 +41,7 @@ export default function CreatorOnboarding() {
     bio: '',
     profile_image: '',
     cover_image: '',
+    portfolio_images: [],
     specialties: [],
     social_links: {
       instagram: '',
@@ -49,6 +50,8 @@ export default function CreatorOnboarding() {
       website: ''
     }
   });
+
+  const [validationErrors, setValidationErrors] = useState({});
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
