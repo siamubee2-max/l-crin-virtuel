@@ -848,51 +848,107 @@ export default function CreatorOnboarding() {
             className="space-y-8"
           >
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-serif mb-2">Review Your Application</h2>
-              <p className="text-neutral-500">Make sure everything looks good</p>
+              <h2 className="text-2xl font-serif mb-2">✅ Vérifiez Votre Candidature</h2>
+              <p className="text-neutral-500">Assurez-vous que tout est correct</p>
             </div>
 
-            {/* Profile Preview */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 rounded-full bg-neutral-100 overflow-hidden">
+            {/* Full Profile Preview */}
+            <Card className="overflow-hidden">
+              {/* Cover Preview */}
+              <div className="h-28 bg-gradient-to-r from-purple-200 to-pink-200 relative">
+                {formData.cover_image && (
+                  <img src={formData.cover_image} alt="Cover" className="w-full h-full object-cover" />
+                )}
+              </div>
+              
+              <CardContent className="pt-0 relative">
+                {/* Profile Image */}
+                <div className="absolute -top-10 left-6">
+                  <div className="w-20 h-20 rounded-full border-4 border-white bg-neutral-100 overflow-hidden">
                     {formData.profile_image ? (
                       <img src={formData.profile_image} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xl font-medium text-neutral-400">
+                      <div className="w-full h-full flex items-center justify-center text-2xl font-medium text-neutral-400">
                         {formData.display_name?.[0]}
                       </div>
                     )}
                   </div>
-                  <div>
-                    <h3 className="font-medium text-lg">{formData.display_name}</h3>
-                    <p className="text-sm text-neutral-500">{user?.email}</p>
-                    {formData.specialties.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {formData.specialties.map(s => (
-                          <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>
-                        ))}
-                      </div>
-                    )}
-                  </div>
                 </div>
-                {formData.bio && (
-                  <p className="text-sm text-neutral-600 mt-4 border-t pt-4">{formData.bio}</p>
-                )}
+                
+                <div className="pt-12">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-medium text-xl">{formData.display_name}</h3>
+                      <p className="text-sm text-neutral-500">{user?.email}</p>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => setStep(STEPS.PROFILE_INFO)}>
+                      <Edit2 className="w-3 h-3 mr-1" /> Modifier
+                    </Button>
+                  </div>
+                  
+                  {formData.specialties.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-3">
+                      {formData.specialties.map(s => (
+                        <Badge key={s} variant="secondary" className="text-xs">{s}</Badge>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {formData.bio && (
+                    <p className="text-sm text-neutral-600 mt-4 border-t pt-4">{formData.bio}</p>
+                  )}
+                  
+                  {/* Portfolio Preview */}
+                  {formData.portfolio_images.length > 0 && (
+                    <div className="mt-4 pt-4 border-t">
+                      <p className="text-xs text-neutral-500 mb-2">Portfolio ({formData.portfolio_images.length} images)</p>
+                      <div className="flex gap-2">
+                        {formData.portfolio_images.slice(0, 4).map((img, idx) => (
+                          <div key={idx} className="w-16 h-16 rounded-lg overflow-hidden">
+                            <img src={img} alt="" className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                        {formData.portfolio_images.length > 4 && (
+                          <div className="w-16 h-16 rounded-lg bg-neutral-100 flex items-center justify-center text-sm text-neutral-500">
+                            +{formData.portfolio_images.length - 4}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Social Links Preview */}
+                  {Object.values(formData.social_links).some(v => v) && (
+                    <div className="mt-4 pt-4 border-t flex gap-3">
+                      {formData.social_links.instagram && (
+                        <span className="text-xs text-neutral-500 flex items-center gap-1">
+                          <Instagram className="w-3 h-3" /> @{formData.social_links.instagram}
+                        </span>
+                      )}
+                      {formData.social_links.tiktok && (
+                        <span className="text-xs text-neutral-500">🎵 @{formData.social_links.tiktok}</span>
+                      )}
+                      {formData.social_links.youtube && (
+                        <span className="text-xs text-neutral-500 flex items-center gap-1">
+                          <Youtube className="w-3 h-3" /> {formData.social_links.youtube}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
             {/* Terms */}
             <div className="bg-neutral-50 rounded-xl p-6 space-y-4">
-              <h4 className="font-medium">Creator Agreement</h4>
+              <h4 className="font-medium">Accord Créateur</h4>
               <div className="text-sm text-neutral-600 space-y-2 max-h-32 overflow-y-auto">
-                <p>By submitting this application, you agree to:</p>
+                <p>En soumettant cette candidature, vous acceptez de :</p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>Create original, high-quality content</li>
-                  <li>Not engage in fraudulent affiliate activity</li>
-                  <li>Comply with FTC disclosure guidelines</li>
-                  <li>Maintain professional conduct with users</li>
+                  <li>Créer du contenu original et de qualité</li>
+                  <li>Ne pas s'engager dans des activités d'affiliation frauduleuses</li>
+                  <li>Respecter les règles de divulgation FTC</li>
+                  <li>Maintenir une conduite professionnelle avec les utilisateurs</li>
                 </ul>
               </div>
               <div className="flex items-center gap-2 pt-2">
@@ -902,14 +958,14 @@ export default function CreatorOnboarding() {
                   id="terms"
                 />
                 <Label htmlFor="terms" className="text-sm">
-                  I agree to the Creator Terms & Conditions
+                  J'accepte les Conditions Générales des Créateurs
                 </Label>
               </div>
             </div>
 
             <div className="flex justify-between pt-6">
               <Button variant="ghost" onClick={() => setStep(STEPS.BEST_PRACTICES)}>
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                <ArrowLeft className="w-4 h-4 mr-2" /> Retour
               </Button>
               <Button 
                 onClick={() => submitApplication.mutate()}
@@ -921,7 +977,7 @@ export default function CreatorOnboarding() {
                 ) : (
                   <CheckCircle2 className="w-4 h-4 mr-2" />
                 )}
-                Submit Application
+                Soumettre la Candidature
               </Button>
             </div>
           </motion.div>
