@@ -300,141 +300,349 @@ export default function CreatorOnboarding() {
               </Card>
             </div>
 
-            <Button size="lg" onClick={() => setStep(STEPS.PROFILE)} className="px-8">
-              Get Started <ArrowRight className="w-4 h-4 ml-2" />
+            <Button size="lg" onClick={() => setStep(STEPS.PROFILE_IMAGES)} className="px-8">
+              Commencer <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </motion.div>
         )}
 
-        {/* Profile Setup Step */}
-        {step === STEPS.PROFILE && (
+        {/* Step 1: Profile Images */}
+        {step === STEPS.PROFILE_IMAGES && (
           <motion.div
-            key="profile"
+            key="profile-images"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
             className="space-y-8"
           >
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-serif mb-2">Create Your Profile</h2>
-              <p className="text-neutral-500">Tell us about yourself and your style expertise</p>
+              <h2 className="text-2xl font-serif mb-2">📸 Vos Photos</h2>
+              <p className="text-neutral-500">Ajoutez une photo de profil et une couverture attrayante</p>
             </div>
 
-            {/* Cover & Profile Image */}
-            <div className="relative">
-              <div className="h-32 bg-gradient-to-r from-purple-200 to-pink-200 rounded-xl overflow-hidden">
-                {formData.cover_image && (
-                  <img src={formData.cover_image} alt="Cover" className="w-full h-full object-cover" />
-                )}
-                <label className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity cursor-pointer text-white text-sm">
-                  <Camera className="w-5 h-5 mr-2" /> Upload Cover
-                  <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'cover_image')} className="hidden" />
-                </label>
-              </div>
-              
-              <div className="absolute -bottom-10 left-6">
-                <div className="w-24 h-24 rounded-full border-4 border-white bg-neutral-100 overflow-hidden relative">
-                  {formData.profile_image ? (
-                    <img src={formData.profile_image} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-400">
-                      <Camera className="w-8 h-8" />
+            <Alert className="bg-blue-50 border-blue-200">
+              <Info className="w-4 h-4 text-blue-600" />
+              <AlertDescription className="text-blue-700">
+                Une photo de profil professionnelle augmente de 40% les chances d'être suivi !
+              </AlertDescription>
+            </Alert>
+
+            {/* Profile Image - Required */}
+            <Card className={`${validationErrors.profile_image ? 'border-red-300 bg-red-50/50' : ''}`}>
+              <CardContent className="pt-6">
+                <Label className="mb-3 block">Photo de profil *</Label>
+                <div className="flex items-center gap-6">
+                  <div className="relative">
+                    <div className={`w-28 h-28 rounded-full border-4 ${formData.profile_image ? 'border-green-300' : 'border-dashed border-neutral-300'} bg-neutral-100 overflow-hidden relative`}>
+                      {formData.profile_image ? (
+                        <img src={formData.profile_image} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-neutral-400">
+                          <Camera className="w-10 h-10" />
+                        </div>
+                      )}
+                      <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                        <Camera className="w-6 h-6 text-white" />
+                        <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'profile_image')} className="hidden" />
+                      </label>
                     </div>
+                    {formData.profile_image && (
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-neutral-600 mb-2">Choisissez une photo claire de votre visage</p>
+                    <ul className="text-xs text-neutral-500 space-y-1">
+                      <li>✓ Format carré recommandé</li>
+                      <li>✓ Bonne luminosité</li>
+                      <li>✓ Fond neutre de préférence</li>
+                    </ul>
+                  </div>
+                </div>
+                {validationErrors.profile_image && (
+                  <p className="text-red-500 text-sm mt-3 flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" /> {validationErrors.profile_image}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Cover Image - Optional but recommended */}
+            <Card>
+              <CardContent className="pt-6">
+                <Label className="mb-3 block">Image de couverture (recommandé)</Label>
+                <div className="relative h-40 bg-gradient-to-r from-purple-200 to-pink-200 rounded-xl overflow-hidden">
+                  {formData.cover_image ? (
+                    <>
+                      <img src={formData.cover_image} alt="Cover" className="w-full h-full object-cover" />
+                      <button 
+                        onClick={() => setFormData({...formData, cover_image: ''})}
+                        className="absolute top-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer text-neutral-500 hover:text-neutral-700 transition-colors">
+                      <ImagePlus className="w-10 h-10 mb-2" />
+                      <span className="text-sm font-medium">Ajouter une couverture</span>
+                      <span className="text-xs">1200x400px recommandé</span>
+                      <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'cover_image')} className="hidden" />
+                    </label>
                   )}
-                  <label className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
-                    <Camera className="w-6 h-6 text-white" />
-                    <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'profile_image')} className="hidden" />
-                  </label>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            <div className="pt-12 space-y-6">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Display Name *</Label>
-                  <Input 
-                    value={formData.display_name}
-                    onChange={(e) => setFormData({...formData, display_name: e.target.value})}
-                    placeholder="Your creator name"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Bio</Label>
-                <Textarea 
-                  value={formData.bio}
-                  onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                  placeholder="Tell your audience about your style journey and expertise..."
-                  rows={4}
-                />
-              </div>
-
-              <div className="space-y-3">
-                <Label>Style Specialties</Label>
-                <div className="flex flex-wrap gap-2">
-                  {specialtyOptions.map(specialty => (
-                    <button
-                      key={specialty}
-                      onClick={() => toggleSpecialty(specialty)}
-                      className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
-                        formData.specialties.includes(specialty)
-                          ? 'bg-neutral-900 text-white border-neutral-900'
-                          : 'bg-white hover:border-neutral-400'
-                      }`}
-                    >
-                      {specialty}
-                    </button>
+            {/* Portfolio Images */}
+            <Card>
+              <CardContent className="pt-6">
+                <Label className="mb-3 block">Portfolio (jusqu'à 6 images)</Label>
+                <p className="text-sm text-neutral-500 mb-4">Montrez vos meilleures créations ou looks pour illustrer votre style</p>
+                
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                  {formData.portfolio_images.map((img, idx) => (
+                    <div key={idx} className="aspect-square relative rounded-lg overflow-hidden group">
+                      <img src={img} alt={`Portfolio ${idx+1}`} className="w-full h-full object-cover" />
+                      <button 
+                        onClick={() => removePortfolioImage(idx)}
+                        className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-6 h-6 text-white" />
+                      </button>
+                    </div>
                   ))}
+                  
+                  {formData.portfolio_images.length < 6 && (
+                    <label className="aspect-square border-2 border-dashed border-neutral-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-neutral-400 hover:bg-neutral-50 transition-all">
+                      {uploading ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+                      ) : (
+                        <>
+                          <ImagePlus className="w-6 h-6 text-neutral-400 mb-1" />
+                          <span className="text-xs text-neutral-400">Ajouter</span>
+                        </>
+                      )}
+                      <input type="file" accept="image/*" onChange={handlePortfolioUpload} className="hidden" disabled={uploading} />
+                    </label>
+                  )}
                 </div>
-              </div>
-
-              <div className="space-y-4">
-                <Label>Social Links (Optional)</Label>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Instagram className="w-5 h-5 text-pink-500" />
-                    <Input 
-                      value={formData.social_links.instagram}
-                      onChange={(e) => setFormData({...formData, social_links: {...formData.social_links, instagram: e.target.value}})}
-                      placeholder="Instagram username"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 flex items-center justify-center text-sm">🎵</div>
-                    <Input 
-                      value={formData.social_links.tiktok}
-                      onChange={(e) => setFormData({...formData, social_links: {...formData.social_links, tiktok: e.target.value}})}
-                      placeholder="TikTok username"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Youtube className="w-5 h-5 text-red-500" />
-                    <Input 
-                      value={formData.social_links.youtube}
-                      onChange={(e) => setFormData({...formData, social_links: {...formData.social_links, youtube: e.target.value}})}
-                      placeholder="YouTube channel"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-5 h-5 text-neutral-500" />
-                    <Input 
-                      value={formData.social_links.website}
-                      onChange={(e) => setFormData({...formData, social_links: {...formData.social_links, website: e.target.value}})}
-                      placeholder="Website URL"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             <div className="flex justify-between pt-6">
               <Button variant="ghost" onClick={() => setStep(STEPS.WELCOME)}>
-                <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                <ArrowLeft className="w-4 h-4 mr-2" /> Retour
               </Button>
-              <Button onClick={() => setStep(STEPS.COMMISSIONS)} disabled={!formData.display_name}>
-                Continue <ArrowRight className="w-4 h-4 ml-2" />
+              <Button onClick={() => handleNextStep(STEPS.PROFILE_INFO)} disabled={uploading}>
+                Continuer <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step 2: Profile Info */}
+        {step === STEPS.PROFILE_INFO && (
+          <motion.div
+            key="profile-info"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            className="space-y-8"
+          >
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-serif mb-2">✍️ À Propos de Vous</h2>
+              <p className="text-neutral-500">Présentez-vous à votre future audience</p>
+            </div>
+
+            <Card className={`${validationErrors.display_name ? 'border-red-300' : ''}`}>
+              <CardContent className="pt-6 space-y-2">
+                <Label>Nom d'affichage *</Label>
+                <Input 
+                  value={formData.display_name}
+                  onChange={(e) => {
+                    setFormData({...formData, display_name: e.target.value});
+                    setValidationErrors({...validationErrors, display_name: null});
+                  }}
+                  placeholder="Ex: Marie Style, The Fashion Guy..."
+                  className={validationErrors.display_name ? 'border-red-300' : ''}
+                />
+                <p className="text-xs text-neutral-500">Ce nom sera visible publiquement sur vos collections</p>
+                {validationErrors.display_name && (
+                  <p className="text-red-500 text-sm flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" /> {validationErrors.display_name}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className={`${validationErrors.bio ? 'border-red-300' : ''}`}>
+              <CardContent className="pt-6 space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label>Biographie *</Label>
+                  <span className={`text-xs ${formData.bio.length < 50 ? 'text-amber-600' : 'text-green-600'}`}>
+                    {formData.bio.length}/50 min
+                  </span>
+                </div>
+                <Textarea 
+                  value={formData.bio}
+                  onChange={(e) => {
+                    setFormData({...formData, bio: e.target.value});
+                    setValidationErrors({...validationErrors, bio: null});
+                  }}
+                  placeholder="Parlez de votre parcours mode, vos inspirations, ce qui vous rend unique..."
+                  rows={5}
+                  className={validationErrors.bio ? 'border-red-300' : ''}
+                />
+                <Alert className="bg-amber-50 border-amber-200">
+                  <Lightbulb className="w-4 h-4 text-amber-600" />
+                  <AlertDescription className="text-amber-700 text-xs">
+                    <strong>Conseils :</strong> Mentionnez votre expérience, vos marques préférées, et ce qui vous passionne dans la mode.
+                  </AlertDescription>
+                </Alert>
+                {validationErrors.bio && (
+                  <p className="text-red-500 text-sm flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" /> {validationErrors.bio}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="pt-6 space-y-4">
+                <Label>Réseaux sociaux (optionnel)</Label>
+                <p className="text-sm text-neutral-500">Connectez vos réseaux pour augmenter votre crédibilité</p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-2">
+                    <Instagram className="w-5 h-5 text-pink-500 shrink-0" />
+                    <Input 
+                      value={formData.social_links.instagram}
+                      onChange={(e) => setFormData({...formData, social_links: {...formData.social_links, instagram: e.target.value}})}
+                      placeholder="@username"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 flex items-center justify-center text-sm shrink-0">🎵</div>
+                    <Input 
+                      value={formData.social_links.tiktok}
+                      onChange={(e) => setFormData({...formData, social_links: {...formData.social_links, tiktok: e.target.value}})}
+                      placeholder="@username"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Youtube className="w-5 h-5 text-red-500 shrink-0" />
+                    <Input 
+                      value={formData.social_links.youtube}
+                      onChange={(e) => setFormData({...formData, social_links: {...formData.social_links, youtube: e.target.value}})}
+                      placeholder="Nom de chaîne"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-neutral-500 shrink-0" />
+                    <Input 
+                      value={formData.social_links.website}
+                      onChange={(e) => setFormData({...formData, social_links: {...formData.social_links, website: e.target.value}})}
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-between pt-6">
+              <Button variant="ghost" onClick={() => setStep(STEPS.PROFILE_IMAGES)}>
+                <ArrowLeft className="w-4 h-4 mr-2" /> Retour
+              </Button>
+              <Button onClick={() => handleNextStep(STEPS.SPECIALTIES)}>
+                Continuer <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step 3: Specialties */}
+        {step === STEPS.SPECIALTIES && (
+          <motion.div
+            key="specialties"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            className="space-y-8"
+          >
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-serif mb-2">🎨 Vos Spécialités</h2>
+              <p className="text-neutral-500">Sélectionnez les styles qui vous définissent le mieux</p>
+            </div>
+
+            <Alert className="bg-purple-50 border-purple-200">
+              <Sparkles className="w-4 h-4 text-purple-600" />
+              <AlertDescription className="text-purple-700">
+                Choisissez au moins 1 spécialité. Cela aidera les utilisateurs à vous découvrir !
+              </AlertDescription>
+            </Alert>
+
+            <Card className={`${validationErrors.specialties ? 'border-red-300' : ''}`}>
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                  {specialtyOptions.map(specialty => {
+                    const isSelected = formData.specialties.includes(specialty);
+                    return (
+                      <button
+                        key={specialty}
+                        onClick={() => {
+                          toggleSpecialty(specialty);
+                          setValidationErrors({...validationErrors, specialties: null});
+                        }}
+                        className={`p-4 rounded-xl border-2 transition-all text-center ${
+                          isSelected
+                            ? 'bg-neutral-900 text-white border-neutral-900 shadow-lg scale-105'
+                            : 'bg-white hover:border-neutral-400 hover:shadow'
+                        }`}
+                      >
+                        <span className="text-2xl block mb-1">
+                          {specialty === 'Luxury' ? '💎' :
+                           specialty === 'Streetwear' ? '🔥' :
+                           specialty === 'Vintage' ? '🕰️' :
+                           specialty === 'Minimalist' ? '⚪' :
+                           specialty === 'Boho' ? '🌸' :
+                           specialty === 'Bridal' ? '💍' :
+                           specialty === 'Casual' ? '👕' :
+                           specialty === 'Evening' ? '✨' :
+                           specialty === 'Sustainable' ? '🌿' : '🎭'}
+                        </span>
+                        <span className="text-sm font-medium">{specialty}</span>
+                        {isSelected && <CheckCircle2 className="w-4 h-4 mx-auto mt-1" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                {validationErrors.specialties && (
+                  <p className="text-red-500 text-sm mt-4 flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" /> {validationErrors.specialties}
+                  </p>
+                )}
+                
+                {formData.specialties.length > 0 && (
+                  <div className="mt-6 pt-4 border-t">
+                    <p className="text-sm text-neutral-500 mb-2">Sélectionné ({formData.specialties.length}) :</p>
+                    <div className="flex flex-wrap gap-2">
+                      {formData.specialties.map(s => (
+                        <Badge key={s} className="bg-neutral-900 text-white">{s}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-between pt-6">
+              <Button variant="ghost" onClick={() => setStep(STEPS.PROFILE_INFO)}>
+                <ArrowLeft className="w-4 h-4 mr-2" /> Retour
+              </Button>
+              <Button onClick={() => handleNextStep(STEPS.COMMISSIONS)}>
+                Continuer <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </motion.div>
