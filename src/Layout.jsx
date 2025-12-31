@@ -33,11 +33,6 @@ function LayoutContent({ children }) {
       { label: "Abonnement", icon: Star, path: "/Subscription" },
         ];
 
-        // Add Creator Dashboard for approved creators
-        if (currentUser) {
-          navItems.push({ label: "Dashboard", icon: UserCircle, path: "/CreatorDashboard" });
-        }
-
         if (currentUser?.role === 'admin') {
           navItems.push({ label: "Partnerships", icon: Star, path: "/AdminPartnerships" });
       }

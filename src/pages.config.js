@@ -2,6 +2,7 @@ import AdminPartnerships from './pages/AdminPartnerships';
 import BrandPartnerships from './pages/BrandPartnerships';
 import Checkout from './pages/Checkout';
 import Closet from './pages/Closet';
+import CreatorDashboard from './pages/CreatorDashboard';
 import CreatorOnboarding from './pages/CreatorOnboarding';
 import Gallery from './pages/Gallery';
 import JewelryBox from './pages/JewelryBox';
@@ -14,9 +15,8 @@ import Studio from './pages/Studio';
 import StyleFeed from './pages/StyleFeed';
 import StylistProfile from './pages/StylistProfile';
 import Stylists from './pages/Stylists';
-import Wardrobe from './pages/Wardrobe';
 import Subscription from './pages/Subscription';
-import CreatorDashboard from './pages/CreatorDashboard';
+import Wardrobe from './pages/Wardrobe';
 import __Layout from './Layout.jsx';
 
 
@@ -25,6 +25,7 @@ export const PAGES = {
     "BrandPartnerships": BrandPartnerships,
     "Checkout": Checkout,
     "Closet": Closet,
+    "CreatorDashboard": CreatorDashboard,
     "CreatorOnboarding": CreatorOnboarding,
     "Gallery": Gallery,
     "JewelryBox": JewelryBox,
@@ -37,9 +38,8 @@ export const PAGES = {
     "StyleFeed": StyleFeed,
     "StylistProfile": StylistProfile,
     "Stylists": Stylists,
-    "Wardrobe": Wardrobe,
     "Subscription": Subscription,
-    "CreatorDashboard": CreatorDashboard,
+    "Wardrobe": Wardrobe,
 }
 
 export const pagesConfig = {
