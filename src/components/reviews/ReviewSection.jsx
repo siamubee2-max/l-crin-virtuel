@@ -210,37 +210,61 @@ export default function ReviewSection({ jewelryId }) {
         <h4 className="font-medium text-sm">
             {language === 'fr' ? "Laisser un avis" : "Leave a review"}
         </h4>
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-             <span className="text-xs text-neutral-500">
-                 {language === 'fr' ? "Note :" : "Rating:"}
-             </span>
-             <StarRating rating={newRating} onRate={setNewRating} size={20} />
+        
+        {!user ? (
+          <div className="text-center py-4 space-y-2">
+            <Lock className="w-8 h-8 mx-auto text-neutral-300" />
+            <p className="text-sm text-neutral-500">
+              {language === 'fr' ? "Connectez-vous pour laisser un avis" : "Sign in to leave a review"}
+            </p>
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="comment" className="sr-only">Comment</Label>
-            <Textarea 
-              id="comment"
-              placeholder={language === 'fr' ? "Partagez votre expérience..." : "Share your experience..."}
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              className="bg-white text-sm"
-            />
+        ) : hasAlreadyReviewed ? (
+          <div className="text-center py-4 space-y-2">
+            <BadgeCheck className="w-8 h-8 mx-auto text-green-400" />
+            <p className="text-sm text-neutral-500">
+              {language === 'fr' ? "Vous avez déjà donné votre avis" : "You already reviewed this item"}
+            </p>
           </div>
-          
-          <Button 
-            onClick={handleSubmit} 
-            disabled={newRating === 0 || isSubmitting}
-            size="sm"
-            className="w-full bg-neutral-900 hover:bg-neutral-800 text-white"
-          >
-            {isSubmitting ? (
-              <Loader2 className="w-3 h-3 animate-spin mr-2" />
-            ) : null}
-            {language === 'fr' ? "Publier l'avis" : "Post Review"}
-          </Button>
-        </div>
+        ) : (
+          <div className="space-y-3">
+            {hasPurchased && (
+              <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                <ShoppingBag className="w-3 h-3" />
+                {language === 'fr' ? "Vous avez acheté ce produit" : "You purchased this item"}
+              </div>
+            )}
+            
+            <div className="flex items-center gap-2">
+               <span className="text-xs text-neutral-500">
+                   {language === 'fr' ? "Note :" : "Rating:"}
+               </span>
+               <StarRating rating={newRating} onRate={setNewRating} size={20} />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="comment" className="sr-only">Comment</Label>
+              <Textarea 
+                id="comment"
+                placeholder={language === 'fr' ? "Partagez votre expérience..." : "Share your experience..."}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                className="bg-white text-sm"
+              />
+            </div>
+            
+            <Button 
+              onClick={handleSubmit} 
+              disabled={newRating === 0 || isSubmitting}
+              size="sm"
+              className="w-full bg-neutral-900 hover:bg-neutral-800 text-white"
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-3 h-3 animate-spin mr-2" />
+              ) : null}
+              {language === 'fr' ? "Publier l'avis" : "Post Review"}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
