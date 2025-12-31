@@ -77,18 +77,14 @@ export default function ReviewSection({ jewelryId }) {
 
   const createMutation = useMutation({
     mutationFn: async (data) => {
-      // Create review
-      await base44.entities.Review.create(data);
+      // Create review with verified_purchase flag
+      await base44.entities.Review.create({
+        ...data,
+        verified_purchase: hasPurchased
+      });
       
       // Create notification for owner (if owner is not self)
       if (jewelryItem?.created_by && jewelryItem.created_by !== user?.email) {
-          // Note: recipient_id should ideally be the user ID. 
-          // Since created_by is email in Base44, we might need to lookup user ID by email 
-          // OR if the system handles email notifications. 
-          // For this specific app, let's assume we can notify by finding the user or if we just use email matching.
-          // LIMITATION: 'created_by' gives email. 'Notification' wants 'recipient_id'. 
-          // We need to find the user with that email.
-          
           const users = await base44.entities.User.list();
           const owner = users.find(u => u.email === jewelryItem.created_by);
           
@@ -99,7 +95,7 @@ export default function ReviewSection({ jewelryId }) {
                 message: `${user?.full_name || "Someone"} reviewed your item "${jewelryItem.name}"`,
                 type: "review",
                 related_item_id: jewelryItem.id,
-                link: `/JewelryBox?item=${jewelryItem.id}` // Hypothetical link deep linking
+                link: `/JewelryBox?item=${jewelryItem.id}`
              });
           }
       }
