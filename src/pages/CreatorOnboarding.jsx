@@ -174,7 +174,18 @@ export default function CreatorOnboarding() {
     'Bridal', 'Casual', 'Evening', 'Sustainable', 'Avant-garde'
   ];
 
-  const progress = (step / (Object.keys(STEPS).length - 1)) * 100;
+  const totalSteps = Object.keys(STEPS).length - 2; // Exclude WELCOME and SUCCESS
+  const currentStepNum = step === STEPS.WELCOME ? 0 : step - 1;
+  const progress = step === STEPS.SUCCESS ? 100 : (currentStepNum / totalSteps) * 100;
+
+  const stepTitles = {
+    [STEPS.PROFILE_IMAGES]: "Photos",
+    [STEPS.PROFILE_INFO]: "Informations",
+    [STEPS.SPECIALTIES]: "Spécialités",
+    [STEPS.COMMISSIONS]: "Commissions",
+    [STEPS.BEST_PRACTICES]: "Conseils",
+    [STEPS.REVIEW]: "Validation"
+  };
 
   // If already applied
   if (existingProfile) {
