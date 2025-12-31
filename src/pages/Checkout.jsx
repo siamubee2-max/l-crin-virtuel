@@ -318,6 +318,18 @@ function CheckoutContent() {
 }
 
 export default function Checkout() {
+  if (!stripePromise) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 p-8 text-center">
+        <CreditCard className="w-16 h-16 text-neutral-200" />
+        <h2 className="text-xl font-medium">Paiement non configuré</h2>
+        <p className="text-neutral-500 max-w-md">
+          La clé Stripe n'est pas configurée. Veuillez contacter l'administrateur.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <Elements stripe={stripePromise}>
       <CheckoutContent />
