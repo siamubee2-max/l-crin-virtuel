@@ -994,13 +994,13 @@ export default function CreatorOnboarding() {
             <div className="w-24 h-24 bg-green-100 rounded-full mx-auto mb-8 flex items-center justify-center">
               <CheckCircle2 className="w-12 h-12 text-green-600" />
             </div>
-            <h2 className="text-3xl font-serif mb-4">Application Submitted!</h2>
+            <h2 className="text-3xl font-serif mb-4">Candidature Envoyée !</h2>
             <p className="text-neutral-600 mb-8 max-w-md mx-auto">
-              Thank you for applying to become a creator. Our team will review your 
-              application and get back to you within 2-3 business days.
+              Merci d'avoir postulé pour devenir créateur. Notre équipe examinera votre 
+              candidature et vous répondra sous 2-3 jours ouvrés.
             </p>
             <Button onClick={() => navigate(createPageUrl('BrandPartnerships'))}>
-              Explore Collections <ArrowRight className="w-4 h-4 ml-2" />
+              Explorer les Collections <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </motion.div>
         )}
