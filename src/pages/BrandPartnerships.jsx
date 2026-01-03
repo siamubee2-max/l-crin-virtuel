@@ -333,67 +333,7 @@ export default function BrandPartnerships() {
           </div>
         </TabsContent>
 
-        {/* Creators */}
-        <TabsContent value="creators" className="space-y-6">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {creators?.map((creator, idx) =>
-            <motion.div
-              key={creator.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              className="bg-white rounded-xl border overflow-hidden hover:shadow-lg transition-all">
 
-                {/* Cover */}
-                <div className="h-24 bg-gradient-to-r from-purple-500 to-pink-500 relative">
-                  {creator.cover_image &&
-                <img src={creator.cover_image} alt="" className="w-full h-full object-cover" />
-                }
-                </div>
-                
-                {/* Profile */}
-                <div className="px-4 pb-4">
-                  <div className="flex items-end gap-3 -mt-8 mb-3">
-                    <div className="w-16 h-16 rounded-full border-4 border-white bg-neutral-100 overflow-hidden">
-                      {creator.profile_image ?
-                    <img src={creator.profile_image} alt={creator.display_name} className="w-full h-full object-cover" /> :
-
-                    <div className="w-full h-full flex items-center justify-center text-xl font-medium text-neutral-400">
-                          {creator.display_name?.[0]}
-                        </div>
-                    }
-                    </div>
-                    <div className="flex-1 pb-1">
-                      <h3 className="font-medium flex items-center gap-1">
-                        {creator.display_name}
-                        {creator.verified &&
-                      <Badge className="bg-blue-500 text-white text-[8px] px-1">✓</Badge>
-                      }
-                      </h3>
-                      <p className="text-xs text-neutral-500">{creator.follower_count || 0} followers</p>
-                    </div>
-                  </div>
-                  
-                  {creator.bio &&
-                <p className="text-sm text-neutral-600 line-clamp-2 mb-3">{creator.bio}</p>
-                }
-                  
-                  {creator.specialties?.length > 0 &&
-                <div className="flex flex-wrap gap-1 mb-3">
-                      {creator.specialties.slice(0, 3).map((s, i) =>
-                  <Badge key={i} variant="secondary" className="text-[10px]">{s}</Badge>
-                  )}
-                    </div>
-                }
-                  
-                  <Button variant="outline" size="sm" className="w-full">
-                    View Collections
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-          </div>
-        </TabsContent>
       </Tabs>
     </div>);
 
