@@ -1,26 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from "@/components/ui/button";
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Sparkles, Crown, Loader2, CreditCard, AlertCircle } from "lucide-react";
+import { Check, Crown, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
-import SubscriptionPaymentForm from '@/components/subscription/SubscriptionPaymentForm';
 import SubscriptionStatus from '@/components/subscription/SubscriptionStatus';
 
-const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
+const STRIPE_PUBLISHABLE_KEY = "pk_test_51SlUIJIlDuDg7U168pXJyygXJX5L3Bv9iTwQSqD8sLt3tD4yRwsnd5KLDrruCHd3ugFvOMfZApzfjSbgMmCBYkbM00HfizuI25";
+const STRIPE_BUY_BUTTON_MONTHLY = "buy_btn_1SlV73IlDuDg7U16mY7oX1lL";
 
-function SubscriptionContent() {
-  const queryClient = useQueryClient();
+export default function Subscription() {
   const [billingCycle, setBillingCycle] = useState('monthly');
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
-  const [paymentError, setPaymentError] = useState(null);
 
   const price = billingCycle === 'monthly' ? 10.99 : 99.00;
   const savings = billingCycle === 'yearly' ? Math.round((10.99 * 12 - 99.00) / (10.99 * 12) * 100) : 0;
+
+  // Load Stripe Buy Button script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/v3/buy-button.js';
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const features = [
     "Essayages virtuels illimités",
@@ -46,76 +50,6 @@ function SubscriptionContent() {
 
   const currentSubscription = subscriptions?.find(s => s.status === 'active' || s.status === 'past_due');
 
-  // Create subscription mutation
-  const createSubscriptionMutation = useMutation({
-    mutationFn: async (paymentData) => {
-      // In a real app, you would call a backend function to create the Stripe subscription
-      // For now, we simulate by creating a local record
-      const now = new Date();
-      const periodEnd = new Date();
-      if (paymentData.plan === 'yearly') {
-        periodEnd.setFullYear(periodEnd.getFullYear() + 1);
-      } else {
-        periodEnd.setMonth(periodEnd.getMonth() + 1);
-      }
-
-      await base44.entities.UserSubscription.create({
-        plan: paymentData.plan,
-        status: 'active',
-        stripe_customer_id: `cus_demo_${Date.now()}`,
-        stripe_subscription_id: `sub_demo_${Date.now()}`,
-        current_period_start: now.toISOString(),
-        current_period_end: periodEnd.toISOString(),
-        cancel_at_period_end: false
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userSubscription'] });
-      setShowPaymentForm(false);
-      setPaymentError(null);
-    },
-    onError: (error) => {
-      setPaymentError(error.message || 'Une erreur est survenue');
-    }
-  });
-
-  // Cancel subscription mutation
-  const cancelSubscriptionMutation = useMutation({
-    mutationFn: async () => {
-      if (!currentSubscription) return;
-      await base44.entities.UserSubscription.update(currentSubscription.id, {
-        cancel_at_period_end: true
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userSubscription'] });
-    }
-  });
-
-  // Reactivate subscription mutation
-  const reactivateSubscriptionMutation = useMutation({
-    mutationFn: async () => {
-      if (!currentSubscription) return;
-      await base44.entities.UserSubscription.update(currentSubscription.id, {
-        cancel_at_period_end: false
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userSubscription'] });
-    }
-  });
-
-  const handlePaymentSuccess = (paymentData) => {
-    createSubscriptionMutation.mutate({
-      ...paymentData,
-      plan: billingCycle
-    });
-  };
-
-  const handlePaymentError = (errorMessage) => {
-    setPaymentError(errorMessage);
-  };
-
   const isLoading = userLoading || subLoading;
 
   if (isLoading) {
@@ -137,9 +71,6 @@ function SubscriptionContent() {
 
         <SubscriptionStatus 
           subscription={currentSubscription}
-          onCancel={() => cancelSubscriptionMutation.mutate()}
-          onReactivate={() => reactivateSubscriptionMutation.mutate()}
-          isLoading={cancelSubscriptionMutation.isPending || reactivateSubscriptionMutation.isPending}
         />
       </div>
     );
@@ -221,49 +152,13 @@ function SubscriptionContent() {
               ))}
             </ul>
 
-            {paymentError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-                <p className="text-sm text-red-600">{paymentError}</p>
-              </div>
-            )}
-
-            {!user ? (
-              <div className="text-center py-4">
-                <p className="text-neutral-500 mb-4">Connectez-vous pour vous abonner</p>
-                <Button 
-                  onClick={() => base44.auth.redirectToLogin()}
-                  className="bg-neutral-900 hover:bg-neutral-800"
-                >
-                  Se connecter
-                </Button>
-              </div>
-            ) : showPaymentForm ? (
-              <div className="space-y-4">
-                <SubscriptionPaymentForm 
-                  plan={billingCycle}
-                  price={price}
-                  onSuccess={handlePaymentSuccess}
-                  onError={handlePaymentError}
-                  disabled={createSubscriptionMutation.isPending}
-                />
-                <Button 
-                  variant="ghost" 
-                  className="w-full"
-                  onClick={() => setShowPaymentForm(false)}
-                >
-                  Retour
-                </Button>
-              </div>
-            ) : (
-              <Button 
-                onClick={() => setShowPaymentForm(true)}
-                className="w-full h-12 bg-amber-600 hover:bg-amber-700 text-white text-lg"
-              >
-                <Sparkles className="w-5 h-5 mr-2" />
-                S'abonner maintenant
-              </Button>
-            )}
+            {/* Stripe Buy Button */}
+            <div className="flex justify-center pt-2">
+              <stripe-buy-button
+                buy-button-id={STRIPE_BUY_BUTTON_MONTHLY}
+                publishable-key={STRIPE_PUBLISHABLE_KEY}
+              />
+            </div>
 
             <p className="text-xs text-center text-neutral-400">
               Annulation possible à tout moment. Paiement sécurisé par Stripe.
@@ -272,25 +167,5 @@ function SubscriptionContent() {
         </Card>
       </motion.div>
     </div>
-  );
-}
-
-export default function Subscription() {
-  if (!stripePromise) {
-    return (
-      <div className="max-w-2xl mx-auto py-12 px-4 text-center">
-        <CreditCard className="w-16 h-16 mx-auto text-neutral-200 mb-4" />
-        <h2 className="text-xl font-medium mb-2">Paiement non configuré</h2>
-        <p className="text-neutral-500">
-          La clé Stripe n'est pas configurée. Veuillez contacter l'administrateur.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <Elements stripe={stripePromise}>
-      <SubscriptionContent />
-    </Elements>
   );
 }
