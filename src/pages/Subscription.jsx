@@ -87,7 +87,7 @@ export default function Subscription() {
       <div className="flex justify-center mb-8">
         <div className="bg-neutral-100 p-1 rounded-full inline-flex">
           <button
-            onClick={() => { setBillingCycle('monthly'); setShowPaymentForm(false); }}
+            onClick={() => setBillingCycle('monthly')}
             className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
               billingCycle === 'monthly' 
                 ? 'bg-white shadow text-neutral-900' 
@@ -97,7 +97,7 @@ export default function Subscription() {
             Mensuel
           </button>
           <button
-            onClick={() => { setBillingCycle('yearly'); setShowPaymentForm(false); }}
+            onClick={() => setBillingCycle('yearly')}
             className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
               billingCycle === 'yearly' 
                 ? 'bg-white shadow text-neutral-900' 
