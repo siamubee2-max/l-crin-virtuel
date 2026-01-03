@@ -85,11 +85,6 @@ export default function BrandPartnerships() {
             <Button className="bg-white text-neutral-900 hover:bg-neutral-100">
               <Sparkles className="w-4 h-4 mr-2" /> Explore Collections
             </Button>
-            <Link to={createPageUrl('CreatorOnboarding')}>
-              <Button variant="outline" className="bg-slate-50 text-slate-900 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-neutral-600 hover:bg-neutral-800">
-                Become a Creator
-              </Button>
-            </Link>
           </div>
         </div>
       </div>
