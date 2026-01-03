@@ -17,19 +17,24 @@ export default function ShopTheLook() {
   
   const urlParams = new URLSearchParams(window.location.search);
   const collectionId = urlParams.get('id');
+  const shareToken = urlParams.get('token'); // For private collection access
   const creatorRef = urlParams.get('ref'); // For affiliate tracking
   
   const [selectedItems, setSelectedItems] = useState([]);
   const [addedAll, setAddedAll] = useState(false);
 
-  // Fetch collection
+  // Fetch collection (by ID or share token)
   const { data: collection, isLoading } = useQuery({
-    queryKey: ['collection', collectionId],
+    queryKey: ['collection', collectionId, shareToken],
     queryFn: async () => {
+      if (shareToken) {
+        const collections = await base44.entities.CuratedCollection.filter({ share_token: shareToken });
+        return collections[0];
+      }
       const collections = await base44.entities.CuratedCollection.filter({ id: collectionId });
       return collections[0];
     },
-    enabled: !!collectionId
+    enabled: !!collectionId || !!shareToken
   });
 
   // Increment view count
