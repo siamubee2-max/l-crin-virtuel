@@ -31,7 +31,7 @@ const translations = {
       noCreations: "Vous n'avez pas encore créé d'essayages."
       },
       common: {
-      footer: "L'Écrin Virtuel © 2024 — Luxe & Technologie",
+      footer: "L'Écrin Virtuel © 2025 — Luxe & Technologie",
       loading: "Chargement...",
       save: "Enregistrer",
       saving: "Enregistrement...",
@@ -274,7 +274,7 @@ const translations = {
       noCreations: "You haven't created any try-ons yet."
     },
     common: {
-      footer: "The Virtual Jewelry Box © 2024 — Luxury & Technology",
+      footer: "The Virtual Jewelry Box © 2025 — Luxury & Technology",
       loading: "Loading...",
       save: "Save",
       saving: "Saving...",
@@ -451,7 +451,7 @@ const translations = {
       noCreations: "Aún no has creado ninguna prueba."
     },
     common: {
-      footer: "El Joyero Virtual © 2024 — Lujo y Tecnología",
+      footer: "El Joyero Virtual © 2025 — Lujo y Tecnología",
       loading: "Cargando...",
       save: "Guardar",
       saving: "Guardando...",
@@ -615,7 +615,7 @@ const translations = {
       noCreations: "Sie haben noch keine Anproben erstellt."
     },
     common: {
-      footer: "Das Virtuelle Schmuckkästchen © 2024 — Luxus & Technologie",
+      footer: "Das Virtuelle Schmuckkästchen © 2025 — Luxus & Technologie",
       loading: "Laden...",
       save: "Speichern",
       saving: "Speichern...",
@@ -779,7 +779,7 @@ const translations = {
       noCreations: "Non hai ancora creato prove."
     },
     common: {
-      footer: "Lo Scrigno Virtuale © 2024 — Lusso & Tecnologia",
+      footer: "Lo Scrigno Virtuale © 2025 — Lusso & Tecnologia",
       loading: "Caricamento...",
       save: "Salva",
       saving: "Salvataggio...",
@@ -943,7 +943,7 @@ const translations = {
       noCreations: "Você ainda não criou nenhuma prova."
     },
     common: {
-      footer: "O Porta-Joias Virtual © 2024 — Luxo & Tecnologia",
+      footer: "O Porta-Joias Virtual © 2025 — Luxo & Tecnologia",
       loading: "Carregando...",
       save: "Salvar",
       saving: "Salvando...",
