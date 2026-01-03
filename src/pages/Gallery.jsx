@@ -9,6 +9,7 @@ import { Loader2, Plus, ArrowRight, Download, Calendar, Filter, Trash2 } from "l
 import ShareButton from "@/components/common/ShareButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
+import SEO from '@/components/common/SEO';
 
 const ITEMS_PER_PAGE = 9;
 
