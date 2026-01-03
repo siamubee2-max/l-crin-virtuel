@@ -19,8 +19,8 @@ function SubscriptionContent() {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
 
-  const price = billingCycle === 'monthly' ? 9.99 : 99.90;
-  const savings = billingCycle === 'yearly' ? Math.round((9.99 * 12 - 99.90) / (9.99 * 12) * 100) : 0;
+  const price = billingCycle === 'monthly' ? 10.99 : 99.00;
+  const savings = billingCycle === 'yearly' ? Math.round((10.99 * 12 - 99.00) / (10.99 * 12) * 100) : 0;
 
   const features = [
     "Essayages virtuels illimités",
@@ -205,7 +205,7 @@ function SubscriptionContent() {
               </span>
               {billingCycle === 'yearly' && (
                 <p className="text-sm text-green-600 mt-2">
-                  Soit {(99.90 / 12).toFixed(2)}€/mois
+                  Soit {(99.00 / 12).toFixed(2)}€/mois
                 </p>
               )}
             </div>
