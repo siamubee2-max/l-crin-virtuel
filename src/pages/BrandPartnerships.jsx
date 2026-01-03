@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Crown, Sparkles, ExternalLink, Search, Heart, Eye, Bookmark, ChevronRight, Star } from "lucide-react";
+import { Loader2, Crown, Sparkles, ExternalLink, Search, Heart, Eye, Bookmark, ChevronRight, Star, Settings } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -40,6 +40,11 @@ export default function BrandPartnerships() {
   const { data: clothingItems } = useQuery({
     queryKey: ['clothingItems'],
     queryFn: () => base44.entities.ClothingItem.list()
+  });
+
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me().catch(() => null),
   });
 
   // Get featured brands
@@ -336,6 +341,18 @@ export default function BrandPartnerships() {
 
 
       </Tabs>
+
+      {/* Mobile-only Admin Link */}
+      {currentUser?.role === 'admin' && (
+        <div className="md:hidden mt-8 pb-8 border-t pt-4">
+          <Link to={createPageUrl("AdminPartnerships")}>
+            <Button variant="outline" className="w-full gap-2 border-dashed">
+              <Settings className="w-4 h-4" />
+              Partnership Management
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>);
 
 }
