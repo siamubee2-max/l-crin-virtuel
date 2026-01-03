@@ -140,7 +140,7 @@ export default function Gallery() {
                   <SelectValue placeholder={t.gallery.filter} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tout</SelectItem>
+                  <SelectItem value="all">{t.gallery.all}</SelectItem>
                   <SelectItem value="necklace">{t.studio.step1.types.necklace}</SelectItem>
                   <SelectItem value="earrings">{t.studio.step1.types.earrings}</SelectItem>
                   <SelectItem value="ring">{t.studio.step1.types.ring}</SelectItem>

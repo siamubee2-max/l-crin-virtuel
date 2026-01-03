@@ -165,7 +165,8 @@ const translations = {
       newest: "Plus récents",
       oldest: "Plus anciens",
       loadMore: "Voir plus",
-      bodyPart: "Sur : "
+      bodyPart: "Sur : ",
+      all: "Tout"
       },
       stylist: {
         title: "Styliste IA",
@@ -415,7 +416,8 @@ const translations = {
       newest: "Newest",
       oldest: "Oldest",
       loadMore: "Load More",
-      bodyPart: "On: "
+      bodyPart: "On: ",
+      all: "All"
       },
     stylist: {
       title: "AI Stylist",
@@ -595,7 +597,8 @@ const translations = {
       newest: "Más recientes",
       oldest: "Más antiguos",
       loadMore: "Cargar más",
-      bodyPart: "En: "
+      bodyPart: "En: ",
+      all: "Todo"
       },
     stylist: {
       title: "Estilista IA",
@@ -775,7 +778,8 @@ const translations = {
       newest: "Neueste",
       oldest: "Älteste",
       loadMore: "Mehr laden",
-      bodyPart: "Auf: "
+      bodyPart: "Auf: ",
+      all: "Alle"
       },
     stylist: {
       title: "KI-Stylist",
@@ -955,7 +959,8 @@ const translations = {
       newest: "Più recenti",
       oldest: "Più vecchi",
       loadMore: "Carica altro",
-      bodyPart: "Su: "
+      bodyPart: "Su: ",
+      all: "Tutti"
       },
     stylist: {
       title: "Stilista IA",
@@ -1135,7 +1140,8 @@ const translations = {
       newest: "Mais recentes",
       oldest: "Mais antigos",
       loadMore: "Carregar mais",
-      bodyPart: "Em: "
+      bodyPart: "Em: ",
+      all: "Todos"
       },
     stylist: {
       title: "Estilista IA",
