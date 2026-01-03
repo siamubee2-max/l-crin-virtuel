@@ -72,9 +72,11 @@ function LayoutContent({ children }) {
           
           {/* Logo */}
           <Link to={createPageUrl("Gallery")} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center rounded-sm">
-              <Gem className="w-5 h-5 text-amber-400" />
-            </div>
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6942ff9b2efb59336aebfa58/a0c7900de_ElegantLogowithAbstractGemIcon.png" 
+              alt="L'Écrin Virtuel" 
+              className="w-8 h-8 object-contain rounded-sm"
+            />
             <span className="font-serif text-xl tracking-tight font-medium accent-shimmer">
               L'Écrin Virtuel
             </span>
