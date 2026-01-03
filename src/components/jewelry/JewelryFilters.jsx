@@ -56,7 +56,7 @@ export default function JewelryFilters({
         </div>
 
         {/* Quick Type Filter (Tabs style) */}
-        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
            {["all", "necklace", "earrings", "ring", "bracelet", "set"].map(type => (
              <Button
                key={type}
