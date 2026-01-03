@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Crown, Sparkles, ExternalLink, Search, Heart, Eye, Bookmark, ChevronRight, Star, Users } from "lucide-react";
+import { Loader2, Crown, Sparkles, ExternalLink, Search, Heart, Eye, Bookmark, ChevronRight, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useLanguage } from '@/components/LanguageProvider';
 
 export default function BrandPartnerships() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("featured");
 
@@ -71,19 +73,18 @@ export default function BrandPartnerships() {
         
         <div className="relative z-10 max-w-2xl">
           <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 mb-4">
-            <Crown className="w-3 h-3 mr-1" /> Partner Brands & Creators
+            <Crown className="w-3 h-3 mr-1" /> {t.brands.partnerBadge}
           </Badge>
           <h1 className="text-4xl md:text-5xl font-serif text-white mb-4">
-            Shop Curated Style
+            {t.brands.heroTitle}
           </h1>
           <p className="text-neutral-300 text-lg mb-6">
-            Discover exclusive collections from top brands and expert stylists. 
-            Shop the look with one click.
+            {t.brands.heroDesc}
           </p>
           
           <div className="flex gap-3">
             <Button className="bg-white text-neutral-900 hover:bg-neutral-100">
-              <Sparkles className="w-4 h-4 mr-2" /> Explore Collections
+              <Sparkles className="w-4 h-4 mr-2" /> {t.brands.exploreBtn}
             </Button>
           </div>
         </div>
@@ -93,7 +94,7 @@ export default function BrandPartnerships() {
       {featuredBrands.length > 0 &&
       <section>
           <h2 className="text-2xl font-serif mb-6 flex items-center gap-2">
-            <Crown className="w-6 h-6 text-amber-500" /> Featured Partners
+            <Crown className="w-6 h-6 text-amber-500" /> {t.brands.featuredPartners}
           </h2>
           <div className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
             {featuredBrands.map((brand, idx) =>
@@ -122,7 +123,7 @@ export default function BrandPartnerships() {
                   {brand.website_url &&
               <a href={brand.website_url} target="_blank" rel="noopener noreferrer">
                       <Button variant="outline" size="sm" className="w-full text-xs">
-                        Visit Brand <ExternalLink className="w-3 h-3 ml-1" />
+                        {t.brands.visitBrand} <ExternalLink className="w-3 h-3 ml-1" />
                       </Button>
                     </a>
               }
@@ -137,10 +138,10 @@ export default function BrandPartnerships() {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-neutral-100 p-1 mb-8">
           <TabsTrigger value="featured" className="gap-2">
-            <Sparkles className="w-4 h-4" /> Featured Looks
+            <Sparkles className="w-4 h-4" /> {t.brands.featuredLooks}
           </TabsTrigger>
           <TabsTrigger value="collections" className="gap-2">
-            <Bookmark className="w-4 h-4" /> All Collections
+            <Bookmark className="w-4 h-4" /> {t.brands.allCollections}
           </TabsTrigger>
 
         </TabsList>
@@ -154,7 +155,7 @@ export default function BrandPartnerships() {
           featuredCollections.length === 0 ?
           <div className="text-center py-20 bg-neutral-50 rounded-2xl">
               <Sparkles className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-              <p className="text-neutral-500">No featured collections yet</p>
+              <p className="text-neutral-500">{t.brands.noFeatured}</p>
             </div> :
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -192,7 +193,7 @@ export default function BrandPartnerships() {
                         <h3 className="text-white text-xl font-serif mb-1">{collection.title}</h3>
                         {creator &&
                       <p className="text-white/80 text-sm flex items-center gap-2">
-                            by {creator.display_name}
+                            {t.brands.by} {creator.display_name}
                             {creator.verified && <Badge className="bg-blue-500 text-white text-[8px] px-1">✓</Badge>}
                           </p>
                       }
@@ -222,7 +223,7 @@ export default function BrandPartnerships() {
                         
                         <Link to={createPageUrl(`ShopTheLook?id=${collection.id}`)}>
                           <Button size="sm" className="bg-neutral-900 text-white">
-                            Shop the Look <ChevronRight className="w-4 h-4 ml-1" />
+                            {t.brands.shopTheLook} <ChevronRight className="w-4 h-4 ml-1" />
                           </Button>
                         </Link>
                       </div>
@@ -240,7 +241,7 @@ export default function BrandPartnerships() {
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
               <Input
-                placeholder="Search collections..."
+                placeholder={t.brands.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10" />
@@ -305,7 +306,7 @@ export default function BrandPartnerships() {
                     <h3 className="font-medium text-neutral-900 mb-1">{collection.title}</h3>
                     {creator &&
                     <p className="text-xs text-neutral-500 mb-2">
-                        by {creator.display_name} {creator.verified && "✓"}
+                        {t.brands.by} {creator.display_name} {creator.verified && "✓"}
                       </p>
                     }
                     {collection.tags?.length > 0 && (
@@ -319,10 +320,10 @@ export default function BrandPartnerships() {
                     )}
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">${totalValue.toFixed(0)} total</span>
+                      <span className="text-sm font-medium">${totalValue.toFixed(0)} {t.brands.total}</span>
                       <Link to={createPageUrl(`ShopTheLook?id=${collection.id}`)}>
                         <Button size="sm" variant="outline">
-                          View <ChevronRight className="w-3 h-3 ml-1" />
+                          {t.brands.view} <ChevronRight className="w-3 h-3 ml-1" />
                         </Button>
                       </Link>
                     </div>
