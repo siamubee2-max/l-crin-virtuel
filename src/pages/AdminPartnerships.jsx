@@ -46,7 +46,7 @@ export default function AdminPartnerships() {
             </p>
             <a 
               href="mailto:inferencevision@inferencevision.store" 
-              className="text-lg font-medium text-amber-800 hover:underline block"
+              className="text-sm font-medium text-amber-800 hover:underline block"
             >
               inferencevision@inferencevision.store
             </a>
