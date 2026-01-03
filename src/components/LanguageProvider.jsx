@@ -151,7 +151,7 @@ const translations = {
     },
     gallery: {
       hero: {
-        title: "Essayez l'inaccessible.",
+        title: "Essayez l'inaccessible",
         subtitle: "Virtuellement.",
         desc: "Importez un bijou, choisissez votre photo, et laissez la magie opérer. Visualisez le résultat avant d'acheter ou juste pour rêver.",
         cta: "Nouvel Essayage"
@@ -442,7 +442,7 @@ const translations = {
     },
     gallery: {
       hero: {
-        title: "Try the unreachable.",
+        title: "Try the unreachable",
         subtitle: "Virtually.",
         desc: "Import jewelry, choose your photo, and let the magic happen. Visualize the result before buying or just to dream.",
         cta: "New Try-On"
@@ -681,7 +681,7 @@ const translations = {
     },
     gallery: {
       hero: {
-        title: "Prueba lo inalcanzable.",
+        title: "Prueba lo inalcanzable",
         subtitle: "Virtualmente.",
         desc: "Importa una joya, elige tu foto y deja que ocurra la magia. Visualiza el resultado antes de comprar o simplemente para soñar.",
         cta: "Nueva Prueba"
@@ -885,7 +885,7 @@ const translations = {
     },
     gallery: {
       hero: {
-        title: "Probieren Sie das Unerreichbare.",
+        title: "Probieren Sie das Unerreichbare",
         subtitle: "Virtuell.",
         desc: "Importieren Sie Schmuck, wählen Sie Ihr Foto und lassen Sie die Magie geschehen. Visualisieren Sie das Ergebnis vor dem Kauf oder einfach zum Träumen.",
         cta: "Neue Anprobe"
@@ -1066,7 +1066,7 @@ const translations = {
     },
     gallery: {
       hero: {
-        title: "Prova l'irraggiungibile.",
+        title: "Prova l'irraggiungibile",
         subtitle: "Virtualmente.",
         desc: "Importa un gioiello, scegli la tua foto e lascia che la magia accada. Visualizza il risultato prima di acquistare o solo per sognare.",
         cta: "Nuova Prova"
@@ -1247,7 +1247,7 @@ const translations = {
     },
     gallery: {
       hero: {
-        title: "Experimente o inalcançável.",
+        title: "Experimente o inalcançável",
         subtitle: "Virtualmente.",
         desc: "Importe uma joia, escolha sua foto e deixe a magia acontecer. Visualize o resultado antes de comprar ou apenas para sonhar.",
         cta: "Nova Prova"
