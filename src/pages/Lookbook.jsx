@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 import { useLanguage } from '@/components/LanguageProvider';
 import ShareButton from "@/components/common/ShareButton";
+import SEO from '@/components/common/SEO';
 
 export default function Lookbook() {
   const { t } = useLanguage();
@@ -93,6 +94,15 @@ export default function Lookbook() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
+      {lookbook && (
+        <SEO 
+          title={lookbook.title}
+          description={lookbook.description}
+          image={lookbook.cover_image}
+          type="article"
+          author={lookbook.stylist_id}
+        />
+      )}
       <div className="flex justify-between items-center mb-4">
         <Button variant="ghost" onClick={() => navigate(-1)}>
           <ArrowLeft className="w-4 h-4 mr-2" /> {t.product?.back || "Back"}

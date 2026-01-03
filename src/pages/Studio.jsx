@@ -14,6 +14,7 @@ import { useLanguage } from '@/components/LanguageProvider';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 import TryOnEditor from '@/components/studio/TryOnEditor';
 import { Pencil } from 'lucide-react';
+import SEO from '@/components/common/SEO';
 
 const STEPS = {
   UPLOAD: 0,
@@ -277,6 +278,11 @@ export default function Studio() {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <SEO 
+        title="Studio IA" 
+        description="Essayez virtuellement n'importe quel bijou ou vêtement sur vos propres photos grâce à notre IA générative."
+        keywords={["studio IA", "essayage virtuel", "générateur", "mode"]}
+      />
       {isARMode ? (
          <ARLiveTryOn 
            jewelryImage={jewelryImage}

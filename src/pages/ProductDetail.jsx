@@ -13,6 +13,7 @@ import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 import ProductImageGallery from '@/components/product/ProductImageGallery';
 import { useLanguage } from '@/components/LanguageProvider';
 import ShareButton from "@/components/common/ShareButton";
+import SEO from '@/components/common/SEO';
 
 export default function ProductDetail() {
   const { t } = useLanguage();

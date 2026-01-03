@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/LanguageProvider';
+import SEO from '@/components/common/SEO';
 
 export default function BrandPartnerships() {
   const { t } = useLanguage();
@@ -69,6 +70,11 @@ export default function BrandPartnerships() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-12">
+      <SEO 
+        title="Marques & Collections"
+        description="Découvrez nos marques partenaires exclusives et les collections curées par nos stylistes."
+        keywords={["marques luxe", "partenariats", "collections", "mode", "stylistes"]}
+      />
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 rounded-3xl p-8 md:p-12 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
