@@ -7,8 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Lock, ShoppingBag, ExternalLink, ArrowLeft } from "lucide-react";
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
+import { useLanguage } from '@/components/LanguageProvider';
+import ShareButton from "@/components/common/ShareButton";
 
 export default function Lookbook() {
+  const { t } = useLanguage();
   const urlParams = new URLSearchParams(window.location.search);
   const lookbookId = urlParams.get('id');
   const navigate = useNavigate();
@@ -90,9 +93,20 @@ export default function Lookbook() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back
-      </Button>
+      <div className="flex justify-between items-center mb-4">
+        <Button variant="ghost" onClick={() => navigate(-1)}>
+          <ArrowLeft className="w-4 h-4 mr-2" /> {t.product?.back || "Back"}
+        </Button>
+        {lookbook && (
+          <ShareButton 
+             text={`Discover ${lookbook.title} on L'Écrin Virtuel`} 
+             url={window.location.href}
+             imageUrl={lookbook.cover_image}
+          >
+             {t.lookbook?.share || "Partager"}
+          </ShareButton>
+        )}
+      </div>
 
       <div className="relative aspect-video rounded-3xl overflow-hidden bg-neutral-100 shadow-xl">
         <img src={lookbook.cover_image} alt={lookbook.title} className="w-full h-full object-cover" />
@@ -108,9 +122,9 @@ export default function Lookbook() {
             <Lock className="w-8 h-8 text-neutral-400" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-serif">Unlock Premium Content</h2>
+            <h2 className="text-2xl font-serif">{t.lookbook?.unlock || "Unlock Premium Content"}</h2>
             <p className="text-neutral-500 max-w-md mx-auto">
-              Get exclusive access to this curated lookbook, including style notes and direct shopping links.
+              {t.lookbook?.exclusive || "Get exclusive access to this curated lookbook, including style notes and direct shopping links."}
             </p>
           </div>
           <Button 
@@ -120,21 +134,21 @@ export default function Lookbook() {
             disabled={purchaseMutation.isPending}
           >
             {purchaseMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <ShoppingBag className="w-5 h-5 mr-2" />}
-            Buy for ${lookbook.price}
+            {t.lookbook?.buyFor || "Buy for"} ${lookbook.price}
           </Button>
-          <p className="text-xs text-neutral-400">One-time purchase • Lifetime access</p>
+          <p className="text-xs text-neutral-400">{t.lookbook?.oneTime || "One-time purchase • Lifetime access"}</p>
         </div>
       ) : (
         <div className="space-y-12">
           {/* Content */}
           <div className="prose prose-lg prose-neutral max-w-none">
-             <ReactMarkdown>{lookbook.content_html || "*No content provided.*"}</ReactMarkdown>
+             <ReactMarkdown>{lookbook.content_html || `*${t.lookbook?.noContent || "No content provided."}*`}</ReactMarkdown>
           </div>
 
           {/* Shop the Look */}
           {items?.length > 0 && (
             <div className="border-t pt-12">
-              <h2 className="text-2xl font-serif mb-8">Shop the Look</h2>
+              <h2 className="text-2xl font-serif mb-8">{t.lookbook?.shopLook || "Shop the Look"}</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 {items.map(item => (
                   <div key={item.id} className="group">
@@ -148,7 +162,7 @@ export default function Lookbook() {
                           className="absolute inset-0 bg-black/0 group-hover:bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
                         >
                           <Button size="sm" variant="secondary" className="shadow-lg">
-                            Buy Now <ExternalLink className="w-3 h-3 ml-2" />
+                            {t.lookbook?.buyNow || "Buy Now"} <ExternalLink className="w-3 h-3 ml-2" />
                           </Button>
                         </a>
                       )}

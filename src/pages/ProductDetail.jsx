@@ -11,8 +11,11 @@ import { createPageUrl } from '@/utils';
 import ReviewSection from '@/components/reviews/ProductReviewSection';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 import ProductImageGallery from '@/components/product/ProductImageGallery';
+import { useLanguage } from '@/components/LanguageProvider';
+import ShareButton from "@/components/common/ShareButton";
 
 export default function ProductDetail() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedMaterial, setSelectedMaterial] = useState(null);
@@ -110,13 +113,24 @@ export default function ProductDetail() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Back Button */}
-      <Button 
-        variant="ghost" 
-        className="mb-6 pl-0 hover:bg-transparent text-neutral-500"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back
-      </Button>
+      <div className="flex justify-between items-center mb-6">
+        <Button 
+          variant="ghost" 
+          className="pl-0 hover:bg-transparent text-neutral-500"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" /> {t.product?.back || "Back"}
+        </Button>
+        {product && (
+          <ShareButton 
+             text={`Check out ${product.name} on L'Écrin Virtuel!`} 
+             url={window.location.href}
+             imageUrl={product.image_url}
+          >
+             {t.product?.share || "Partager"}
+          </ShareButton>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         {/* Product Image Gallery */}
@@ -128,7 +142,7 @@ export default function ProductDetail() {
           {/* Sale Badge */}
           {isOnSale && (
             <Badge className="absolute top-4 left-4 z-10 bg-red-500 text-white text-sm px-3 py-1">
-              -{discountPercent}% OFF
+              -{discountPercent}% {t.product?.off || "OFF"}
             </Badge>
           )}
 
@@ -145,7 +159,7 @@ export default function ProductDetail() {
             variant="secondary"
             className="w-full mt-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-900"
           >
-            <Sparkles className="w-4 h-4 mr-2" /> Essayer dans le Studio IA
+            <Sparkles className="w-4 h-4 mr-2" /> {t.product?.tryInStudio || "Try in AI Studio"}
           </Button>
         </motion.div>
 
@@ -184,7 +198,7 @@ export default function ProductDetail() {
                 ))}
               </div>
               <span className="text-sm font-medium">{avgRating}</span>
-              <span className="text-sm text-neutral-500">({reviews?.length} reviews)</span>
+              <span className="text-sm text-neutral-500">({reviews?.length} {t.product?.reviews || "reviews"})</span>
             </div>
           )}
 
@@ -210,7 +224,7 @@ export default function ProductDetail() {
           {/* Material Options */}
           {product.material_options?.length > 0 && (
             <div className="space-y-3">
-              <label className="text-sm font-medium text-neutral-700">Material</label>
+              <label className="text-sm font-medium text-neutral-700">{t.product?.materialOptions || "Material"}</label>
               <div className="flex flex-wrap gap-2">
                 {product.material_options.map(material => (
                   <button
@@ -233,25 +247,25 @@ export default function ProductDetail() {
           <div className="grid grid-cols-2 gap-4 py-4 border-y border-neutral-100">
             {product.metal_type && (
               <div>
-                <p className="text-xs text-neutral-500 uppercase">Metal</p>
+                <p className="text-xs text-neutral-500 uppercase">{t.product?.metal || "Metal"}</p>
                 <p className="font-medium">{product.metal_type}</p>
               </div>
             )}
             {product.gemstone_type && (
               <div>
-                <p className="text-xs text-neutral-500 uppercase">Gemstone</p>
+                <p className="text-xs text-neutral-500 uppercase">{t.product?.gemstone || "Gemstone"}</p>
                 <p className="font-medium">{product.gemstone_type}</p>
               </div>
             )}
             {product.collection_name && (
               <div>
-                <p className="text-xs text-neutral-500 uppercase">Collection</p>
+                <p className="text-xs text-neutral-500 uppercase">{t.product?.collection || "Collection"}</p>
                 <p className="font-medium">{product.collection_name}</p>
               </div>
             )}
             {(product.material || product.color) && (
               <div>
-                <p className="text-xs text-neutral-500 uppercase">{product.material ? 'Material' : 'Color'}</p>
+                <p className="text-xs text-neutral-500 uppercase">{product.material ? (t.product?.material || "Material") : (t.product?.color || "Color")}</p>
                 <p className="font-medium">{product.material || product.color}</p>
               </div>
             )}
@@ -269,7 +283,7 @@ export default function ProductDetail() {
               variant={isWishlisted ? "outline" : "default"}
             >
               <Heart className={`w-5 h-5 mr-2 ${isWishlisted ? 'fill-red-500' : ''}`} />
-              {isWishlisted ? 'Dans mes favoris' : 'Ajouter aux favoris'}
+              {isWishlisted ? (t.product?.inWishlist || 'Dans mes favoris') : (t.product?.addToWishlist || 'Ajouter aux favoris')}
             </Button>
           </div>
           
@@ -284,7 +298,7 @@ export default function ProductDetail() {
               className="block"
             >
               <Button variant="outline" className="w-full h-11">
-                View on Partner Store
+                {t.product?.viewPartner || "View on Partner Store"}
               </Button>
             </a>
           )}
@@ -293,15 +307,15 @@ export default function ProductDetail() {
           <div className="grid grid-cols-3 gap-4 pt-4">
             <div className="flex flex-col items-center text-center p-3 bg-neutral-50 rounded-xl">
               <Truck className="w-5 h-5 text-neutral-600 mb-1" />
-              <span className="text-xs text-neutral-600">Free Shipping</span>
+              <span className="text-xs text-neutral-600">{t.product?.freeShipping || "Free Shipping"}</span>
             </div>
             <div className="flex flex-col items-center text-center p-3 bg-neutral-50 rounded-xl">
               <Shield className="w-5 h-5 text-neutral-600 mb-1" />
-              <span className="text-xs text-neutral-600">Secure Payment</span>
+              <span className="text-xs text-neutral-600">{t.product?.securePayment || "Secure Payment"}</span>
             </div>
             <div className="flex flex-col items-center text-center p-3 bg-neutral-50 rounded-xl">
               <RotateCcw className="w-5 h-5 text-neutral-600 mb-1" />
-              <span className="text-xs text-neutral-600">30-Day Returns</span>
+              <span className="text-xs text-neutral-600">{t.product?.returns || "30-Day Returns"}</span>
             </div>
           </div>
         </motion.div>
@@ -311,8 +325,8 @@ export default function ProductDetail() {
       <div className="mt-16">
         <Tabs defaultValue="reviews" className="space-y-6">
           <TabsList className="bg-neutral-100 p-1">
-            <TabsTrigger value="reviews">Reviews ({reviews?.length || 0})</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
+            <TabsTrigger value="reviews">{t.product?.reviews || "Reviews"} ({reviews?.length || 0})</TabsTrigger>
+            <TabsTrigger value="details">{t.product?.details || "Details"}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="reviews">
@@ -321,33 +335,33 @@ export default function ProductDetail() {
 
           <TabsContent value="details">
             <div className="bg-white rounded-xl border p-6 space-y-4">
-              <h3 className="font-medium text-lg">Product Details</h3>
+              <h3 className="font-medium text-lg">{t.product?.details || "Product Details"}</h3>
               <div className="grid md:grid-cols-2 gap-4 text-sm">
                 <div className="flex justify-between py-2 border-b">
-                  <span className="text-neutral-500">Type</span>
+                  <span className="text-neutral-500">{t.product?.type || "Type"}</span>
                   <span className="capitalize">{product.type}</span>
                 </div>
                 {product.brand && (
                   <div className="flex justify-between py-2 border-b">
-                    <span className="text-neutral-500">Brand</span>
+                    <span className="text-neutral-500">{t.product?.brand || "Brand"}</span>
                     <span>{product.brand}</span>
                   </div>
                 )}
                 {product.metal_type && (
                   <div className="flex justify-between py-2 border-b">
-                    <span className="text-neutral-500">Metal Type</span>
+                    <span className="text-neutral-500">{t.product?.metal || "Metal Type"}</span>
                     <span>{product.metal_type}</span>
                   </div>
                 )}
                 {product.gemstone_type && (
                   <div className="flex justify-between py-2 border-b">
-                    <span className="text-neutral-500">Gemstone</span>
+                    <span className="text-neutral-500">{t.product?.gemstone || "Gemstone"}</span>
                     <span>{product.gemstone_type}</span>
                   </div>
                 )}
                 {product.collection_name && (
                   <div className="flex justify-between py-2 border-b">
-                    <span className="text-neutral-500">Collection</span>
+                    <span className="text-neutral-500">{t.product?.collection || "Collection"}</span>
                     <span>{product.collection_name}</span>
                   </div>
                 )}
@@ -355,7 +369,7 @@ export default function ProductDetail() {
               
               {product.tags?.length > 0 && (
                 <div className="pt-4">
-                  <p className="text-sm text-neutral-500 mb-2">Tags</p>
+                  <p className="text-sm text-neutral-500 mb-2">{t.product?.tags || "Tags"}</p>
                   <div className="flex flex-wrap gap-2">
                     {product.tags.map((tag, i) => (
                       <Badge key={i} variant="secondary" className="text-xs">{tag}</Badge>

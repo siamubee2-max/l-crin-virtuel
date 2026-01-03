@@ -260,6 +260,41 @@ const translations = {
           visitBrand: "Visiter la Marque",
           total: "total",
           by: "par"
+        },
+        product: {
+          back: "Retour",
+          off: "de REMISE",
+          tryInStudio: "Essayer dans le Studio IA",
+          reviews: "Avis",
+          details: "Détails",
+          description: "Description",
+          addToWishlist: "Ajouter aux favoris",
+          inWishlist: "Dans mes favoris",
+          viewPartner: "Voir la boutique",
+          freeShipping: "Livraison Gratuite",
+          securePayment: "Paiement Sécurisé",
+          returns: "Retours 30 Jours",
+          metal: "Métal",
+          gemstone: "Pierre",
+          collection: "Collection",
+          material: "Matière",
+          color: "Couleur",
+          tags: "Tags",
+          type: "Type",
+          brand: "Marque",
+          share: "Partager ce produit",
+          materialOptions: "Matière",
+          availableIn: "Disponible en"
+        },
+        lookbook: {
+          unlock: "Débloquer le contenu Premium",
+          exclusive: "Accès exclusif à ce lookbook, notes de style et liens shopping.",
+          buyFor: "Acheter pour",
+          oneTime: "Achat unique • Accès à vie",
+          shopLook: "Acheter ce Look",
+          buyNow: "Acheter",
+          share: "Partager ce lookbook",
+          noContent: "Aucun contenu disponible."
         }
         },
   en: {
@@ -454,9 +489,44 @@ const translations = {
       visitBrand: "Visit Brand",
       total: "total",
       by: "by"
-    }
-    },
-  es: {
+      },
+      product: {
+      back: "Back",
+      off: "OFF",
+      tryInStudio: "Try in AI Studio",
+      reviews: "Reviews",
+      details: "Details",
+      description: "Description",
+      addToWishlist: "Add to Wishlist",
+      inWishlist: "In Wishlist",
+      viewPartner: "View on Partner Store",
+      freeShipping: "Free Shipping",
+      securePayment: "Secure Payment",
+      returns: "30-Day Returns",
+      metal: "Metal",
+      gemstone: "Gemstone",
+      collection: "Collection",
+      material: "Material",
+      color: "Color",
+      tags: "Tags",
+      type: "Type",
+      brand: "Brand",
+      share: "Share this product",
+      materialOptions: "Material",
+      availableIn: "Available In"
+      },
+      lookbook: {
+      unlock: "Unlock Premium Content",
+      exclusive: "Get exclusive access to this curated lookbook, style notes and shopping links.",
+      buyFor: "Buy for",
+      oneTime: "One-time purchase • Lifetime access",
+      shopLook: "Shop the Look",
+      buyNow: "Buy Now",
+      share: "Share this lookbook",
+      noContent: "No content provided."
+      }
+      },
+      es: {
     nav: {
       gallery: "Galería",
       studio: "El Taller",
