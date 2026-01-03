@@ -10,6 +10,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { HelmetProvider } from 'react-helmet-async';
+import SEO from '@/components/common/SEO';
 
 function LayoutContent({ children }) {
   const location = useLocation();
@@ -213,9 +215,11 @@ function LayoutContent({ children }) {
 
 export default function Layout({ children }) {
   return (
-    <LanguageProvider>
-      <style>{`
-        :root {
+    <HelmetProvider>
+      <LanguageProvider>
+        <SEO />
+        <style>{`
+          :root {
           --gold: #C9A962;
           --gold-light: #E8D9B5;
           --silver: #A8A9AD;
@@ -245,6 +249,7 @@ export default function Layout({ children }) {
       <LayoutContent>
          {children}
       </LayoutContent>
-    </LanguageProvider>
-  );
-}
+      </LanguageProvider>
+      </HelmetProvider>
+      );
+      }
