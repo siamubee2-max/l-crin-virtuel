@@ -142,9 +142,7 @@ export default function BrandPartnerships() {
           <TabsTrigger value="collections" className="gap-2">
             <Bookmark className="w-4 h-4" /> All Collections
           </TabsTrigger>
-          <TabsTrigger value="creators" className="gap-2">
-            <Users className="w-4 h-4" /> Creators
-          </TabsTrigger>
+
         </TabsList>
 
         {/* Featured Looks */}
