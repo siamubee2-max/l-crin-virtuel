@@ -113,6 +113,15 @@ export default function ProductDetail() {
 
   return (
     <div className="max-w-6xl mx-auto">
+      {product && (
+        <SEO 
+          title={product.name}
+          description={product.description?.substring(0, 160) || `Découvrez ${product.name} chez L'Écrin Virtuel.`}
+          image={product.image_url}
+          type="product"
+          keywords={[product.brand, product.type, product.material, product.gemstone_type].filter(Boolean)}
+        />
+      )}
       {/* Back Button */}
       <div className="flex justify-between items-center mb-6">
         <Button 

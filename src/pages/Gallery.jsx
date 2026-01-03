@@ -81,6 +81,11 @@ export default function Gallery() {
 
   return (
     <div className="space-y-12">
+      <SEO 
+        title="Galerie de Créations" 
+        description="Explorez les créations uniques de notre communauté. Essayez virtuellement des bijoux de luxe."
+        keywords={["bijoux", "essayage virtuel", "luxe", "galerie", "créations"]}
+      />
       {/* Hero Section */}
       <section className="relative rounded-3xl overflow-hidden bg-neutral-900 text-white p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=2075&auto=format&fit=crop')] bg-cover bg-center" />
