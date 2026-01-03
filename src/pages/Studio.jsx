@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Sparkles, Upload, ArrowRight, CheckCircle2, RefreshCw, Lightbulb, Wand2, Camera } from "lucide-react";
+import { Loader2, Sparkles, Upload, ArrowRight, CheckCircle2, RefreshCw, Lightbulb, Wand2, Camera, Lock } from "lucide-react";
 import ShareButton from "@/components/common/ShareButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from '@/utils';
@@ -32,6 +32,13 @@ export default function Studio() {
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me().catch(() => null), // Handle not logged in
   });
+
+  const { data: subscriptions } = useQuery({
+    queryKey: ['userSubscription', user?.email],
+    queryFn: () => base44.entities.UserSubscription.filter({ created_by: user?.email }),
+    enabled: !!user?.email,
+  });
+  const isPremium = subscriptions?.some(s => s.status === 'active');
 
   const [step, setStep] = useState(STEPS.UPLOAD);
   const [uploading, setUploading] = useState(false);
@@ -124,6 +131,13 @@ export default function Studio() {
   };
 
   const handleStylistAnalysis = async () => {
+    if (!isPremium) {
+      if (window.confirm("Le Styliste IA est une fonctionnalité Premium. Voulez-vous débloquer tout le potentiel ?")) {
+        navigate(createPageUrl("Subscription"));
+      }
+      return;
+    }
+
     if (!jewelryImage || !selectedBodyPartId) return;
     
     setAnalyzingStyle(true);
@@ -577,6 +591,8 @@ export default function Studio() {
                         >
                           {analyzingStyle ? (
                             <><Loader2 className="w-3 h-3 mr-2 animate-spin" /> {t.stylist.analyzing}</>
+                          ) : !isPremium ? (
+                            <><Lock className="w-3 h-3 mr-2" /> Débloquer le Styliste</>
                           ) : (
                             <><Lightbulb className="w-3 h-3 mr-2" /> {t.stylist.analyzeBtn}</>
                           )}

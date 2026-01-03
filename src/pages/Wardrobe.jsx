@@ -6,12 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Trash2, Camera, Loader2, User as UserIcon } from "lucide-react";
+import { Plus, Trash2, Camera, Loader2, User as UserIcon, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import WardrobeAIAssistant from '@/components/wardrobe/WardrobeAIAssistant';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function Wardrobe() {
+  const navigate = useNavigate();
   const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -43,6 +46,15 @@ export default function Wardrobe() {
     queryKey: ['bodyParts'],
     queryFn: () => base44.entities.BodyPart.list(),
   });
+
+  const { data: user } = useQuery({ queryKey: ['currentUser'], queryFn: () => base44.auth.me().catch(() => null) });
+  const { data: subscriptions } = useQuery({
+    queryKey: ['userSubscription', user?.email],
+    queryFn: () => base44.entities.UserSubscription.filter({ created_by: user?.email }),
+    enabled: !!user?.email,
+  });
+  const isPremium = subscriptions?.some(s => s.status === 'active');
+  const isLimitReached = !isPremium && bodyParts?.length >= 2;
 
   // Fetch clothing items for AI assistant
   const { data: clothingItems } = useQuery({
@@ -108,10 +120,19 @@ export default function Wardrobe() {
             jewelryItems={jewelryItems || []} 
           />
           
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+            if (open && isLimitReached) {
+              if (window.confirm("La version gratuite est limitée à 2 photos. Passez Premium pour une garde-robe illimitée !")) {
+                navigate(createPageUrl("Subscription"));
+              }
+              return;
+            }
+            setIsDialogOpen(open);
+          }}>
             <DialogTrigger asChild>
               <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
-                <Plus className="w-4 h-4 mr-2" /> {t.wardrobe.addPhoto}
+                {isLimitReached ? <Lock className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />} 
+                {t.wardrobe.addPhoto}
               </Button>
             </DialogTrigger>
           <DialogContent className="sm:max-w-md">

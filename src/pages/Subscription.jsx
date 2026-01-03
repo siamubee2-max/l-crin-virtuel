@@ -27,12 +27,12 @@ export default function Subscription() {
   }, []);
 
   const features = [
+    "Garde-robe illimitée (vs 2 articles gratuits)",
+    "Styliste IA illimité dans l'Atelier et le Dressing",
     "Essayages virtuels illimités",
     "Mode AR en direct (webcam)",
-    "Styliste IA personnalisé",
-    "Galerie et collections illimitées",
-    "Export HD de vos créations",
-    "Accès prioritaire aux nouvelles fonctionnalités"
+    "Accès aux collections et marques exclusives",
+    "Export HD de vos créations"
   ];
 
   // Fetch current user

@@ -8,14 +8,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Loader2, Camera, Shirt, Trash2, Sparkles, Link as LinkIcon, X, CheckSquare, Square, Video } from "lucide-react";
+import { Plus, Search, Loader2, Camera, Shirt, Trash2, Sparkles, Link as LinkIcon, X, CheckSquare, Square, Video, Lock, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import ClothingFilters from '@/components/clothing/ClothingFilters';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 
 export default function Closet() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
@@ -67,6 +70,14 @@ export default function Closet() {
     queryKey: ['jewelryItems'],
     queryFn: () => base44.entities.JewelryItem.list(),
   });
+
+  const { data: user } = useQuery({ queryKey: ['currentUser'], queryFn: () => base44.auth.me().catch(() => null) });
+  const { data: subscriptions } = useQuery({
+    queryKey: ['userSubscription', user?.email],
+    queryFn: () => base44.entities.UserSubscription.filter({ created_by: user?.email }),
+    enabled: !!user?.email,
+  });
+  const isPremium = subscriptions?.some(s => s.status === 'active');
 
   // Mutations
   const createMutation = useMutation({
@@ -530,13 +541,20 @@ export default function Closet() {
                  size="sm" 
                  className="bg-amber-500 hover:bg-amber-600 text-white rounded-full px-4"
                  onClick={() => {
+                   if (!isPremium) {
+                     if (window.confirm("Le Styliste IA est une fonctionnalité Premium. Voulez-vous débloquer tout le potentiel ?")) {
+                       navigate(createPageUrl("Subscription"));
+                     }
+                     return;
+                   }
                    setStylistMode('outfit');
                    setIsAIModalOpen(true);
                    setAiSuggestion(null);
                    setOccasionPrompt("");
                  }}
               >
-                <Sparkles className="w-3 h-3 mr-2" /> {t.closet?.aiMatch || "Styliste"}
+                {isPremium ? <Sparkles className="w-3 h-3 mr-2" /> : <Lock className="w-3 h-3 mr-2" />}
+                {t.closet?.aiMatch || "Styliste"}
               </Button>
            </motion.div>
         )}
@@ -659,8 +677,15 @@ export default function Closet() {
                          {stylistMode === 'outfit' ? (
                             jewelry?.filter(j => aiSuggestion.recommended_ids?.includes(j.id)).map(j => (
                                 <div key={j.id} className="bg-white p-2 rounded-lg border border-neutral-100 shadow-sm text-center">
-                                   <div className="aspect-square bg-neutral-50 rounded-md overflow-hidden mb-2">
+                                   <div className="aspect-square bg-neutral-50 rounded-md overflow-hidden mb-2 relative group">
                                       <img src={j.image_url} className="w-full h-full object-cover" />
+                                      {j.affiliate_link && (
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                          <a href={j.affiliate_link} target="_blank" rel="noopener noreferrer">
+                                            <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full"><ShoppingBag className="w-4 h-4" /></Button>
+                                          </a>
+                                        </div>
+                                      )}
                                    </div>
                                    <p className="text-xs font-medium truncate">{j.name}</p>
                                 </div>
@@ -668,8 +693,15 @@ export default function Closet() {
                          ) : (
                             clothes?.filter(c => aiSuggestion.recommended_ids?.includes(c.id)).map(c => (
                                 <div key={c.id} className="bg-white p-2 rounded-lg border border-neutral-100 shadow-sm text-center">
-                                   <div className="aspect-[3/4] bg-neutral-50 rounded-md overflow-hidden mb-2">
+                                   <div className="aspect-[3/4] bg-neutral-50 rounded-md overflow-hidden mb-2 relative group">
                                       <img src={c.image_url} className="w-full h-full object-cover" />
+                                      {c.affiliate_link && (
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                          <a href={c.affiliate_link} target="_blank" rel="noopener noreferrer">
+                                            <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full"><ShoppingBag className="w-4 h-4" /></Button>
+                                          </a>
+                                        </div>
+                                      )}
                                    </div>
                                    <p className="text-xs font-medium truncate">{c.name}</p>
                                 </div>
