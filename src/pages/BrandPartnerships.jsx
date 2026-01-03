@@ -86,7 +86,7 @@ export default function BrandPartnerships() {
               <Sparkles className="w-4 h-4 mr-2" /> Explore Collections
             </Button>
             <Link to={createPageUrl('CreatorOnboarding')}>
-              <Button variant="outline" className="border-neutral-600 text-white hover:bg-neutral-800">
+              <Button variant="outline" className="border-neutral-600 text-black hover:bg-neutral-800">
                 Become a Creator
               </Button>
             </Link>
