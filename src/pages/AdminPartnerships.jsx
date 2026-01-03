@@ -62,7 +62,7 @@ export default function AdminPartnerships() {
   // Filter clicks by date range
   const filteredClicks = useMemo(() => {
     if (!clicks) return [];
-    return clicks.filter(click => {
+    return clicks.filter((click) => {
       try {
         const clickDate = parseISO(click.created_date);
         return isWithinInterval(clickDate, { start: dateRange.from, end: dateRange.to });
@@ -74,14 +74,14 @@ export default function AdminPartnerships() {
 
   // Stats
   const totalClicks = filteredClicks.length;
-  const conversions = filteredClicks.filter(c => c.converted).length;
+  const conversions = filteredClicks.filter((c) => c.converted).length;
   const totalCommissions = filteredClicks.reduce((sum, c) => sum + (c.commission_amount || 0), 0);
-  const conversionRate = totalClicks > 0 ? ((conversions / totalClicks) * 100).toFixed(1) : 0;
+  const conversionRate = totalClicks > 0 ? (conversions / totalClicks * 100).toFixed(1) : 0;
 
   // Chart data
   const chartData = useMemo(() => {
     const clicksByDate = {};
-    filteredClicks.forEach(click => {
+    filteredClicks.forEach((click) => {
       const date = format(parseISO(click.created_date), 'dd/MM');
       if (!clicksByDate[date]) {
         clicksByDate[date] = { date, clicks: 0, conversions: 0, revenue: 0 };
@@ -90,26 +90,26 @@ export default function AdminPartnerships() {
       if (click.converted) clicksByDate[date].conversions++;
       clicksByDate[date].revenue += click.commission_amount || 0;
     });
-    
+
     const timeSeries = Object.values(clicksByDate).sort((a, b) => a.date.localeCompare(b.date));
-    
+
     // By creator
     const byCreator = {};
-    filteredClicks.forEach(click => {
+    filteredClicks.forEach((click) => {
       const id = click.creator_id || 'unknown';
       if (!byCreator[id]) byCreator[id] = { clicks: 0, revenue: 0 };
       byCreator[id].clicks++;
       byCreator[id].revenue += click.commission_amount || 0;
     });
-    
+
     const creatorData = Object.entries(byCreator).map(([id, data]) => {
-      const creator = creators?.find(c => c.id === id);
+      const creator = creators?.find((c) => c.id === id);
       return { id, name: creator?.display_name || 'Inconnu', ...data };
     }).sort((a, b) => b.revenue - a.revenue);
 
     // Category breakdown
     const categoryData = {};
-    filteredClicks.forEach(click => {
+    filteredClicks.forEach((click) => {
       const type = click.item_type || 'other';
       if (!categoryData[type]) categoryData[type] = 0;
       categoryData[type]++;
@@ -121,8 +121,8 @@ export default function AdminPartnerships() {
 
   // Export data
   const exportData = useMemo(() => {
-    return filteredClicks.map(click => {
-      const creator = creators?.find(c => c.id === click.creator_id);
+    return filteredClicks.map((click) => {
+      const creator = creators?.find((c) => c.id === click.creator_id);
       return {
         date: click.created_date,
         creator: creator?.display_name || 'N/A',
@@ -140,8 +140,8 @@ export default function AdminPartnerships() {
         <XCircle className="w-16 h-16 text-red-300 mx-auto mb-4" />
         <h2 className="text-xl font-medium text-neutral-700">Access Denied</h2>
         <p className="text-neutral-500">Admin privileges required</p>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -150,7 +150,7 @@ export default function AdminPartnerships() {
         <h1 className="text-3xl font-serif">Partnership Management</h1>
         <p className="text-neutral-500">Manage brands, creators, and affiliate performance</p>
         <p className="text-sm text-neutral-400 mt-1">
-          Pour toute demande de partenariat : <a href="mailto:inferencevision@inference.store" className="text-amber-600 hover:underline">inferencevision@inference.store</a>
+          Pour toute demande de partenariat : <a href="mailto:inferencevision@inference.store" className="text-amber-800 hover:underline">inferencevision@inferencevision.store</a>
         </p>
       </div>
 
@@ -159,12 +159,12 @@ export default function AdminPartnerships() {
         <DateRangeSelector value={dateRange} onChange={setDateRange} />
         <div className="flex items-center gap-2">
           <ExportButton data={exportData} filename="partnership_analytics" />
-          <WidgetConfigDialog 
-            widgets={widgets} 
-            onToggle={toggleWidget} 
-            onReorder={reorderWidgets} 
-            onReset={resetWidgets} 
-          />
+          <WidgetConfigDialog
+            widgets={widgets}
+            onToggle={toggleWidget}
+            onReorder={reorderWidgets}
+            onReset={resetWidgets} />
+
         </div>
       </div>
 
@@ -180,7 +180,7 @@ export default function AdminPartnerships() {
         <StatsCard title="Conversions" value={conversions} icon={TrendingUp} color="pink" />
         <StatsCard title="Taux Conversion" value={conversionRate} suffix="%" icon={BarChart3} color="blue" />
         <StatsCard title="Collections" value={collections?.length || 0} icon={Package} color="amber" />
-        <StatsCard title="Créateurs Approuvés" value={creators?.filter(c => c.status === 'approved').length || 0} icon={CheckCircle2} color="green" />
+        <StatsCard title="Créateurs Approuvés" value={creators?.filter((c) => c.status === 'approved').length || 0} icon={CheckCircle2} color="green" />
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -193,7 +193,7 @@ export default function AdminPartnerships() {
         {/* Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
-            <RevenueChart data={chartData.timeSeries.map(d => ({ date: d.date, revenue: d.revenue }))} title="Revenus des Commissions" />
+            <RevenueChart data={chartData.timeSeries.map((d) => ({ date: d.date, revenue: d.revenue }))} title="Revenus des Commissions" />
             <ClicksChart data={chartData.timeSeries} title="Clics & Conversions" />
           </div>
           
@@ -206,17 +206,17 @@ export default function AdminPartnerships() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {brands?.slice(0, 5).map((brand, idx) => (
-                    <div key={brand.id} className="flex items-center justify-between">
+                  {brands?.slice(0, 5).map((brand, idx) =>
+                  <div key={brand.id} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        {brand.logo_url && (
-                          <img src={brand.logo_url} alt="" className="w-6 h-6 rounded object-contain" />
-                        )}
+                        {brand.logo_url &&
+                      <img src={brand.logo_url} alt="" className="w-6 h-6 rounded object-contain" />
+                      }
                         <span className="text-sm font-medium">{brand.brand_name}</span>
                       </div>
                       <Badge variant="secondary">{brand.commission_rate}%</Badge>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -226,8 +226,8 @@ export default function AdminPartnerships() {
         {/* Creators Tab */}
         <TabsContent value="creators" className="space-y-6">
           {/* Pending Applications Alert */}
-          {creators?.filter(c => c.status === 'pending').length > 0 && (
-            <Card className="bg-amber-50 border-amber-200">
+          {creators?.filter((c) => c.status === 'pending').length > 0 &&
+          <Card className="bg-amber-50 border-amber-200">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -236,7 +236,7 @@ export default function AdminPartnerships() {
                     </div>
                     <div>
                       <p className="font-medium text-amber-800">
-                        {creators.filter(c => c.status === 'pending').length} Pending Applications
+                        {creators.filter((c) => c.status === 'pending').length} Pending Applications
                       </p>
                       <p className="text-sm text-amber-600">Review and approve creator applications</p>
                     </div>
@@ -244,73 +244,73 @@ export default function AdminPartnerships() {
                 </div>
               </CardContent>
             </Card>
-          )}
+          }
 
           {/* Pending Applications Section */}
-          {creators?.filter(c => c.status === 'pending').length > 0 && (
-            <div className="space-y-4">
+          {creators?.filter((c) => c.status === 'pending').length > 0 &&
+          <div className="space-y-4">
               <h3 className="font-medium text-lg">Pending Review</h3>
               <div className="grid gap-4">
-                {creators?.filter(c => c.status === 'pending').map(creator => (
-                  <Card key={creator.id} className="border-amber-200">
+                {creators?.filter((c) => c.status === 'pending').map((creator) =>
+              <Card key={creator.id} className="border-amber-200">
                     <CardContent className="pt-6">
                       <div className="flex flex-col md:flex-row gap-6">
                         {/* Profile Info */}
                         <div className="flex items-start gap-4 flex-1">
                           <div className="w-16 h-16 rounded-full bg-neutral-100 overflow-hidden flex-shrink-0">
-                            {creator.profile_image ? (
-                              <img src={creator.profile_image} className="w-full h-full object-cover" alt="" />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-xl font-medium text-neutral-400">
+                            {creator.profile_image ?
+                        <img src={creator.profile_image} className="w-full h-full object-cover" alt="" /> :
+
+                        <div className="w-full h-full flex items-center justify-center text-xl font-medium text-neutral-400">
                                 {creator.display_name?.[0]}
                               </div>
-                            )}
+                        }
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium text-lg">{creator.display_name}</h4>
                             <p className="text-sm text-neutral-500 mb-2">{creator.created_by}</p>
-                            {creator.bio && (
-                              <p className="text-sm text-neutral-600 line-clamp-2 mb-2">{creator.bio}</p>
-                            )}
-                            {creator.specialties?.length > 0 && (
-                              <div className="flex flex-wrap gap-1">
-                                {creator.specialties.map((s, i) => (
-                                  <Badge key={i} variant="secondary" className="text-xs">{s}</Badge>
-                                ))}
+                            {creator.bio &&
+                        <p className="text-sm text-neutral-600 line-clamp-2 mb-2">{creator.bio}</p>
+                        }
+                            {creator.specialties?.length > 0 &&
+                        <div className="flex flex-wrap gap-1">
+                                {creator.specialties.map((s, i) =>
+                          <Badge key={i} variant="secondary" className="text-xs">{s}</Badge>
+                          )}
                               </div>
-                            )}
-                            {creator.social_links && (
-                              <div className="flex gap-3 mt-3 text-xs text-neutral-500">
+                        }
+                            {creator.social_links &&
+                        <div className="flex gap-3 mt-3 text-xs text-neutral-500">
                                 {creator.social_links.instagram && <span>IG: @{creator.social_links.instagram}</span>}
                                 {creator.social_links.tiktok && <span>TT: @{creator.social_links.tiktok}</span>}
                               </div>
-                            )}
+                        }
                           </div>
                         </div>
                         
                         {/* Actions */}
                         <div className="flex md:flex-col gap-2 md:w-32">
-                          <Button 
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                            onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'approved' } })}
-                          >
+                          <Button
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                        onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'approved' } })}>
+
                             <CheckCircle2 className="w-4 h-4 mr-1" /> Approve
                           </Button>
-                          <Button 
-                            variant="outline"
-                            className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
-                            onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'suspended' } })}
-                          >
+                          <Button
+                        variant="outline"
+                        className="flex-1 border-red-200 text-red-600 hover:bg-red-50"
+                        onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'suspended' } })}>
+
                             <XCircle className="w-4 h-4 mr-1" /> Reject
                           </Button>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+              )}
               </div>
             </div>
-          )}
+          }
 
           {/* All Creators Table */}
           <div className="space-y-4">
@@ -328,8 +328,8 @@ export default function AdminPartnerships() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {creators?.map(creator => (
-                    <TableRow key={creator.id}>
+                  {creators?.map((creator) =>
+                  <TableRow key={creator.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded-full bg-neutral-100 overflow-hidden">
@@ -348,8 +348,8 @@ export default function AdminPartnerships() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right space-x-1">
-                        {creator.status === 'pending' && (
-                          <>
+                        {creator.status === 'pending' &&
+                      <>
                             <Button size="sm" variant="outline" className="h-7 text-xs text-green-600" onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'approved' } })}>
                               Approve
                             </Button>
@@ -357,20 +357,20 @@ export default function AdminPartnerships() {
                               Reject
                             </Button>
                           </>
-                        )}
-                        {creator.status === 'approved' && (
-                          <Button size="sm" variant="ghost" className="h-7" onClick={() => updateCreator.mutate({ id: creator.id, data: { verified: !creator.verified } })}>
+                      }
+                        {creator.status === 'approved' &&
+                      <Button size="sm" variant="ghost" className="h-7" onClick={() => updateCreator.mutate({ id: creator.id, data: { verified: !creator.verified } })}>
                             {creator.verified ? 'Unverify' : 'Verify'}
                           </Button>
-                        )}
-                        {creator.status === 'suspended' && (
-                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'approved' } })}>
+                      }
+                        {creator.status === 'suspended' &&
+                      <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateCreator.mutate({ id: creator.id, data: { status: 'approved' } })}>
                             Reinstate
                           </Button>
-                        )}
+                      }
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </Card>
@@ -392,8 +392,8 @@ export default function AdminPartnerships() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {collections?.map(col => {
-                  const creator = creators?.find(c => c.id === col.creator_id);
+                {collections?.map((col) => {
+                  const creator = creators?.find((c) => c.id === col.creator_id);
                   return (
                     <TableRow key={col.id}>
                       <TableCell className="font-medium">{col.title}</TableCell>
@@ -402,19 +402,19 @@ export default function AdminPartnerships() {
                       <TableCell>{col.views || 0}</TableCell>
                       <TableCell>{col.saves || 0}</TableCell>
                       <TableCell>
-                        <Switch 
-                          checked={col.featured} 
-                          onCheckedChange={(v) => base44.entities.CuratedCollection.update(col.id, { featured: v }).then(() => queryClient.invalidateQueries({ queryKey: ['allCollections'] }))}
-                        />
+                        <Switch
+                          checked={col.featured}
+                          onCheckedChange={(v) => base44.entities.CuratedCollection.update(col.id, { featured: v }).then(() => queryClient.invalidateQueries({ queryKey: ['allCollections'] }))} />
+
                       </TableCell>
-                    </TableRow>
-                  );
+                    </TableRow>);
+
                 })}
               </TableBody>
             </Table>
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>);
+
 }
