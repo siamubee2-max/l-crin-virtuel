@@ -373,7 +373,7 @@ export default function JewelryBox() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Collection</Label>
+                  <Label>{t.product?.collection || "Collection"}</Label>
                   <Input 
                     value={newItem.collection_name}
                     onChange={(e) => setNewItem({...newItem, collection_name: e.target.value})}
@@ -384,7 +384,7 @@ export default function JewelryBox() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                   <Label>Metal Type</Label>
+                   <Label>{t.product?.metal || "Metal Type"}</Label>
                    <Select 
                       value={newItem.metal_type}
                       onValueChange={(val) => setNewItem({...newItem, metal_type: val})}
@@ -400,7 +400,7 @@ export default function JewelryBox() {
                     </Select>
                 </div>
                 <div className="space-y-2">
-                   <Label>Gemstone</Label>
+                   <Label>{t.product?.gemstone || "Gemstone"}</Label>
                    <Input 
                       value={newItem.gemstone_type}
                       onChange={(e) => setNewItem({...newItem, gemstone_type: e.target.value})}
@@ -410,7 +410,7 @@ export default function JewelryBox() {
               </div>
 
               <div className="space-y-2">
-                <Label>Material Options (comma separated)</Label>
+                <Label>{t.product?.materialOptions || "Material Options"} (comma separated)</Label>
                 <Input 
                   value={newItem.material_options?.join(", ")}
                   onChange={(e) => setNewItem({...newItem, material_options: e.target.value.split(",").map(s => s.trim()).filter(Boolean)})}
@@ -458,10 +458,10 @@ export default function JewelryBox() {
               </div>
 
               <div className="border-t pt-4 mt-4">
-                 <h4 className="text-sm font-medium mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4" /> Pricing & Sales</h4>
+                 <h4 className="text-sm font-medium mb-3 flex items-center gap-2"><DollarSign className="w-4 h-4" /> {t.jewelryBox?.pricing || "Pricing"}</h4>
                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                       <Label>Regular Price ($)</Label>
+                       <Label>{t.jewelryBox?.regularPrice || "Regular Price"}</Label>
                        <Input 
                          type="number"
                          value={newItem.price}
@@ -470,7 +470,7 @@ export default function JewelryBox() {
                        />
                     </div>
                     <div className="space-y-2">
-                       <Label>Sale Price ($)</Label>
+                       <Label>{t.jewelryBox?.salePrice || "Sale Price"}</Label>
                        <Input 
                          type="number"
                          value={newItem.sale_price}
@@ -480,7 +480,7 @@ export default function JewelryBox() {
                     </div>
                  </div>
                  <div className="mt-4 space-y-2">
-                    <Label>Sale End Date</Label>
+                    <Label>{t.jewelryBox?.saleEndDate || "Sale End Date"}</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -488,7 +488,7 @@ export default function JewelryBox() {
                           className={`w-full justify-start text-left font-normal ${!newItem.sale_end_date && "text-muted-foreground"}`}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {newItem.sale_end_date ? format(new Date(newItem.sale_end_date), "PPP") : <span>Pick a date</span>}
+                          {newItem.sale_end_date ? format(new Date(newItem.sale_end_date), "PPP") : <span>{t.jewelryBox?.pickDate || "Pick a date"}</span>}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -590,42 +590,42 @@ export default function JewelryBox() {
                    </div>
 
                    <div>
-                      <h4 className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-1">Details</h4>
+                      <h4 className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-1">{t.product?.details || "Details"}</h4>
                       <div className="space-y-2 text-sm">
                          <div className="flex justify-between border-b border-neutral-100 pb-1">
-                            <span className="text-neutral-500">Brand</span>
+                            <span className="text-neutral-500">{t.product?.brand || "Brand"}</span>
                             <span className="font-medium">{detailItem.brand || "-"}</span>
                          </div>
                          <div className="flex justify-between border-b border-neutral-100 pb-1">
-                            <span className="text-neutral-500">Material</span>
+                            <span className="text-neutral-500">{t.product?.material || "Material"}</span>
                             <span className="font-medium">{detailItem.material || "-"}</span>
                          </div>
                          {detailItem.metal_type && (
                             <div className="flex justify-between border-b border-neutral-100 pb-1">
-                               <span className="text-neutral-500">Metal</span>
+                               <span className="text-neutral-500">{t.product?.metal || "Metal"}</span>
                                <span className="font-medium">{detailItem.metal_type}</span>
                             </div>
                          )}
                          {detailItem.gemstone_type && (
                             <div className="flex justify-between border-b border-neutral-100 pb-1">
-                               <span className="text-neutral-500">Gemstone</span>
+                               <span className="text-neutral-500">{t.product?.gemstone || "Gemstone"}</span>
                                <span className="font-medium">{detailItem.gemstone_type}</span>
                             </div>
                          )}
                          {detailItem.collection_name && (
                             <div className="flex justify-between border-b border-neutral-100 pb-1">
-                               <span className="text-neutral-500">Collection</span>
+                               <span className="text-neutral-500">{t.product?.collection || "Collection"}</span>
                                <span className="font-medium">{detailItem.collection_name}</span>
                             </div>
                          )}
                          {detailItem.material_options?.length > 0 && (
                             <div className="flex justify-between border-b border-neutral-100 pb-1">
-                               <span className="text-neutral-500">Available In</span>
+                               <span className="text-neutral-500">{t.product?.availableIn || "Available In"}</span>
                                <span className="font-medium text-right">{detailItem.material_options.join(", ")}</span>
                             </div>
                          )}
                          <div className="flex justify-between border-b border-neutral-100 pb-1">
-                            <span className="text-neutral-500">Type</span>
+                            <span className="text-neutral-500">{t.product?.type || "Type"}</span>
                             <span className="font-medium capitalize">{detailItem.type}</span>
                          </div>
                       </div>
@@ -633,7 +633,7 @@ export default function JewelryBox() {
 
                    {detailItem.description && (
                      <div>
-                        <h4 className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-1">Description</h4>
+                        <h4 className="text-sm font-medium text-neutral-500 uppercase tracking-wider mb-1">{t.product?.description || "Description"}</h4>
                         <p className="text-sm text-neutral-600 leading-relaxed">{detailItem.description}</p>
                      </div>
                    )}

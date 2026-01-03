@@ -192,7 +192,12 @@ const translations = {
           tags: "Tags détectés"
         },
         empty: "Votre écrin est vide.",
-        emptyCta: "Ajoutez votre premier trésor."
+        emptyCta: "Ajoutez votre premier trésor.",
+        pricing: "Prix & Promotions",
+        regularPrice: "Prix Standard ($)",
+        salePrice: "Prix Soldé ($)",
+        saleEndDate: "Fin de la promo",
+        pickDate: "Choisir une date"
         },
         closet: {
         title: "Mon Dressing",
@@ -462,6 +467,29 @@ const translations = {
       advice: "Color & Occasion",
       compatible: "Complete the Look"
     },
+    jewelryBox: {
+      title: "My Jewelry Box",
+      subtitle: "Catalog your precious jewelry. AI helps you organize and find matches.",
+      addBtn: "Add Jewelry",
+      newItem: "New Item",
+      searchPlaceholder: "Search (gold, silver, Cartier...)",
+      analyzing: "AI is analyzing...",
+      fields: {
+        name: "Name",
+        type: "Type",
+        brand: "Brand",
+        material: "Material",
+        desc: "Description",
+        tags: "Detected Tags"
+      },
+      empty: "Your jewelry box is empty.",
+      emptyCta: "Add your first treasure.",
+      pricing: "Pricing & Sales",
+      regularPrice: "Regular Price ($)",
+      salePrice: "Sale Price ($)",
+      saleEndDate: "Sale End Date",
+      pickDate: "Pick a date"
+    },
     feed: {
       title: "Style Feed",
       subtitle: "Daily inspiration, trends, and personalized suggestions just for you.",
@@ -677,6 +705,29 @@ const translations = {
       suggestions: "Sugerencias de Estilo",
       advice: "Color y Ocasión",
       compatible: "Completar el Look"
+    },
+    jewelryBox: {
+      title: "Mi Joyero",
+      subtitle: "Cataloga tus joyas preciosas. La IA te ayuda a organizarlas y combinarlas.",
+      addBtn: "Añadir Joya",
+      newItem: "Nueva Joya",
+      searchPlaceholder: "Buscar (oro, plata, Cartier...)",
+      analyzing: "La IA está analizando...",
+      fields: {
+        name: "Nombre",
+        type: "Tipo",
+        brand: "Marca",
+        material: "Material",
+        desc: "Descripción",
+        tags: "Tags detectados"
+      },
+      empty: "Tu joyero está vacío.",
+      emptyCta: "Añade tu primer tesoro.",
+      pricing: "Precios y Ofertas",
+      regularPrice: "Precio Regular ($)",
+      salePrice: "Precio Oferta ($)",
+      saleEndDate: "Fin de Oferta",
+      pickDate: "Elegir fecha"
     },
     feed: {
       title: "Feed de Estilo",
