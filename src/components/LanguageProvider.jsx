@@ -243,6 +243,22 @@ const translations = {
           basedOn: "Basé sur vos préférences :",
           trendAlert: "Alerte Tendance",
           viewItem: "Voir le détail"
+        },
+        brands: {
+          heroTitle: "Boutique Style Sélectionné",
+          heroDesc: "Découvrez des collections exclusives de marques de luxe et de stylistes experts. Achetez le look en un clic.",
+          partnerBadge: "Marques & Créateurs Partenaires",
+          exploreBtn: "Explorer les Collections",
+          featuredPartners: "Partenaires Vedettes",
+          featuredLooks: "Looks Vedettes",
+          allCollections: "Toutes les Collections",
+          noFeatured: "Aucune collection mise en avant pour le moment",
+          searchPlaceholder: "Rechercher des collections...",
+          shopTheLook: "Acheter le Look",
+          view: "Voir",
+          visitBrand: "Visiter la Marque",
+          total: "total",
+          by: "par"
         }
         },
   en: {
@@ -420,6 +436,22 @@ const translations = {
       basedOn: "Based on preferences:",
       trendAlert: "Trend Alert",
       viewItem: "View Details"
+    },
+    brands: {
+      heroTitle: "Shop Curated Style",
+      heroDesc: "Discover exclusive collections from top brands and expert stylists. Shop the look with one click.",
+      partnerBadge: "Partner Brands & Creators",
+      exploreBtn: "Explore Collections",
+      featuredPartners: "Featured Partners",
+      featuredLooks: "Featured Looks",
+      allCollections: "All Collections",
+      noFeatured: "No featured collections yet",
+      searchPlaceholder: "Search collections...",
+      shopTheLook: "Shop the Look",
+      view: "View",
+      visitBrand: "Visit Brand",
+      total: "total",
+      by: "by"
     }
     },
   es: {
@@ -584,6 +616,22 @@ const translations = {
       basedOn: "Basado en preferencias:",
       trendAlert: "Alerta de Tendencia",
       viewItem: "Ver Detalles"
+    },
+    brands: {
+      heroTitle: "Compra Estilo Seleccionado",
+      heroDesc: "Descubre colecciones exclusivas de las mejores marcas y estilistas expertos. Compra el look con un clic.",
+      partnerBadge: "Marcas y Creadores Asociados",
+      exploreBtn: "Explorar Colecciones",
+      featuredPartners: "Socios Destacados",
+      featuredLooks: "Looks Destacados",
+      allCollections: "Todas las Colecciones",
+      noFeatured: "Aún no hay colecciones destacadas",
+      searchPlaceholder: "Buscar colecciones...",
+      shopTheLook: "Comprar el Look",
+      view: "Ver",
+      visitBrand: "Visitar Marca",
+      total: "total",
+      by: "por"
     }
     },
   de: {
@@ -748,6 +796,22 @@ const translations = {
       basedOn: "Basierend auf Vorlieben:",
       trendAlert: "Trend-Alarm",
       viewItem: "Details ansehen"
+    },
+    brands: {
+      heroTitle: "Kuratierter Stil",
+      heroDesc: "Entdecken Sie exklusive Kollektionen von Top-Marken und Experten-Stylisten. Kaufen Sie den Look mit einem Klick.",
+      partnerBadge: "Partner-Marken & Kreative",
+      exploreBtn: "Kollektionen Entdecken",
+      featuredPartners: "Ausgewählte Partner",
+      featuredLooks: "Ausgewählte Looks",
+      allCollections: "Alle Kollektionen",
+      noFeatured: "Noch keine ausgewählten Kollektionen",
+      searchPlaceholder: "Kollektionen suchen...",
+      shopTheLook: "Look Kaufen",
+      view: "Ansehen",
+      visitBrand: "Marke Besuchen",
+      total: "gesamt",
+      by: "von"
     }
     },
   it: {
@@ -912,6 +976,22 @@ const translations = {
       basedOn: "Basato sulle preferenze:",
       trendAlert: "Allerta Tendenza",
       viewItem: "Vedi Dettagli"
+    },
+    brands: {
+      heroTitle: "Acquista Stile Curato",
+      heroDesc: "Scopri collezioni esclusive dei migliori marchi e stilisti esperti. Acquista il look con un clic.",
+      partnerBadge: "Marchi & Creatori Partner",
+      exploreBtn: "Esplora Collezioni",
+      featuredPartners: "Partner in Evidenza",
+      featuredLooks: "Look in Evidenza",
+      allCollections: "Tutte le Collezioni",
+      noFeatured: "Nessuna collezione in evidenza ancora",
+      searchPlaceholder: "Cerca collezioni...",
+      shopTheLook: "Acquista il Look",
+      view: "Vedi",
+      visitBrand: "Visita il Marchio",
+      total: "totale",
+      by: "di"
     }
     },
   pt: {
@@ -1076,6 +1156,22 @@ const translations = {
       basedOn: "Baseado nas preferências:",
       trendAlert: "Alerta de Tendência",
       viewItem: "Ver Detalhes"
+    },
+    brands: {
+      heroTitle: "Compre Estilo Selecionado",
+      heroDesc: "Descubra coleções exclusivas das melhores marcas e estilistas especializados. Compre o look com um clique.",
+      partnerBadge: "Marcas & Criadores Parceiros",
+      exploreBtn: "Explorar Coleções",
+      featuredPartners: "Parceiros em Destaque",
+      featuredLooks: "Looks em Destaque",
+      allCollections: "Todas as Coleções",
+      noFeatured: "Nenhuma coleção em destaque ainda",
+      searchPlaceholder: "Pesquisar coleções...",
+      shopTheLook: "Comprar o Look",
+      view: "Ver",
+      visitBrand: "Visitar Marca",
+      total: "total",
+      by: "por"
     }
     }
 };
