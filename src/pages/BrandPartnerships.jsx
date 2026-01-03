@@ -22,7 +22,7 @@ export default function BrandPartnerships() {
 
   const { data: collections, isLoading: collectionsLoading } = useQuery({
     queryKey: ['curatedCollections'],
-    queryFn: () => base44.entities.CuratedCollection.list('-created_date')
+    queryFn: () => base44.entities.CuratedCollection.filter({ is_private: false }, '-created_date')
   });
 
   const { data: creators, isLoading: creatorsLoading } = useQuery({
@@ -250,10 +250,30 @@ export default function BrandPartnerships() {
             </div>
           </div>
 
+          {/* Popular Tags */}
+          {collections?.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-6">
+              {[...new Set(collections.flatMap(c => c.tags || []))].slice(0, 10).map((tag, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSearchQuery(tag)}
+                  className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                    searchQuery === tag 
+                      ? 'bg-neutral-900 text-white' 
+                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                  }`}
+                >
+                  #{tag}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {collections?.filter((c) =>
             c.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            c.occasion?.toLowerCase().includes(searchQuery.toLowerCase())
+            c.occasion?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            c.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
             ).map((collection, idx) => {
               const items = getCollectionItems(collection);
               const creator = getCreator(collection.creator_id);
@@ -286,10 +306,19 @@ export default function BrandPartnerships() {
                   <div className="p-4">
                     <h3 className="font-medium text-neutral-900 mb-1">{collection.title}</h3>
                     {creator &&
-                    <p className="text-xs text-neutral-500 mb-3">
+                    <p className="text-xs text-neutral-500 mb-2">
                         by {creator.display_name} {creator.verified && "✓"}
                       </p>
                     }
+                    {collection.tags?.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {collection.tags.slice(0, 3).map((tag, i) => (
+                          <span key={i} className="text-[10px] bg-neutral-100 text-neutral-500 px-2 py-0.5 rounded">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">${totalValue.toFixed(0)} total</span>
