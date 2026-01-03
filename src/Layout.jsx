@@ -72,8 +72,8 @@ function LayoutContent({ children }) {
           
           {/* Logo */}
           <Link to={createPageUrl("Gallery")} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center rounded-sm font-serif text-xl">
-              É
+            <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center rounded-sm">
+              <Gem className="w-5 h-5 text-amber-400" />
             </div>
             <span className="font-serif text-xl tracking-tight font-medium accent-shimmer">
               L'Écrin Virtuel
