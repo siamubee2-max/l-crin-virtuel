@@ -238,6 +238,7 @@ export default function Wardrobe() {
           </DialogContent>
           </Dialog>
         </div>
+        </div>
       </div>
 
       {isLoading ? (
