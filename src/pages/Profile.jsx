@@ -181,22 +181,14 @@ export default function Profile() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white p-8 rounded-3xl border border-neutral-100 shadow-sm space-y-6"
           >
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>{t.profile.name}</Label>
-                <Input 
-                  value={formData.full_name} 
-                  onChange={(e) => setFormData({...formData, full_name: e.target.value})} 
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t.profile.email}</Label>
-                <Input 
-                  value={formData.email} 
-                  disabled 
-                  className="bg-neutral-50 text-neutral-500" 
-                />
-              </div>
+            <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-100 mb-4 flex items-center gap-3">
+               <div className="w-12 h-12 bg-neutral-200 rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 text-neutral-500" />
+               </div>
+               <div>
+                  <p className="font-medium text-neutral-900">Fashionista Anonyme</p>
+                  <p className="text-xs text-neutral-500">Identité protégée</p>
+               </div>
             </div>
 
             <div className="space-y-2">
