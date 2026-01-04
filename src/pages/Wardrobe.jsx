@@ -54,9 +54,8 @@ export default function Wardrobe() {
     enabled: !!user?.email,
   });
   const isPremium = subscriptions?.some(s => s.status === 'active');
-  const limit = 2;
-  const currentCount = bodyParts?.length || 0;
-  const isLimitReached = !isPremium && currentCount >= limit;
+  // Limit removed as requested
+  const isLimitReached = false;
 
   // Fetch clothing items for AI assistant
   const { data: clothingItems } = useQuery({
@@ -117,40 +116,11 @@ export default function Wardrobe() {
         </div>
 
         <div className="flex flex-col items-end gap-2">
-          {!isPremium && !isLoading && (
-            <div className="bg-neutral-100 rounded-lg p-2 flex items-center gap-3 text-xs">
-               <span className="text-neutral-500 font-medium">Plan Gratuit: {currentCount}/{limit} photos</span>
-               <div className="w-20 h-2 bg-neutral-200 rounded-full overflow-hidden">
-                 <div 
-                   className={`h-full rounded-full ${isLimitReached ? 'bg-red-500' : 'bg-green-500'}`} 
-                   style={{ width: `${Math.min((currentCount / limit) * 100, 100)}%` }}
-                 />
-               </div>
-               {isLimitReached && (
-                 <Button 
-                   size="sm" 
-                   variant="link" 
-                   className="h-auto p-0 text-amber-600 font-bold"
-                   onClick={() => navigate(createPageUrl("Subscription"))}
-                 >
-                   Upgrade
-                 </Button>
-               )}
-            </div>
-          )}
           <div className="flex gap-3">
-            <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            if (open && isLimitReached) {
-              if (window.confirm("La version gratuite est limitée à 2 photos. Passez Premium pour une garde-robe illimitée !")) {
-                navigate(createPageUrl("Subscription"));
-              }
-              return;
-            }
-            setIsDialogOpen(open);
-          }}>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
-                {isLimitReached ? <Lock className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />} 
+                <Plus className="w-4 h-4 mr-2" /> 
                 {t.wardrobe.addPhoto}
               </Button>
             </DialogTrigger>
