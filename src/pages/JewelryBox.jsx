@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Search, Loader2, Camera, Tag, Trash2, Filter, Star, Eye, Heart, DollarSign, Calendar as CalendarIcon, Edit2, Percent, Clock } from "lucide-react";
+import { Plus, Search, Loader2, Camera, Tag, Trash2, Filter, Star, Eye, Heart, DollarSign, Calendar as CalendarIcon, Edit2, Percent, Clock, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import StarRating from '@/components/reviews/StarRating';
@@ -647,6 +647,14 @@ export default function JewelryBox() {
                         <Heart className={`w-5 h-5 mr-2 ${isWishlisted(detailItem.id) ? 'fill-red-500' : ''}`} />
                         {isWishlisted(detailItem.id) ? 'Dans mes favoris' : 'Ajouter aux favoris'}
                       </Button>
+
+                      <Button 
+                        className="w-full h-12 text-lg bg-amber-600 hover:bg-amber-700 text-white"
+                        onClick={() => navigate(createPageUrl("Studio"), { state: { item: detailItem } })}
+                      >
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        Essayer dans l'Atelier
+                      </Button>
                    
                       <ReviewSection jewelryId={detailItem.id} />
                    </div>
@@ -769,13 +777,25 @@ export default function JewelryBox() {
                     <SalesBadge price={item.price} salePrice={item.sale_price} endDate={item.sale_end_date} />
                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
                        <Button
-                        variant="secondary"
-                        size="icon"
-                        className="h-8 w-8 rounded-full bg-white/90 hover:bg-white text-neutral-700"
-                        onClick={(e) => { e.stopPropagation(); setDetailItem(item); }}
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
+                       variant="secondary"
+                       size="icon"
+                       className="h-8 w-8 rounded-full bg-white/90 hover:bg-white text-neutral-700"
+                       onClick={(e) => { e.stopPropagation(); setDetailItem(item); }}
+                       >
+                       <Eye className="w-4 h-4" />
+                       </Button>
+                       <Button
+                       variant="secondary"
+                       size="icon"
+                       className="h-8 w-8 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-700"
+                       onClick={(e) => { 
+                         e.stopPropagation(); 
+                         navigate(createPageUrl("Studio"), { state: { item: item } }); 
+                       }}
+                       title="Essayer dans l'Atelier"
+                       >
+                       <Sparkles className="w-4 h-4" />
+                       </Button>
                       <Button
                         variant="destructive"
                         size="icon"

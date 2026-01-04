@@ -9,7 +9,7 @@ import { Loader2, Sparkles, Upload, ArrowRight, CheckCircle2, RefreshCw, Lightbu
 import ShareButton from "@/components/common/ShareButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from '@/utils';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/components/LanguageProvider';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 import TryOnEditor from '@/components/studio/TryOnEditor';
@@ -26,6 +26,7 @@ const STEPS = {
 export default function Studio() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Fetch user for stylist context
   const { data: user } = useQuery({
@@ -42,6 +43,16 @@ export default function Studio() {
 
   const [step, setStep] = useState(STEPS.UPLOAD);
   const [uploading, setUploading] = useState(false);
+
+  React.useEffect(() => {
+    if (location.state?.item) {
+      setJewelryImage(location.state.item.image_url);
+      setJewelryType(location.state.item.type);
+      setStep(STEPS.SELECT_BODY);
+      // Clear state to avoid reopening on refresh (optional, but good practice)
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
   const [generating, setGenerating] = useState(false);
   const [showCatalog, setShowCatalog] = useState(false);
   
