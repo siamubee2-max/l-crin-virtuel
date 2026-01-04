@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Trash2, Camera, Loader2, User as UserIcon, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
-import WardrobeAIAssistant from '@/components/wardrobe/WardrobeAIAssistant';
+
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -139,11 +139,6 @@ export default function Wardrobe() {
             </div>
           )}
           <div className="flex gap-3">
-            <WardrobeAIAssistant 
-              clothingItems={clothingItems || []} 
-              jewelryItems={jewelryItems || []} 
-            />
-            
             <Dialog open={isDialogOpen} onOpenChange={(open) => {
             if (open && isLimitReached) {
               if (window.confirm("La version gratuite est limitée à 2 photos. Passez Premium pour une garde-robe illimitée !")) {
