@@ -122,11 +122,19 @@ export default function Subscription() {
         transition={{ duration: 0.2 }}
       >
         <Card className="border-2 border-amber-200 bg-gradient-to-b from-amber-50/50 to-white">
-          <CardHeader className="text-center pb-2">
-            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <CardHeader className="text-center pb-2 relative">
+            {billingCycle === 'yearly' && (
+              <div className="absolute top-0 right-0 -mt-4 -mr-4">
+                <span className="bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                  BEST VALUE
+                </span>
+              </div>
+            )}
+            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 ring-4 ring-amber-50">
               <Crown className="w-8 h-8 text-amber-600" />
             </div>
-            <CardTitle className="text-2xl font-serif">Premium</CardTitle>
+            <CardTitle className="text-2xl font-serif">L'Écrin Premium</CardTitle>
+            <p className="text-sm text-neutral-500">L'expérience ultime de luxe digital</p>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="text-center">

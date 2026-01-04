@@ -54,7 +54,9 @@ export default function Wardrobe() {
     enabled: !!user?.email,
   });
   const isPremium = subscriptions?.some(s => s.status === 'active');
-  const isLimitReached = !isPremium && bodyParts?.length >= 2;
+  const limit = 2;
+  const currentCount = bodyParts?.length || 0;
+  const isLimitReached = !isPremium && currentCount >= limit;
 
   // Fetch clothing items for AI assistant
   const { data: clothingItems } = useQuery({
@@ -114,13 +116,35 @@ export default function Wardrobe() {
           </p>
         </div>
 
-        <div className="flex gap-3">
-          <WardrobeAIAssistant 
-            clothingItems={clothingItems || []} 
-            jewelryItems={jewelryItems || []} 
-          />
-          
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        <div className="flex flex-col items-end gap-2">
+          {!isPremium && !isLoading && (
+            <div className="bg-neutral-100 rounded-lg p-2 flex items-center gap-3 text-xs">
+               <span className="text-neutral-500 font-medium">Plan Gratuit: {currentCount}/{limit} photos</span>
+               <div className="w-20 h-2 bg-neutral-200 rounded-full overflow-hidden">
+                 <div 
+                   className={`h-full rounded-full ${isLimitReached ? 'bg-red-500' : 'bg-green-500'}`} 
+                   style={{ width: `${Math.min((currentCount / limit) * 100, 100)}%` }}
+                 />
+               </div>
+               {isLimitReached && (
+                 <Button 
+                   size="sm" 
+                   variant="link" 
+                   className="h-auto p-0 text-amber-600 font-bold"
+                   onClick={() => navigate(createPageUrl("Subscription"))}
+                 >
+                   Upgrade
+                 </Button>
+               )}
+            </div>
+          )}
+          <div className="flex gap-3">
+            <WardrobeAIAssistant 
+              clothingItems={clothingItems || []} 
+              jewelryItems={jewelryItems || []} 
+            />
+            
+            <Dialog open={isDialogOpen} onOpenChange={(open) => {
             if (open && isLimitReached) {
               if (window.confirm("La version gratuite est limitée à 2 photos. Passez Premium pour une garde-robe illimitée !")) {
                 navigate(createPageUrl("Subscription"));
