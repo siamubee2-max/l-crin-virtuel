@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ClothingFilters from '@/components/clothing/ClothingFilters';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
+import WardrobeAIAssistant from '@/components/wardrobe/WardrobeAIAssistant';
 
 export default function Closet() {
   const { t } = useLanguage();
@@ -278,12 +279,17 @@ export default function Closet() {
           </p>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
-              <Plus className="w-4 h-4 mr-2" /> {t.closet?.addBtn || "Ajouter"}
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-3">
+          <WardrobeAIAssistant 
+            clothingItems={clothes || []} 
+            jewelryItems={jewelry || []} 
+          />
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-6">
+                <Plus className="w-4 h-4 mr-2" /> {t.closet?.addBtn || "Ajouter"}
+              </Button>
+            </DialogTrigger>
           <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="font-serif text-xl">{t.closet?.newItem || "Nouveau Vêtement"}</DialogTitle>
@@ -395,6 +401,7 @@ export default function Closet() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Filters */}
