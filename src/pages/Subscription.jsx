@@ -12,10 +12,7 @@ const STRIPE_PUBLISHABLE_KEY = "pk_live_51SlUI7Ik6xDX8EoQKAVRNZq0m3IuuYum6XYdF22
 
 // Updated Buy Button IDs
 const PLANS = {
-  ESSENTIEL: {
-    MONTHLY: "buy_btn_1SlV73IlDuDg7U16mY7oX1lL",
-    YEARLY: "buy_btn_1SlrJvIk6xDX8EoQtdDL1MRx"
-  },
+
   PLUS: {
     MONTHLY: "buy_btn_1SlrETIk6xDX8EoQVVkoAlEm",
     YEARLY: "buy_btn_1SlrPQIk6xDX8EoQ5lm2peN0"
@@ -111,25 +108,7 @@ export default function Subscription() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              
-              {/* ESSENTIEL PLAN */}
-              <PlanCard 
-                title="Premium Essentiel"
-                description="L'essentiel pour commencer votre voyage de style."
-                price={billingCycle === 'monthly' ? 10.99 : 99.00}
-                period={billingCycle}
-                features={[
-                  "Essayages virtuels illimités",
-                  "Mode AR en direct (webcam)",
-                  "Export HD des créations",
-                  "Garde-robe jusqu'à 20 articles",
-                  "Accès aux marques partenaires"
-                ]}
-                buyButtonId={billingCycle === 'monthly' ? PLANS.ESSENTIEL.MONTHLY : PLANS.ESSENTIEL.YEARLY}
-                stripePublishableKey={STRIPE_PUBLISHABLE_KEY}
-                variant="default"
-              />
+            <div className="flex justify-center max-w-md mx-auto">
 
               {/* PLUS PLAN */}
               <PlanCard 
