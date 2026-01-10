@@ -73,35 +73,14 @@ export default function Closet() {
   });
 
   const { data: user } = useQuery({ queryKey: ['currentUser'], queryFn: () => base44.auth.me().catch(() => null) });
-  const { data: subscriptions, isLoading: subLoading } = useQuery({
+  const { data: subscriptions } = useQuery({
     queryKey: ['userSubscription', user?.email],
     queryFn: () => base44.entities.UserSubscription.filter({ created_by: user?.email }),
     enabled: !!user?.email,
   });
-  const isPremium = subscriptions?.some(s => s.status === 'active');
-
-  if (!subLoading && !isPremium && user) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
-        <div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center">
-          <Lock className="w-10 h-10 text-neutral-400" />
-        </div>
-        <div className="max-w-md space-y-2">
-          <h1 className="text-3xl font-serif text-neutral-900">{t.closet?.lockedTitle || "Dressing Verrouillé"}</h1>
-          <p className="text-neutral-500">
-            {t.closet?.lockedDesc || "L'accès à votre dressing virtuel est réservé aux membres Premium Plus. Organisez, stylisez et planifiez vos tenues sans limite."}
-          </p>
-        </div>
-        <Button 
-          onClick={() => navigate(createPageUrl("Subscription"))}
-          className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
-        >
-          <Sparkles className="w-5 h-5 mr-2" />
-          {t.common?.upgradeToPremium || "Passer Premium Plus"}
-        </Button>
-      </div>
-    );
-  }
+  
+  // Accès débloqué
+  const isPremium = true;
 
   // Mutations
   const createMutation = useMutation({
