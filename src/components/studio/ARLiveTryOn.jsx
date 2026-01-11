@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { base44 } from '@/api/base44Client';
+import { base44 } from '@/api/apiClient';
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Camera, RefreshCw, X, Maximize2, RotateCw, Move, Loader2, Check, Sparkles, Eye, EyeOff, Gem, Shirt, Scan, Zap, Sun, Contrast, Share2, Link as LinkIcon, Download, Instagram, Facebook } from "lucide-react";
