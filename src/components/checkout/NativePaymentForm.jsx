@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Loader2, Lock, Shield, Smartphone } from "lucide-react";
+import { paymentService } from '@/lib/supabase';
+import { base44 } from '@/api/apiClient';
 
 // Detect platform for native payments
 const getPlatform = () => {
@@ -14,6 +16,24 @@ export default function NativePaymentForm({ amount, onSuccess, onError, disabled
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState(null);
   const platform = getPlatform();
+
+  const recordPaymentToSupabase = async (paymentData) => {
+    try {
+      const user = await base44.auth.me().catch(() => null);
+      if (user) {
+        await paymentService.recordPayment({
+          userId: user.id || user.email,
+          productId: productId,
+          amount: amount,
+          platform: paymentData.platform,
+          transactionId: paymentData.transactionId,
+          receipt: paymentData.receipt
+        });
+      }
+    } catch (err) {
+      console.error('Error recording payment:', err);
+    }
+  };
 
   const handleNativePayment = async () => {
     setProcessing(true);
@@ -29,13 +49,15 @@ export default function NativePaymentForm({ amount, onSuccess, onError, disabled
         });
 
         // Listen for response from native
-        window.handleIAPResponse = (response) => {
+        window.handleIAPResponse = async (response) => {
           if (response.success) {
-            onSuccess?.({
+            const paymentData = {
               transactionId: response.transactionId,
               platform: 'ios',
               receipt: response.receipt
-            });
+            };
+            await recordPaymentToSupabase(paymentData);
+            onSuccess?.(paymentData);
           } else {
             setError(response.error || 'Paiement annulé');
             onError?.(response.error);
@@ -55,14 +77,16 @@ export default function NativePaymentForm({ amount, onSuccess, onError, disabled
         );
 
         // Listen for response from native
-        window.handleAndroidPaymentResponse = (responseJson) => {
+        window.handleAndroidPaymentResponse = async (responseJson) => {
           const response = JSON.parse(responseJson);
           if (response.success) {
-            onSuccess?.({
+            const paymentData = {
               transactionId: response.purchaseToken,
               platform: 'android',
               receipt: response.receipt
-            });
+            };
+            await recordPaymentToSupabase(paymentData);
+            onSuccess?.(paymentData);
           } else {
             setError(response.error || 'Paiement annulé');
             onError?.(response.error);

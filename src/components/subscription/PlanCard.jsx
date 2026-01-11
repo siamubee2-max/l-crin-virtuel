@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, Crown, Star, Loader2, Shield } from "lucide-react";
+import { paymentService } from '@/lib/supabase';
+import { base44 } from '@/api/apiClient';
 
 // Detect platform for native payments
 const getPlatform = () => {
@@ -20,13 +22,52 @@ export default function PlanCard({
   isPopular,
   description,
   variant = "default",
-  currentPlan = false
+  currentPlan = false,
+  onSubscriptionSuccess
 }) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
   const platform = getPlatform();
+
+  const recordSubscriptionToSupabase = async (subscriptionData) => {
+    try {
+      const user = await base44.auth.me().catch(() => null);
+      if (user) {
+        // Calculate expiration date based on period
+        const expiresAt = new Date();
+        if (period === 'monthly') {
+          expiresAt.setMonth(expiresAt.getMonth() + 1);
+        } else {
+          expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+        }
+
+        await paymentService.upsertSubscription({
+          userId: user.id || user.email,
+          productId: productId,
+          platform: subscriptionData.platform,
+          transactionId: subscriptionData.transactionId,
+          status: 'active',
+          expiresAt: expiresAt.toISOString()
+        });
+
+        // Also record the payment
+        await paymentService.recordPayment({
+          userId: user.id || user.email,
+          productId: productId,
+          amount: price,
+          platform: subscriptionData.platform,
+          transactionId: subscriptionData.transactionId,
+          receipt: subscriptionData.receipt
+        });
+      }
+    } catch (err) {
+      console.error('Error recording subscription:', err);
+    }
+  };
 
   const handleSubscribe = async () => {
     setIsProcessing(true);
+    setError(null);
 
     try {
       // iOS - Apple In-App Purchase
@@ -36,6 +77,22 @@ export default function PlanCard({
           productId: productId,
           price: price
         });
+
+        // Listen for response from native
+        window.handleSubscriptionResponse = async (response) => {
+          if (response.success) {
+            const subscriptionData = {
+              transactionId: response.transactionId,
+              platform: 'ios',
+              receipt: response.receipt
+            };
+            await recordSubscriptionToSupabase(subscriptionData);
+            onSubscriptionSuccess?.(subscriptionData);
+          } else {
+            setError(response.error || 'Abonnement annulé');
+          }
+          setIsProcessing(false);
+        };
         return;
       }
 
@@ -45,14 +102,32 @@ export default function PlanCard({
           productId: productId,
           price: price
         }));
+
+        // Listen for response from native
+        window.handleSubscriptionResponse = async (responseJson) => {
+          const response = JSON.parse(responseJson);
+          if (response.success) {
+            const subscriptionData = {
+              transactionId: response.purchaseToken,
+              platform: 'android',
+              receipt: response.receipt
+            };
+            await recordSubscriptionToSupabase(subscriptionData);
+            onSubscriptionSuccess?.(subscriptionData);
+          } else {
+            setError(response.error || 'Abonnement annulé');
+          }
+          setIsProcessing(false);
+        };
         return;
       }
 
       // Web fallback
-      alert('Pour vous abonner, veuillez utiliser notre application mobile iOS ou Android.');
+      setError('Pour vous abonner, veuillez utiliser notre application mobile iOS ou Android.');
+      setIsProcessing(false);
     } catch (err) {
       console.error('Subscription error:', err);
-    } finally {
+      setError(err.message || 'Erreur lors de l\'abonnement');
       setIsProcessing(false);
     }
   };
@@ -99,6 +174,12 @@ export default function PlanCard({
       </CardContent>
 
       <CardFooter className="pt-2 flex flex-col gap-3">
+        {error && (
+          <div className="w-full bg-red-50 border border-red-200 rounded-lg p-2 text-xs text-red-600 text-center">
+            {error}
+          </div>
+        )}
+
         {currentPlan ? (
           <Button disabled className="w-full bg-green-600 text-white opacity-100">
             Plan Actuel
