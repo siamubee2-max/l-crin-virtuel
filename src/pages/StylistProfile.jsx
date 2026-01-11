@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { base44 } from '@/api/apiClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -175,7 +175,7 @@ export default function StylistProfile() {
                       {bookingMutation.isPending ? "Processing..." : `Pay $${service.price} & Book`}
                     </Button>
                     <p className="text-xs text-center text-neutral-400">
-                      Secure payment processed by Stripe. You won't be charged until the stylist confirms.
+                      Paiement sécurisé. Vous ne serez débité qu'après confirmation du styliste.
                     </p>
                   </div>
                 </DialogContent>

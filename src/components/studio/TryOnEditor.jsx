@@ -4,7 +4,7 @@ import { Slider } from "@/components/ui/slider";
 import { Save, X, Undo2, Move, ZoomIn, Contrast, Sun, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import html2canvas from 'html2canvas';
-import { base44 } from '@/api/base44Client';
+import { base44 } from '@/api/apiClient';
 import { useLanguage } from '@/components/LanguageProvider';
 
 export default function TryOnEditor({ resultImage, onSave, onCancel }) {

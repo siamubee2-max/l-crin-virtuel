@@ -3,11 +3,14 @@ import { appParams } from '@/lib/app-params';
 
 const { appId, token, functionsVersion } = appParams;
 
-//Create a client with authentication required
-export const base44 = createClient({
+// Create API client
+export const apiClient = createClient({
   appId,
   token,
   functionsVersion,
   serverUrl: '',
   requiresAuth: false
 });
+
+// Alias for backwards compatibility during migration
+export { apiClient as base44 };

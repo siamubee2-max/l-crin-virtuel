@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Loader2, Upload, X, Image as ImageIcon, Plus } from "lucide-react";
-import { base44 } from '@/api/base44Client';
+import { base44 } from '@/api/apiClient';
 import { cn } from "@/lib/utils";
 
 const AESTHETICS = [

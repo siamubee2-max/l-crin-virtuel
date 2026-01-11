@@ -1,25 +1,142 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, Crown, Star } from "lucide-react";
+import { Check, Crown, Star, Loader2, Shield } from "lucide-react";
+import { paymentService } from '@/lib/supabase';
+import { base44 } from '@/api/apiClient';
 
-export default function PlanCard({ 
-  title, 
-  price, 
-  period, 
-  features, 
-  buyButtonId, 
-  stripePublishableKey, 
-  isPopular, 
+// Detect platform for native payments
+const getPlatform = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) return 'ios';
+  if (/android/i.test(userAgent)) return 'android';
+  return 'web';
+};
+
+export default function PlanCard({
+  title,
+  price,
+  period,
+  features,
+  productId,
+  isPopular,
   description,
   variant = "default",
-  currentPlan = false
+  currentPlan = false,
+  onSubscriptionSuccess
 }) {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
+  const platform = getPlatform();
+
+  const recordSubscriptionToSupabase = async (subscriptionData) => {
+    try {
+      const user = await base44.auth.me().catch(() => null);
+      if (user) {
+        // Calculate expiration date based on period
+        const expiresAt = new Date();
+        if (period === 'monthly') {
+          expiresAt.setMonth(expiresAt.getMonth() + 1);
+        } else {
+          expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+        }
+
+        await paymentService.upsertSubscription({
+          userId: user.id || user.email,
+          productId: productId,
+          platform: subscriptionData.platform,
+          transactionId: subscriptionData.transactionId,
+          status: 'active',
+          expiresAt: expiresAt.toISOString()
+        });
+
+        // Also record the payment
+        await paymentService.recordPayment({
+          userId: user.id || user.email,
+          productId: productId,
+          amount: price,
+          platform: subscriptionData.platform,
+          transactionId: subscriptionData.transactionId,
+          receipt: subscriptionData.receipt
+        });
+      }
+    } catch (err) {
+      console.error('Error recording subscription:', err);
+    }
+  };
+
+  const handleSubscribe = async () => {
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      // iOS - Apple In-App Purchase
+      if (platform === 'ios' && window.webkit?.messageHandlers?.iapHandler) {
+        window.webkit.messageHandlers.iapHandler.postMessage({
+          action: 'subscribe',
+          productId: productId,
+          price: price
+        });
+
+        // Listen for response from native
+        window.handleSubscriptionResponse = async (response) => {
+          if (response.success) {
+            const subscriptionData = {
+              transactionId: response.transactionId,
+              platform: 'ios',
+              receipt: response.receipt
+            };
+            await recordSubscriptionToSupabase(subscriptionData);
+            onSubscriptionSuccess?.(subscriptionData);
+          } else {
+            setError(response.error || 'Abonnement annulé');
+          }
+          setIsProcessing(false);
+        };
+        return;
+      }
+
+      // Android - Google Play Billing
+      if (platform === 'android' && window.AndroidBridge?.initiateSubscription) {
+        window.AndroidBridge.initiateSubscription(JSON.stringify({
+          productId: productId,
+          price: price
+        }));
+
+        // Listen for response from native
+        window.handleSubscriptionResponse = async (responseJson) => {
+          const response = JSON.parse(responseJson);
+          if (response.success) {
+            const subscriptionData = {
+              transactionId: response.purchaseToken,
+              platform: 'android',
+              receipt: response.receipt
+            };
+            await recordSubscriptionToSupabase(subscriptionData);
+            onSubscriptionSuccess?.(subscriptionData);
+          } else {
+            setError(response.error || 'Abonnement annulé');
+          }
+          setIsProcessing(false);
+        };
+        return;
+      }
+
+      // Web fallback
+      setError('Pour vous abonner, veuillez utiliser notre application mobile iOS ou Android.');
+      setIsProcessing(false);
+    } catch (err) {
+      console.error('Subscription error:', err);
+      setError(err.message || 'Erreur lors de l\'abonnement');
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <Card className={`relative flex flex-col h-full ${
       isPopular ? 'border-amber-400 shadow-lg scale-105 z-10' : 'border-neutral-200'
     } ${currentPlan ? 'bg-amber-50 border-amber-200' : 'bg-white'}`}>
-      
+
       {isPopular && (
         <div className="absolute top-0 right-0 -mt-3 mr-4">
           <span className="bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md uppercase tracking-wider">
@@ -37,7 +154,7 @@ export default function PlanCard({
         <CardTitle className="text-xl font-serif">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      
+
       <CardContent className="flex-1 space-y-6">
         <div className="text-center">
           <span className="text-4xl font-bold">{price}€</span>
@@ -57,20 +174,36 @@ export default function PlanCard({
       </CardContent>
 
       <CardFooter className="pt-2 flex flex-col gap-3">
+        {error && (
+          <div className="w-full bg-red-50 border border-red-200 rounded-lg p-2 text-xs text-red-600 text-center">
+            {error}
+          </div>
+        )}
+
         {currentPlan ? (
           <Button disabled className="w-full bg-green-600 text-white opacity-100">
             Plan Actuel
           </Button>
         ) : (
-          <div className="w-full flex justify-center">
-            <stripe-buy-button
-              buy-button-id={buyButtonId}
-              publishable-key={stripePublishableKey}
-            />
-          </div>
+          <Button
+            onClick={handleSubscribe}
+            disabled={isProcessing}
+            className={`w-full h-12 ${
+              variant === 'plus'
+                ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+            }`}
+          >
+            {isProcessing ? (
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Chargement...</>
+            ) : (
+              `S'abonner - ${price}€/${period === 'monthly' ? 'mois' : 'an'}`
+            )}
+          </Button>
         )}
-        <p className="text-[10px] text-center text-neutral-400">
-          Paiement sécurisé via Stripe
+        <p className="text-[10px] text-center text-neutral-400 flex items-center justify-center gap-1">
+          <Shield className="w-3 h-3" />
+          Paiement sécurisé via {platform === 'ios' ? 'Apple' : platform === 'android' ? 'Google Play' : 'App Store'}
         </p>
       </CardFooter>
     </Card>

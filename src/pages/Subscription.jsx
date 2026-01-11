@@ -1,39 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import React, { useState } from 'react';
+import { base44 } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, CreditCard, Clock, ShieldCheck, History } from "lucide-react";
+import { Loader2, CreditCard, ShieldCheck, History } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SubscriptionStatus from '@/components/subscription/SubscriptionStatus';
 import PlanCard from '@/components/subscription/PlanCard';
 import PurchaseHistory from '@/components/subscription/PurchaseHistory';
 import SEO from '@/components/common/SEO';
 
-const STRIPE_PUBLISHABLE_KEY = "pk_live_51SlUI7Ik6xDX8EoQKAVRNZq0m3IuuYum6XYdF22J9DAZugdU5FFMMhe3OB7bOaXcM2xkp0MPxe66dtNiRxqMHPx200UA20lrl9";
-
-// Updated Buy Button IDs
+// Product IDs for iOS/Android In-App Purchases
 const PLANS = {
-
   PLUS: {
-    MONTHLY: "buy_btn_1SlrETIk6xDX8EoQVVkoAlEm",
-    YEARLY: "buy_btn_1SlrPQIk6xDX8EoQ5lm2peN0"
+    MONTHLY: "premium_plus_monthly",
+    YEARLY: "premium_plus_yearly"
   }
 };
 
 export default function Subscription() {
-  const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' | 'yearly'
-
-  // Load Stripe Script
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://js.stripe.com/v3/buy-button.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      if(document.body.contains(script)) {
-         document.body.removeChild(script);
-      }
-    };
-  }, []);
+  const [billingCycle, setBillingCycle] = useState('monthly');
 
   // Fetch user & subscription
   const { data: user, isLoading: userLoading } = useQuery({
@@ -48,9 +32,6 @@ export default function Subscription() {
   });
 
   const currentSubscription = subscriptions?.find(s => s.status === 'active' || s.status === 'past_due');
-  // Determine current plan level if possible (rudimentary check, ideally stored in subscription metadata or plan ID)
-  // For now, we assume user knows their plan or we just show "Current" on the card if IDs match (hard to check IDs from stripe subscription object without more data)
-  // We'll just display the status at the top.
 
   if (userLoading || subLoading) {
     return <div className="flex justify-center items-center min-h-[500px]"><Loader2 className="w-8 h-8 animate-spin text-neutral-300" /></div>;
@@ -111,7 +92,7 @@ export default function Subscription() {
             <div className="flex justify-center max-w-md mx-auto">
 
               {/* PLUS PLAN */}
-              <PlanCard 
+              <PlanCard
                 title="Premium Plus"
                 description="L'expérience ultime sans aucune limite."
                 price={billingCycle === 'monthly' ? 12.99 : 99.00}
@@ -123,8 +104,7 @@ export default function Subscription() {
                   "Collections Exclusives VIP",
                   "Support Prioritaire"
                 ]}
-                buyButtonId={billingCycle === 'monthly' ? PLANS.PLUS.MONTHLY : PLANS.PLUS.YEARLY}
-                stripePublishableKey={STRIPE_PUBLISHABLE_KEY}
+                productId={billingCycle === 'monthly' ? PLANS.PLUS.MONTHLY : PLANS.PLUS.YEARLY}
                 isPopular={true}
                 variant="plus"
               />
