@@ -5,20 +5,12 @@ import { useMutation } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Loader2, CheckCircle2, Truck, CreditCard, ShoppingBag, ArrowLeft, Lock, Shield, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle2, Truck, CreditCard, ShoppingBag, ArrowLeft, AlertCircle } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/LanguageProvider';
-import { motion, AnimatePresence } from 'framer-motion';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, useStripe, useElements } from '@stripe/react-stripe-js';
-import StripePaymentForm from '@/components/checkout/StripePaymentForm';
-
-const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
+import NativePaymentForm from '@/components/checkout/NativePaymentForm';
 
 const STEPS = {
   SHIPPING: 0,
@@ -47,7 +39,6 @@ function CheckoutContent() {
   });
   
   const [paymentError, setPaymentError] = useState(null);
-  const [stripePaymentData, setStripePaymentData] = useState(null);
 
   const createOrderMutation = useMutation({
     mutationFn: async (paymentData) => {
@@ -66,7 +57,7 @@ function CheckoutContent() {
           shipping_address: fullAddress,
           customer_email: user.email || formData.email,
           customer_name: user.full_name || formData.name,
-          tracking_number: `ORD-${groupID}-${paymentData?.paymentMethodId || Date.now()}`
+          tracking_number: `ORD-${groupID}-${paymentData?.transactionId || Date.now()}`
         });
       });
 
@@ -77,18 +68,17 @@ function CheckoutContent() {
       setStep(STEPS.SUCCESS);
     },
     onError: (error) => {
-      setPaymentError(error.message || 'Payment failed. Please try again.');
+      setPaymentError(error.message || 'Paiement échoué. Veuillez réessayer.');
       setStep(STEPS.PAYMENT);
     }
   });
 
-  const handleStripeSuccess = (paymentData) => {
-    setStripePaymentData(paymentData);
+  const handlePaymentSuccess = (paymentData) => {
     setStep(STEPS.PROCESSING);
     createOrderMutation.mutate(paymentData);
   };
 
-  const handleStripeError = (errorMessage) => {
+  const handlePaymentError = (errorMessage) => {
     setPaymentError(errorMessage);
   };
 
@@ -217,16 +207,12 @@ function CheckoutContent() {
                        </div>
                      )}
 
-                     <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
-                       <p className="font-medium">🧪 Mode Test</p>
-                       <p className="text-xs mt-1">Utilisez la carte <code className="bg-amber-100 px-1 rounded">4242 4242 4242 4242</code> pour tester</p>
-                     </div>
-                     
-                     <StripePaymentForm 
+                     <NativePaymentForm
                        amount={cartTotal}
-                       onSuccess={handleStripeSuccess}
-                       onError={handleStripeError}
+                       onSuccess={handlePaymentSuccess}
+                       onError={handlePaymentError}
                        disabled={createOrderMutation.isPending}
+                       productId="checkout_order"
                      />
                   </CardContent>
                 </Card>
@@ -318,21 +304,5 @@ function CheckoutContent() {
 }
 
 export default function Checkout() {
-  if (!stripePromise) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4 p-8 text-center">
-        <CreditCard className="w-16 h-16 text-neutral-200" />
-        <h2 className="text-xl font-medium">Paiement non configuré</h2>
-        <p className="text-neutral-500 max-w-md">
-          La clé Stripe n'est pas configurée. Veuillez contacter l'administrateur.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <Elements stripe={stripePromise}>
-      <CheckoutContent />
-    </Elements>
-  );
+  return <CheckoutContent />;
 }
