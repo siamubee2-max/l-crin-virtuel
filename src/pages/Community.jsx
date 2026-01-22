@@ -279,10 +279,9 @@ export default function Community() {
             Abonnements ({followingLooks.length})
           </TabsTrigger>
         </TabsList>
-      </Tabs>
 
-      {/* Tab Content */}
-      <TabsContent value="discover">
+        {/* Tab Content */}
+        <TabsContent value="discover">
         {/* Trending Section */}
         {trendingLooks.length > 0 && (
           <div className="mb-8">
@@ -650,6 +649,7 @@ export default function Community() {
           </div>
         )}
       </TabsContent>
+      </Tabs>
 
       {/* Look Detail Dialog */}
       {selectedLook && (
