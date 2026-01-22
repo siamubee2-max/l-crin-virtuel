@@ -13,6 +13,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import ProductDetail from './pages/ProductDetail';
 import Profile from './pages/Profile';
 import SearchResults from './pages/SearchResults';
+import SharedOutfit from './pages/SharedOutfit';
 import ShopTheLook from './pages/ShopTheLook';
 import Studio from './pages/Studio';
 import StyleFeed from './pages/StyleFeed';
@@ -21,7 +22,6 @@ import Stylists from './pages/Stylists';
 import Subscription from './pages/Subscription';
 import TermsOfService from './pages/TermsOfService';
 import Wardrobe from './pages/Wardrobe';
-import SharedOutfit from './pages/SharedOutfit';
 import __Layout from './Layout.jsx';
 
 
@@ -41,6 +41,7 @@ export const PAGES = {
     "ProductDetail": ProductDetail,
     "Profile": Profile,
     "SearchResults": SearchResults,
+    "SharedOutfit": SharedOutfit,
     "ShopTheLook": ShopTheLook,
     "Studio": Studio,
     "StyleFeed": StyleFeed,
@@ -49,7 +50,6 @@ export const PAGES = {
     "Subscription": Subscription,
     "TermsOfService": TermsOfService,
     "Wardrobe": Wardrobe,
-    "SharedOutfit": SharedOutfit,
 }
 
 export const pagesConfig = {

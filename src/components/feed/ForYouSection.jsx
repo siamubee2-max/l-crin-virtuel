@@ -244,16 +244,7 @@ export default function ForYouSection({ user }) {
             <div className="p-3">
               <h3 className="font-medium text-sm text-neutral-900 truncate">{item.name}</h3>
               <div className="flex items-center gap-2 mt-1">
-                {item.sale_price && item.sale_price < item.price ? (
-                  <>
-                    <span className="text-sm font-semibold text-red-600">${item.sale_price}</span>
-                    <span className="text-xs text-neutral-400 line-through">${item.price}</span>
-                  </>
-                ) : item.price ? (
-                  <span className="text-sm font-semibold">${item.price}</span>
-                ) : (
-                  <span className="text-xs text-neutral-400 capitalize">{item.type}</span>
-                )}
+                <span className="text-xs text-neutral-400 capitalize">{item.type}</span>
               </div>
               
               {/* Recommendation reason */}

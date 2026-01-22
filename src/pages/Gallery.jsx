@@ -77,9 +77,10 @@ export default function Gallery() {
   });
 
   // Pagination Logic
-  const totalItems = creations?.length || 0;
+  const visibleCreations = (creations || []).filter(c => c.jewelry_type !== 'bracelet');
+  const totalItems = visibleCreations.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  const paginatedCreations = creations?.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const paginatedCreations = visibleCreations.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   return (
     <div className="space-y-12">
