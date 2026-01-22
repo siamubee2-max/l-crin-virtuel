@@ -275,6 +275,11 @@ export default function ForYouSection({ user }) {
                 className="group bg-white rounded-xl border border-neutral-100 overflow-hidden hover:shadow-lg transition-all"
               >
                 <div className="aspect-[3/4] bg-neutral-50 relative overflow-hidden">
+                  <img 
+                    src={item.image_url} 
+                    alt={item.name} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
                   <Badge className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-[10px]">
                     {item.brand || item.type}
                   </Badge>
@@ -289,13 +294,7 @@ export default function ForYouSection({ user }) {
                     </div>
                   )}
                 </div>
-                <div className="p-3">
-                  <h3 className="font-medium text-sm text-neutral-900 truncate">{item.name}</h3>
-                  <p className="text-xs text-neutral-500">{item.color} • {item.material}</p>
-                  <p className="text-[10px] text-amber-600 mt-1">
-                    {getRecommendationReason(item, false)}
-                  </p>
-                </div>
+
               </motion.div>
             ))}
           </div>
