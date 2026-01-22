@@ -10,7 +10,6 @@ import Gallery from './pages/Gallery';
 import JewelryBox from './pages/JewelryBox';
 import LegalNotice from './pages/LegalNotice';
 import Lookbook from './pages/Lookbook';
-import MyLooks from './pages/MyLooks';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ProductDetail from './pages/ProductDetail';
 import Profile from './pages/Profile';
@@ -39,7 +38,6 @@ export const PAGES = {
     "JewelryBox": JewelryBox,
     "LegalNotice": LegalNotice,
     "Lookbook": Lookbook,
-    "MyLooks": MyLooks,
     "PrivacyPolicy": PrivacyPolicy,
     "ProductDetail": ProductDetail,
     "Profile": Profile,
