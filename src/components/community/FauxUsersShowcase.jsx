@@ -65,7 +65,7 @@ export default function FauxUsersShowcase() {
         <div className="flex items-center gap-2 mb-4">
           <Sparkles className="w-5 h-5 text-amber-600" />
           <h2 className="text-xl font-serif text-neutral-900">
-            Tenues portées (faux utilisateurs)
+            Tenues portées
           </h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -95,7 +95,7 @@ export default function FauxUsersShowcase() {
         <div className="flex items-center gap-2 mb-4">
           <Heart className="w-5 h-5 text-rose-500" />
           <h2 className="text-xl font-serif text-neutral-900">
-            Bijoux portés (faux utilisateurs)
+            Bijoux portés
           </h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
