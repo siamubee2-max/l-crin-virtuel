@@ -275,11 +275,6 @@ export default function ForYouSection({ user }) {
                 className="group bg-white rounded-xl border border-neutral-100 overflow-hidden hover:shadow-lg transition-all"
               >
                 <div className="aspect-[3/4] bg-neutral-50 relative overflow-hidden">
-                  <img 
-                    src={item.image_url} 
-                    alt={item.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                  />
                   <Badge className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-[10px]">
                     {item.brand || item.type}
                   </Badge>
