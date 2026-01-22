@@ -30,6 +30,24 @@ export default function MyLooks() {
     queryFn: () => base44.entities.JewelryItem.list(),
   });
 
+  const { data: clothing = [] } = useQuery({
+    queryKey: ['clothing'],
+    queryFn: () => base44.entities.ClothingItem.list(),
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ['currentUserMyLooks'],
+    queryFn: () => base44.auth.me().catch(() => null),
+  });
+
+  const { data: collections = [], isLoading: isCollectionsLoading } = useQuery({
+    queryKey: ['collections', user?.email],
+    queryFn: () =>
+      user
+        ? base44.entities.CuratedCollection.filter({ created_by: user.email }, '-created_date')
+        : base44.entities.CuratedCollection.filter({ is_private: false }, '-created_date'),
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Look.delete(id),
     onSuccess: () => {
@@ -46,6 +64,13 @@ export default function MyLooks() {
 
   const getCreation = (id) => creations.find(c => c.id === id);
   const getJewelry = (id) => jewelry.find(j => j.id === id);
+  const getClothing = (id) => clothing.find(c => c.id === id);
+  const getItemImage = (item) => {
+    if (!item) return null;
+    return item.item_type === 'jewelry'
+      ? getJewelry(item.item_id)?.image_url
+      : getClothing(item.item_id)?.image_url;
+  };
 
   const filteredLooks = looks.filter(look => {
     if (filter === 'public') return look.is_public;
@@ -258,6 +283,79 @@ export default function MyLooks() {
           })}
         </div>
       )}
+    {/* Collections Section */}
+    <div className="mt-12">
+      <h2 className="text-2xl font-serif text-neutral-900 mb-4">Mes Tenues (Collections)</h2>
+      {isCollectionsLoading ? (
+        <div className="flex items-center justify-center py-10">
+          <div className="w-10 h-10 border-4 border-amber-200 border-t-amber-600 rounded-full animate-spin"></div>
+        </div>
+      ) : collections.length === 0 ? (
+        <div className="text-center py-12 bg-neutral-50 rounded-xl border border-neutral-100">
+          <Sparkles className="w-12 h-12 text-neutral-300 mx-auto mb-3" />
+          <p className="text-neutral-600">Aucune collection pour le moment.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {collections.map((col) => {
+            const items = Array.isArray(col.items) ? col.items : [];
+            const mainImg = col.cover_image || (items[0] ? getItemImage(items[0]) : null);
+            return (
+              <motion.div key={col.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                <Card className="overflow-hidden hover:shadow-xl transition-shadow">
+                  <div className="relative h-64 bg-neutral-100">
+                    {mainImg ? (
+                      <img src={mainImg} alt={col.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Sparkles className="w-12 h-12 text-neutral-300" />
+                      </div>
+                    )}
+                    {col.featured && (
+                      <Badge className="absolute top-3 right-3 bg-amber-600">Mis en avant</Badge>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-serif text-lg text-neutral-900 mb-1">{col.title}</h3>
+                    {col.occasion && (
+                      <p className="text-xs text-neutral-500 mb-2">Occasion: {col.occasion}</p>
+                    )}
+                    {Array.isArray(col.tags) && col.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {col.tags.slice(0, 3).map((tag, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">{tag}</Badge>
+                        ))}
+                      </div>
+                    )}
+                    {items.length > 0 && (
+                      <div>
+                        <p className="text-xs text-neutral-500 mb-2">Pièces ({items.length})</p>
+                        <div className="flex gap-2">
+                          {items.slice(0, 3).map((it, idx) => {
+                            const img = getItemImage(it);
+                            return (
+                              <div key={idx} className="w-12 h-12 rounded-lg overflow-hidden border border-neutral-200">
+                                {img ? <img src={img} alt={it.item_type} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-neutral-100" />}
+                              </div>
+                            );
+                          })}
+                          {items.length > 3 && (
+                            <div className="w-12 h-12 rounded-lg bg-neutral-100 flex items-center justify-center text-xs text-neutral-600">
+                              +{items.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+
     </div>
   );
 }
