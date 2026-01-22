@@ -155,7 +155,7 @@ export default function Gallery() {
                   <SelectItem value="necklace">{t.studio.step1.types.necklace}</SelectItem>
                   <SelectItem value="earrings">{t.studio.step1.types.earrings}</SelectItem>
                   <SelectItem value="ring">{t.studio.step1.types.ring}</SelectItem>
-                  <SelectItem value="bracelet">{t.studio.step1.types.bracelet}</SelectItem>
+                  
                   <SelectItem value="set">{t.studio.step1.types.set}</SelectItem>
                 </SelectContent>
               </Select>
