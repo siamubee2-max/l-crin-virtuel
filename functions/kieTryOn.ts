@@ -4,7 +4,7 @@ import { z } from "npm:zod";
 // KIE.ai API Configuration
 const KIE_API_URL = 'https://api.kie.ai/api/v1/jobs/createTask';
 const KIE_STATUS_URL = 'https://api.kie.ai/api/v1/jobs/recordInfo';
-const JEWELRY_MODEL = 'nano-banana';
+const JEWELRY_MODEL = 'openai/dall-e-3';
 
 const MAX_POLLING_ATTEMPTS = 60;
 const POLLING_INTERVAL = 2000;
