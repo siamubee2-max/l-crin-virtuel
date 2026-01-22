@@ -13,6 +13,7 @@ import { useLanguage } from '@/components/LanguageProvider';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import CategoryPlaceholders from '@/components/wardrobe/CategoryPlaceholders';
+import OutfitGenerator from '@/components/wardrobe/OutfitGenerator';
 
 export default function Wardrobe() {
   const navigate = useNavigate();
@@ -207,6 +208,7 @@ export default function Wardrobe() {
         </div>
       </div>
 
+      <OutfitGenerator clothingItems={clothingItems || []} />
       <CategoryPlaceholders />
 
       {isLoading ? (
