@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ShareButton from '@/components/common/ShareButton';
 import { createPageUrl } from '@/utils';
 import SEO from '@/components/common/SEO';
+import FauxUsersShowcase from '@/components/community/FauxUsersShowcase';
 
 export default function Community() {
   const queryClient = useQueryClient();
@@ -282,6 +283,7 @@ export default function Community() {
 
         {/* Tab Content */}
         <TabsContent value="discover">
+          <FauxUsersShowcase />
         {/* Trending Section */}
         {trendingLooks.length > 0 && (
           <div className="mb-8">
