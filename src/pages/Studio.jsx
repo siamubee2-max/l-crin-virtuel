@@ -14,6 +14,7 @@ import { useLanguage } from '@/components/LanguageProvider';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 import TryOnEditor from '@/components/studio/TryOnEditor';
 import AIStyleRecommendations from '@/components/studio/AIStyleRecommendations';
+import SaveLookDialog from '@/components/looks/SaveLookDialog';
 import { Pencil } from 'lucide-react';
 import SEO from '@/components/common/SEO';
 
@@ -68,6 +69,8 @@ export default function Studio() {
   const [isARMode, setIsARMode] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentCreationId, setCurrentCreationId] = useState(null);
+  const [showSaveLookDialog, setShowSaveLookDialog] = useState(false);
+  const [suggestedComplementary, setSuggestedComplementary] = useState([]);
 
   const { data: bodyParts } = useQuery({
     queryKey: ['bodyParts'],
@@ -662,12 +665,31 @@ export default function Studio() {
                          {t.common.share}
                       </ShareButton>
                       <Button 
-                        className="w-full bg-neutral-900 text-white col-span-2 mt-2"
+                        className="w-full bg-gradient-to-r from-amber-600 to-purple-600 text-white col-span-2"
+                        onClick={() => setShowSaveLookDialog(true)}
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Sauvegarder comme Look
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        className="w-full col-span-2"
                         onClick={() => navigate(createPageUrl("Gallery"))}
                       >
                         {t.studio.step4.goToGallery}
                       </Button>
                     </div>
+
+                    {/* Save Look Dialog */}
+                    <SaveLookDialog 
+                      open={showSaveLookDialog}
+                      onOpenChange={setShowSaveLookDialog}
+                      creation={{ id: currentCreationId, result_image_url: resultImage }}
+                      mainJewelry={catalogItems?.find(item => item.image_url === jewelryImage)}
+                      bodyPart={bodyParts?.find(p => p.id === selectedBodyPartId)}
+                      suggestedComplementary={suggestedComplementary}
+                      aiRecommendations={stylistData}
+                    />
                   </motion.div>
                 )}
 
