@@ -16,6 +16,9 @@ import StylistProfile from './pages/StylistProfile';
 import Stylists from './pages/Stylists';
 import Subscription from './pages/Subscription';
 import Wardrobe from './pages/Wardrobe';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import CookiePolicy from './pages/CookiePolicy';
 import __Layout from './Layout.jsx';
 
 
@@ -38,6 +41,9 @@ export const PAGES = {
     "Stylists": Stylists,
     "Subscription": Subscription,
     "Wardrobe": Wardrobe,
+    "PrivacyPolicy": PrivacyPolicy,
+    "TermsOfService": TermsOfService,
+    "CookiePolicy": CookiePolicy,
 }
 
 export const pagesConfig = {

@@ -203,11 +203,33 @@ function LayoutContent({ children }) {
         {children}
       </main>
 
-      {/* Simple Footer */}
-      <footer className="border-t border-neutral-100 py-8 text-center">
-                    <span className="accent-shimmer font-medium text-xs tracking-widest uppercase">{t.common.footer}</span>
-                    <p className="mt-2 text-[10px] text-neutral-400">Powered by <a href="https://inferencevision.store" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">Inferencevision.store</a></p>
-                  </footer>
+      {/* Footer with Legal Links */}
+      <footer className="border-t border-neutral-100 py-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <span className="accent-shimmer font-medium text-xs tracking-widest uppercase">{t.common.footer}</span>
+
+            {/* Legal Links */}
+            <div className="flex flex-wrap justify-center gap-4 text-[10px] text-neutral-400">
+              <Link to={createPageUrl("PrivacyPolicy")} className="hover:text-gold transition-colors">
+                Politique de Confidentialité
+              </Link>
+              <span>•</span>
+              <Link to={createPageUrl("TermsOfService")} className="hover:text-gold transition-colors">
+                CGU
+              </Link>
+              <span>•</span>
+              <Link to={createPageUrl("CookiePolicy")} className="hover:text-gold transition-colors">
+                Cookies
+              </Link>
+            </div>
+
+            <p className="text-[10px] text-neutral-400">
+              Powered by <a href="https://inferencevision.store" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">Inferencevision.store</a>
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
