@@ -353,16 +353,40 @@ export default function BrandPartnerships() {
         {/* Partnership Management Tab */}
         {currentUser?.role === 'admin' && (
           <TabsContent value="management">
-            <div className="bg-white rounded-2xl border p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-serif">Gestion des Partenariats</h2>
-                <Link to={createPageUrl("AdminPartnerships")}>
-                  <Button className="bg-amber-600 hover:bg-amber-700 text-white">
-                    <Settings className="w-4 h-4 mr-2" /> Ouvrir le panneau complet
-                  </Button>
-                </Link>
+             <div className="max-w-4xl mx-auto space-y-8">
+              <div>
+                <h2 className="text-2xl font-serif flex items-center gap-2">
+                  <Settings className="w-6 h-6 text-amber-600" /> Partnership Management
+                </h2>
+                <p className="text-neutral-500">Informations de contact pour les partenariats</p>
               </div>
-              <p className="text-neutral-500">Accédez au panneau d'administration pour gérer les marques partenaires, les créateurs et les collections.</p>
+
+              <div className="bg-white rounded-2xl border p-6">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                      <Crown className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-medium">Devenir Partenaire</h2>
+                      <p className="text-neutral-500">Rejoignez notre programme de partenariat</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-neutral-50 rounded-lg p-6 space-y-4">
+                    <p className="text-neutral-700">
+                      Pour toute demande de partenariat, veuillez nous contacter à l'adresse suivante :
+                    </p>
+                    <a 
+                      href="mailto:inferencevision@inferencevision.store" 
+                      className="text-sm font-medium text-amber-800 hover:underline block"
+                    >
+                      inferencevision@inferencevision.store
+                    </a>
+                    <p className="text-sm text-neutral-500">
+                      Notre équipe vous répondra dans les plus brefs délais.
+                    </p>
+                  </div>
+              </div>
             </div>
           </TabsContent>
         )}
