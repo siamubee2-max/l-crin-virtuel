@@ -211,8 +211,12 @@ function LayoutContent({ children }) {
 
             {/* Legal Links */}
             <div className="flex flex-wrap justify-center gap-4 text-[10px] text-neutral-400">
+              <Link to={createPageUrl("LegalNotice")} className="hover:text-gold transition-colors">
+                Mentions Légales
+              </Link>
+              <span>•</span>
               <Link to={createPageUrl("PrivacyPolicy")} className="hover:text-gold transition-colors">
-                Politique de Confidentialité
+                Confidentialité
               </Link>
               <span>•</span>
               <Link to={createPageUrl("TermsOfService")} className="hover:text-gold transition-colors">

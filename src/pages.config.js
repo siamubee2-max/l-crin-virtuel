@@ -19,6 +19,7 @@ import Wardrobe from './pages/Wardrobe';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import CookiePolicy from './pages/CookiePolicy';
+import LegalNotice from './pages/LegalNotice';
 import __Layout from './Layout.jsx';
 
 
@@ -44,6 +45,7 @@ export const PAGES = {
     "PrivacyPolicy": PrivacyPolicy,
     "TermsOfService": TermsOfService,
     "CookiePolicy": CookiePolicy,
+    "LegalNotice": LegalNotice,
 }
 
 export const pagesConfig = {
