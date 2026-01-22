@@ -1,5 +1,5 @@
 import React from 'react';
-import { base44 } from '@/api/base44Client';
+import { base44 } from '@/api/apiClient';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -244,7 +244,16 @@ export default function ForYouSection({ user }) {
             <div className="p-3">
               <h3 className="font-medium text-sm text-neutral-900 truncate">{item.name}</h3>
               <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs text-neutral-400 capitalize">{item.type}</span>
+                {item.sale_price && item.sale_price < item.price ? (
+                  <>
+                    <span className="text-sm font-semibold text-red-600">${item.sale_price}</span>
+                    <span className="text-xs text-neutral-400 line-through">${item.price}</span>
+                  </>
+                ) : item.price ? (
+                  <span className="text-sm font-semibold">${item.price}</span>
+                ) : (
+                  <span className="text-xs text-neutral-400 capitalize">{item.type}</span>
+                )}
               </div>
               
               {/* Recommendation reason */}
@@ -294,7 +303,13 @@ export default function ForYouSection({ user }) {
                     </div>
                   )}
                 </div>
-
+                <div className="p-3">
+                  <h3 className="font-medium text-sm text-neutral-900 truncate">{item.name}</h3>
+                  <p className="text-xs text-neutral-500">{item.color} • {item.material}</p>
+                  <p className="text-[10px] text-amber-600 mt-1">
+                    {getRecommendationReason(item, false)}
+                  </p>
+                </div>
               </motion.div>
             ))}
           </div>

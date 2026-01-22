@@ -1,5 +1,5 @@
 import React from 'react';
-import { base44 } from '@/api/base44Client';
+import { base44 } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -24,7 +24,6 @@ function LayoutContent({ children }) {
 
   const navItems = [
     { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
-    { label: "Communauté", icon: Star, path: "/Community" },
     { label: t.nav.gallery, icon: Gem, path: "/" },
     { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
     { label: t.nav.wardrobe, icon: User, path: "/Wardrobe" },
@@ -35,7 +34,9 @@ function LayoutContent({ children }) {
       { label: "Abonnement", icon: Star, path: "/Subscription" },
         ];
 
-
+        if (currentUser?.role === 'admin') {
+          navItems.push({ label: "Partnerships", icon: Star, path: "/AdminPartnerships" });
+      }
 
   const languages = [
     { code: 'fr', label: 'Français', flag: '🇫🇷' },

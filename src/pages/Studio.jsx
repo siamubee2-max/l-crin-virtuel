@@ -14,7 +14,6 @@ import { useLanguage } from '@/components/LanguageProvider';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 import TryOnEditor from '@/components/studio/TryOnEditor';
 import AIStyleRecommendations from '@/components/studio/AIStyleRecommendations';
-import SaveLookDialog from '@/components/looks/SaveLookDialog';
 import { Pencil } from 'lucide-react';
 import SEO from '@/components/common/SEO';
 
@@ -69,8 +68,6 @@ export default function Studio() {
   const [isARMode, setIsARMode] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentCreationId, setCurrentCreationId] = useState(null);
-  const [showSaveLookDialog, setShowSaveLookDialog] = useState(false);
-  const [suggestedComplementary, setSuggestedComplementary] = useState([]);
 
   const { data: bodyParts } = useQuery({
     queryKey: ['bodyParts'],
@@ -342,8 +339,8 @@ export default function Studio() {
           <div className="bg-white rounded-3xl shadow-xl border border-neutral-100 overflow-hidden min-h-[500px] flex flex-col md:flex-row">
             
             {/* Left Side - Progress & Steps */}
-            <div className="w-full md:w-1/3 bg-neutral-50 p-4 md:p-8 border-b md:border-b-0 md:border-r border-neutral-100 flex flex-col">
-              <div className="flex md:flex-col gap-4 md:gap-6 overflow-x-auto pb-2 md:pb-0 scrollbar-hide snap-x">
+            <div className="w-full md:w-1/3 bg-neutral-50 p-8 border-r border-neutral-100 flex flex-col">
+              <div className="space-y-6">
                 {[
                   { id: STEPS.UPLOAD, label: t.studio.steps.upload, icon: "💎" },
                   { id: STEPS.SELECT_BODY, label: t.studio.steps.selectBody, icon: "👤" },
@@ -352,7 +349,7 @@ export default function Studio() {
                 ].map((s) => (
                   <div 
                     key={s.id}
-                    className={`flex items-center gap-2 md:gap-4 transition-colors flex-shrink-0 snap-start ${
+                    className={`flex items-center gap-4 transition-colors ${
                       step === s.id ? "text-amber-600 font-medium" : 
                       step > s.id ? "text-green-600" : "text-neutral-400"
                     }`}
@@ -384,7 +381,7 @@ export default function Studio() {
             </div>
 
             {/* Right Side - Content Area */}
-            <div className="w-full md:w-2/3 p-4 md:p-12 relative">
+            <div className="w-full md:w-2/3 p-8 md:p-12 relative">
               <AnimatePresence mode="wait">
                 
                 {/* STEP 1: UPLOAD JEWELRY */}
@@ -665,31 +662,12 @@ export default function Studio() {
                          {t.common.share}
                       </ShareButton>
                       <Button 
-                        className="w-full bg-gradient-to-r from-amber-600 to-purple-600 text-white col-span-2"
-                        onClick={() => setShowSaveLookDialog(true)}
-                      >
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Sauvegarder comme Look
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        className="w-full col-span-2"
+                        className="w-full bg-neutral-900 text-white col-span-2 mt-2"
                         onClick={() => navigate(createPageUrl("Gallery"))}
                       >
                         {t.studio.step4.goToGallery}
                       </Button>
                     </div>
-
-                    {/* Save Look Dialog */}
-                    <SaveLookDialog 
-                      open={showSaveLookDialog}
-                      onOpenChange={setShowSaveLookDialog}
-                      creation={{ id: currentCreationId, result_image_url: resultImage }}
-                      mainJewelry={catalogItems?.find(item => item.image_url === jewelryImage)}
-                      bodyPart={bodyParts?.find(p => p.id === selectedBodyPartId)}
-                      suggestedComplementary={suggestedComplementary}
-                      aiRecommendations={stylistData}
-                    />
                   </motion.div>
                 )}
 

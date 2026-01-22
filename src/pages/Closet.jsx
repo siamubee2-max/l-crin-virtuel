@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { base44 } from '@/api/apiClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -447,15 +447,7 @@ export default function Closet() {
               className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-neutral-100 flex flex-col"
             >
               <div className="aspect-[3/4] bg-neutral-50 relative overflow-hidden">
-                <img 
-                  src={item.image_url} 
-                  alt={item.name} 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://placehold.co/600x800/f5f5f5/a3a3a3?text=Image+Non+Disponible";
-                  }}
-                />
+                <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
                 
                 {/* Selection Checkbox */}
                 {selectionMode && (

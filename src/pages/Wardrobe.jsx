@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { base44 } from '@/api/apiClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +12,6 @@ import { useLanguage } from '@/components/LanguageProvider';
 
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import CategoryPlaceholders from '@/components/wardrobe/CategoryPlaceholders';
-import OutfitGenerator from '@/components/wardrobe/OutfitGenerator';
 
 export default function Wardrobe() {
   const navigate = useNavigate();
@@ -207,9 +205,6 @@ export default function Wardrobe() {
         </div>
         </div>
       </div>
-
-      <OutfitGenerator clothingItems={clothingItems || []} />
-      <CategoryPlaceholders />
 
       {isLoading ? (
         <div className="flex items-center justify-center h-64">
