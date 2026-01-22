@@ -22,6 +22,7 @@ import TermsOfService from './pages/TermsOfService';
 import Wardrobe from './pages/Wardrobe';
 import FAQ from './pages/FAQ';
 import MyLooks from './pages/MyLooks';
+import Community from './pages/Community';
 import __Layout from './Layout.jsx';
 
 
@@ -50,6 +51,7 @@ export const PAGES = {
     "Wardrobe": Wardrobe,
     "FAQ": FAQ,
     "MyLooks": MyLooks,
+    "Community": Community,
 }
 
 export const pagesConfig = {

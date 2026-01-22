@@ -24,6 +24,7 @@ function LayoutContent({ children }) {
 
   const navItems = [
     { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
+    { label: "Communauté", icon: Star, path: "/Community" },
     { label: t.nav.gallery, icon: Gem, path: "/" },
     { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
     { label: "Mes Looks", icon: Sparkles, path: "/MyLooks" },
