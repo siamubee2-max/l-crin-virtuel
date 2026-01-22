@@ -64,52 +64,11 @@ export default function Subscription() {
              </div>
           )}
 
-          {/* Plan Selection */}
-          <div>
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-serif mb-4">Nos Offres Premium</h2>
-              {/* Billing Toggle */}
-              <div className="bg-neutral-100 p-1 rounded-full inline-flex">
-                <button
-                  onClick={() => setBillingCycle('monthly')}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                    billingCycle === 'monthly' ? 'bg-white shadow text-neutral-900' : 'text-neutral-500 hover:text-neutral-700'
-                  }`}
-                >
-                  Mensuel
-                </button>
-                <button
-                  onClick={() => setBillingCycle('yearly')}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                    billingCycle === 'yearly' ? 'bg-white shadow text-neutral-900' : 'text-neutral-500 hover:text-neutral-700'
-                  }`}
-                >
-                  Annuel <span className="text-green-600 text-xs ml-1 font-bold">-20%</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-center max-w-md mx-auto">
-
-              {/* PLUS PLAN */}
-              <PlanCard
-                title="Premium Plus"
-                description="L'expérience ultime sans aucune limite."
-                price={billingCycle === 'monthly' ? 12.99 : 99.00}
-                period={billingCycle}
-                features={[
-                  "Tout ce qu'il y a dans Essentiel",
-                  "Garde-robe ILLIMITÉE",
-                  "Styliste IA Personnel (Accès complet)",
-                  "Collections Exclusives VIP",
-                  "Support Prioritaire"
-                ]}
-                productId={billingCycle === 'monthly' ? PLANS.PLUS.MONTHLY : PLANS.PLUS.YEARLY}
-                isPopular={true}
-                variant="plus"
-              />
-
-            </div>
+          {/* Plan Selection - Temporarily Disabled */}
+          <div className="text-center py-12 bg-neutral-50 rounded-2xl border border-dashed border-neutral-200">
+             <ShieldCheck className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+             <h3 className="text-lg font-medium text-neutral-900">Abonnements indisponibles</h3>
+             <p className="text-neutral-500 mt-2">Les nouvelles souscriptions sont temporairement suspendues.</p>
           </div>
         </TabsContent>
 
