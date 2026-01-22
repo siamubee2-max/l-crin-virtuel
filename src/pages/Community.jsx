@@ -22,27 +22,12 @@ export default function Community() {
   // Fetch posts
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ['communityPosts', activeTab],
-    queryFn: () => {
-      const filter = activeTab !== 'all' ? { type: activeTab } : {};
-      return base44.entities.CommunityPost.list(
-        { sort: { created_date: -1 }, limit: 50 },
-        activeTab !== 'all' ? { type: activeTab } : undefined // SDK signature might vary, usually list(sort, limit) or list({filter...})
-      ).then(res => {
-         // Handle potential different SDK signatures or just client side filtering if needed, 
-         // but assuming standard list returns array. 
-         // If SDK supports filter in first arg or params, adjust accordingly.
-         // Let's assume standard behavior: we fetch all latest and filter client side if SDK is simple, 
-         // OR better, use specific query. 
-         // Since I can't be 100% sure of the exact SDK filter syntax from here without docs, 
-         // I'll fetch and filter client side for safety if the list is small, or try to pass filter.
-         // Given previous examples: base44.entities.Todo.filter({status: 'active'}, '-created_date', 10)
-         
-         if (activeTab === 'all') {
-             return base44.entities.CommunityPost.list('-created_date', 50);
-         } else {
-             return base44.entities.CommunityPost.filter({ type: activeTab }, '-created_date', 50);
-         }
-      });
+    queryFn: async () => {
+      if (activeTab === 'all') {
+        return base44.entities.CommunityPost.list('-created_date', 50);
+      } else {
+        return base44.entities.CommunityPost.filter({ type: activeTab }, '-created_date', 50);
+      }
     }
   });
 
