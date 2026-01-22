@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/apiClient';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -101,49 +102,85 @@ export default function BrandPartnerships() {
         </div>
       </div>
 
-      {/* Featured Brands Carousel */}
-      {featuredBrands.length > 0 &&
-      <section>
-          <h2 className="text-2xl font-serif mb-6 flex items-center gap-2">
-            <Crown className="w-6 h-6 text-amber-500" /> {t.brands.featuredPartners}
-          </h2>
-          <div className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
-            {featuredBrands.map((brand, idx) =>
-          <motion.div
-            key={brand.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: idx * 0.1 }}
-            className="flex-shrink-0 w-64 bg-white rounded-2xl border hover:shadow-xl transition-all group">
+      {/* Featured Brands + Partnerships */}
+      {featuredBrands.length > 0 && (
+        <section>
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* Featured Partners (left) */}
+            <div className="lg:col-span-2">
+              <h2 className="text-2xl font-serif mb-6 flex items-center gap-2">
+                <Crown className="w-6 h-6 text-amber-500" /> {t.brands.featuredPartners}
+              </h2>
+              <div className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
+                {featuredBrands.map((brand, idx) => (
+                  <motion.div
+                    key={brand.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="flex-shrink-0 w-64 bg-white rounded-2xl border hover:shadow-xl transition-all group"
+                  >
+                    <div className="h-24 bg-gradient-to-br from-neutral-100 to-neutral-50 rounded-t-2xl flex items-center justify-center p-4">
+                      {brand.logo_url ? (
+                        <img src={brand.logo_url} alt={brand.brand_name} className="max-h-16 object-contain" />
+                      ) : (
+                        <span className="text-2xl font-serif text-neutral-400">{brand.brand_name}</span>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-medium">{brand.brand_name}</h3>
+                        <Badge variant="secondary" className="text-[10px]">
+                          {brand.tier}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-neutral-500 line-clamp-2 mb-3">{brand.description}</p>
+                      {brand.website_url && (
+                        <a href={brand.website_url} target="_blank" rel="noopener noreferrer">
+                          <Button variant="outline" size="sm" className="w-full text-xs">
+                            {t.brands.visitBrand} <ExternalLink className="w-3 h-3 ml-1" />
+                          </Button>
+                        </a>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
 
-                <div className="h-24 bg-gradient-to-br from-neutral-100 to-neutral-50 rounded-t-2xl flex items-center justify-center p-4">
-                  {brand.logo_url ?
-              <img src={brand.logo_url} alt={brand.brand_name} className="max-h-16 object-contain" /> :
-
-              <span className="text-2xl font-serif text-neutral-400">{brand.brand_name}</span>
-              }
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium">{brand.brand_name}</h3>
-                    <Badge variant="secondary" className="text-[10px]">
-                      {brand.tier}
-                    </Badge>
+            {/* Partnerships (right) */}
+            <div>
+              <Card className="h-full">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                      <Crown className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium">Devenir Partenaire</h3>
+                      <p className="text-neutral-500 text-sm">Rejoignez notre programme de partenariat</p>
+                    </div>
                   </div>
-                  <p className="text-xs text-neutral-500 line-clamp-2 mb-3">{brand.description}</p>
-                  {brand.website_url &&
-              <a href={brand.website_url} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="w-full text-xs">
-                        {t.brands.visitBrand} <ExternalLink className="w-3 h-3 ml-1" />
-                      </Button>
+                  <div className="bg-neutral-50 rounded-lg p-4 space-y-3">
+                    <p className="text-neutral-700 text-sm">
+                      Pour toute demande de partenariat, contactez-nous :
+                    </p>
+                    <a
+                      href="mailto:inferencevision@inferencevision.store"
+                      className="text-sm font-medium text-amber-800 hover:underline block"
+                    >
+                      inferencevision@inferencevision.store
                     </a>
-              }
-                </div>
-              </motion.div>
-          )}
+                    <p className="text-xs text-neutral-500">
+                      Notre équipe vous répondra dans les plus brefs délais.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </section>
-      }
+      )}
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
