@@ -513,19 +513,13 @@ export default function Community() {
                 return (
                   <motion.div key={look.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} layout>
                     <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
-                      <div className="relative h-80 bg-neutral-100 cursor-pointer" onClick={() => setSelectedLook(look)}>
-                        {creation?.result_image_url ? (
-                          <img src={creation.result_image_url} alt={look.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Sparkles className="w-12 h-12 text-neutral-300" />
-                          </div>
-                        )}
-                        <Badge className="absolute top-3 right-3 bg-purple-600">
-                          <Sparkles className="w-3 h-3 mr-1" />
-                          Pour Vous
-                        </Badge>
-                      </div>
+                      <div className="relative h-80 bg-neutral-100 cursor-pointer flex items-center justify-center" onClick={() => setSelectedLook(look)}>
+                                                <Sparkles className="w-12 h-12 text-neutral-300" />
+                                                <Badge className="absolute top-3 right-3 bg-purple-600">
+                                                  <Sparkles className="w-3 h-3 mr-1" />
+                                                  Pour Vous
+                                                </Badge>
+                                              </div>
                       <div className="p-4">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="font-serif text-lg text-neutral-900 flex-1">{look.title}</h3>
@@ -595,14 +589,8 @@ export default function Community() {
                 return (
                   <motion.div key={look.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} layout>
                     <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
-                      <div className="relative h-80 bg-neutral-100 cursor-pointer" onClick={() => setSelectedLook(look)}>
-                        {creation?.result_image_url ? (
-                          <img src={creation.result_image_url} alt={look.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Sparkles className="w-12 h-12 text-neutral-300" />
-                          </div>
-                        )}
+                      <div className="relative h-80 bg-neutral-100 cursor-pointer flex items-center justify-center" onClick={() => setSelectedLook(look)}>
+                        <Sparkles className="w-12 h-12 text-neutral-300" />
                       </div>
                       <div className="p-4">
                         <div className="flex items-start justify-between mb-2">
