@@ -140,15 +140,11 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Invalid action' }, { status: 400 });
         }
 
-        // Call Kie.ai
+        // Call Kie.ai (GPT-4o Image Endpoint)
         const requestBody = {
-            model: JEWELRY_MODEL,
-            input: {
-                prompt: prompt,
-                negative_prompt: "cartoon, illustration, animation, face deformity, bad anatomy, extra fingers, floating jewelry, unrealistic placement, blur, low quality, distorted, watermark, text, signature",
-                aspect_ratio: aspectRatio,
-                num_images: "1"
-            },
+            prompt: prompt,
+            filesUrl: action === 'tryOn' ? [mImage, jImage] : [jImage], 
+            size: '2:3'
         };
 
         const response = await fetch(KIE_API_URL, {
