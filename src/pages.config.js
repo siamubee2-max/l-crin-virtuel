@@ -1,6 +1,7 @@
 import BrandPartnerships from './pages/BrandPartnerships';
 import Checkout from './pages/Checkout';
 import Closet from './pages/Closet';
+import Community from './pages/Community';
 import CookiePolicy from './pages/CookiePolicy';
 import CreatorOnboarding from './pages/CreatorOnboarding';
 import FAQ from './pages/FAQ';
@@ -20,7 +21,6 @@ import Stylists from './pages/Stylists';
 import Subscription from './pages/Subscription';
 import TermsOfService from './pages/TermsOfService';
 import Wardrobe from './pages/Wardrobe';
-import Community from './pages/Community';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +28,7 @@ export const PAGES = {
     "BrandPartnerships": BrandPartnerships,
     "Checkout": Checkout,
     "Closet": Closet,
+    "Community": Community,
     "CookiePolicy": CookiePolicy,
     "CreatorOnboarding": CreatorOnboarding,
     "FAQ": FAQ,
@@ -47,7 +48,6 @@ export const PAGES = {
     "Subscription": Subscription,
     "TermsOfService": TermsOfService,
     "Wardrobe": Wardrobe,
-    "Community": Community,
 }
 
 export const pagesConfig = {

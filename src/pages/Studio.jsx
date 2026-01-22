@@ -217,10 +217,10 @@ export default function Studio() {
       const isClothing = ['top', 'bottom', 'one-piece'].includes(jewelryType);
 
       if (isClothing) {
-        // Use Fashn AI Backend Function
+        // Use Fashn AI Backend Function for Clothing
         const response = await base44.functions.invoke('fashnTryOn', {
-          modelBase64: bodyPart.image_url, // Using URL, backend handles it
-          garmentBase64: jewelryImage, // Using URL, backend handles it
+          modelBase64: bodyPart.image_url, 
+          garmentBase64: jewelryImage,
           clothingType: jewelryType,
           category: jewelryType === 'one-piece' ? 'one-pieces' : (jewelryType === 'bottom' ? 'bottoms' : 'tops')
         });
@@ -228,7 +228,6 @@ export default function Studio() {
         if (response.data && response.data.outputUrl) {
           setResultImage(response.data.outputUrl);
           
-          // Save the creation
           const newCreation = await base44.entities.Creation.create({
             jewelry_image_url: jewelryImage,
             result_image_url: response.data.outputUrl,
@@ -244,59 +243,29 @@ export default function Studio() {
         }
 
       } else {
-        // Standard Jewelry Logic
-        // Construct a detailed prompt for the AI with natural placement instructions
-        const prompt = `
-            A professional, photorealistic fashion photography shot.
-            The goal is to show a person wearing a specific piece of jewelry naturally and realistically.
-            
-            Input 1 (Base Image): A photo of a ${bodyPart.type} (the user).
-            Input 2 (Jewelry Reference): A photo of a ${jewelryType}.
-            
-            Task: Seamlessly composite and generate the jewelry onto the body part with NATURAL PLACEMENT.
-            
-            CRITICAL PLACEMENT RULES:
-            - ALWAYS maintain the exact proportions of the jewelry relative to the body part size.
-            - Position the jewelry according to GRAVITY and natural physics:
-            * Necklaces: Should follow the curve of the neck/collarbone, hanging naturally with gravity
-            * Earrings: Should dangle naturally, respecting the ear angle and head tilt
-            * Rings: Should wrap around fingers at natural angles
-            * Bracelets: Should rest on wrists following arm position and gravity
-            * Anklets: Should sit naturally on the ankle bone
-            - ADAPT to body part INCLINATION: If the head is tilted, earrings should hang accordingly
-            - SCALE appropriately: Match jewelry size to the body part (e.g., small earrings for small ears)
-            - Consider the DEPTH and PERSPECTIVE of the base image
-            
-            Technical Details:
-            - The jewelry should cast subtle, realistic shadows on the skin
-            - Lighting and reflections must match the ambient light of the base photo
-            - High fashion aesthetic, elegant, clean
-            - Maintain the identity and skin tone of the person in the base image
-            - If the type is 'set', identify all components and place each piece appropriately on visible body parts
-        `;
-
-        const response = await base44.integrations.Core.GenerateImage({
-            prompt: prompt,
-            existing_image_urls: [bodyPart.image_url, jewelryImage],
+        // Use KIE.ai Backend Function for Jewelry
+        const response = await base44.functions.invoke('kieTryOn', {
+          action: 'tryOn',
+          jewelryImage: jewelryImage,
+          modelImage: bodyPart.image_url,
+          jewelryType: jewelryType
         });
 
-        if (response && response.url) {
-            setResultImage(response.url);
-            
-            // Save the creation
-            const newCreation = await base44.entities.Creation.create({
+        if (response.data && response.data.outputUrl) {
+          setResultImage(response.data.outputUrl);
+          
+          const newCreation = await base44.entities.Creation.create({
             jewelry_image_url: jewelryImage,
-            result_image_url: response.url,
+            result_image_url: response.data.outputUrl,
             body_part_id: selectedBodyPartId,
-            description: "",
+            description: "Essayage KIE.ai",
             jewelry_type: jewelryType
-            });
-            
-            if (newCreation) {
-            setCurrentCreationId(newCreation.id);
-            }
-            
-            setStep(STEPS.RESULT);
+          });
+          
+          if (newCreation) setCurrentCreationId(newCreation.id);
+          setStep(STEPS.RESULT);
+        } else {
+           throw new Error(response.data?.error || "Echec de la génération KIE.ai");
         }
       }
     } catch (error) {
