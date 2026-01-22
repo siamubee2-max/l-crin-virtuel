@@ -238,19 +238,59 @@ export default function TermsOfService() {
 
         {/* Droit Applicable */}
         <section className="bg-white rounded-2xl p-8 border border-neutral-100 shadow-sm">
-          <h2 className="text-xl font-serif text-neutral-900 mb-3">11. Droit Applicable et Juridiction</h2>
-          <div className="text-neutral-600 space-y-3">
-            <p>
-              Les présentes CGU sont régies par le droit français. Tout litige relève de la compétence 
-              exclusive des tribunaux français.
-            </p>
-            <p className="text-sm">
-              Conformément à la réglementation européenne, vous pouvez également recourir à la 
-              plateforme de règlement des litiges en ligne de la Commission européenne : 
-              <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline ml-1">
-                https://ec.europa.eu/consumers/odr
-              </a>
-            </p>
+          <h2 className="text-xl font-serif text-neutral-900 mb-3">11. Droit Applicable et Résolution des Litiges</h2>
+          <div className="text-neutral-600 space-y-4">
+            
+            {/* Pour utilisateurs UE */}
+            <div className="border-l-4 border-blue-500 pl-4">
+              <h3 className="font-medium text-neutral-900 mb-2">🇪🇺 Utilisateurs de l'Union Européenne</h3>
+              <p>
+                Les présentes CGU sont régies par le droit français. Tout litige relève de la compétence 
+                des tribunaux français.
+              </p>
+              <p className="text-sm mt-2">
+                Vous pouvez également recourir à la plateforme de règlement des litiges en ligne : 
+                <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline ml-1">
+                  https://ec.europa.eu/consumers/odr
+                </a>
+              </p>
+            </div>
+
+            {/* Pour utilisateurs US */}
+            <div className="border-l-4 border-red-500 pl-4">
+              <h3 className="font-medium text-neutral-900 mb-2">🇺🇸 Utilisateurs des États-Unis</h3>
+              
+              <p className="mb-3">
+                <strong>Arbitrage contraignant :</strong> Tout litige sera résolu par arbitrage individuel 
+                contraignant plutôt que par action en justice, sauf si vous choisissez de vous désengager 
+                (opt-out) dans les 30 jours suivant votre inscription.
+              </p>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm space-y-2">
+                <p><strong className="text-amber-900">Renonciation aux recours collectifs :</strong></p>
+                <p>
+                  Vous acceptez de renoncer à tout droit de participer à une action collective (class action) 
+                  ou à une action de groupe contre L'Écrin Virtuel. Tous les litiges doivent être résolus 
+                  sur une base individuelle.
+                </p>
+                <p className="mt-2">
+                  <strong>Pour vous désengager (opt-out) :</strong> Envoyez un email à 
+                  <a href="mailto:legal@lecrinvirtuel.com" className="text-amber-700 underline ml-1">legal@lecrinvirtuel.com</a> 
+                  dans les 30 jours avec mention "Opt-out of Arbitration".
+                </p>
+              </div>
+
+              <p className="text-sm mt-3">
+                <strong>Droit applicable :</strong> Lois de l'État de Californie (sans égard aux règles de conflit de lois)<br />
+                <strong>Forum :</strong> American Arbitration Association (AAA) selon les règles d'arbitrage commercial
+              </p>
+            </div>
+
+            {/* Exception petites créances */}
+            <div className="text-sm bg-neutral-50 rounded-lg p-3 mt-3">
+              <strong>Exception :</strong> Les litiges de faible montant (&lt; 10 000 €/$ US) peuvent être portés 
+              devant un tribunal des petites créances dans votre juridiction locale.
+            </div>
           </div>
         </section>
 

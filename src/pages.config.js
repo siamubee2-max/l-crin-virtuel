@@ -2,10 +2,13 @@ import AdminPartnerships from './pages/AdminPartnerships';
 import BrandPartnerships from './pages/BrandPartnerships';
 import Checkout from './pages/Checkout';
 import Closet from './pages/Closet';
+import CookiePolicy from './pages/CookiePolicy';
 import CreatorOnboarding from './pages/CreatorOnboarding';
 import Gallery from './pages/Gallery';
 import JewelryBox from './pages/JewelryBox';
+import LegalNotice from './pages/LegalNotice';
 import Lookbook from './pages/Lookbook';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import ProductDetail from './pages/ProductDetail';
 import Profile from './pages/Profile';
 import SearchResults from './pages/SearchResults';
@@ -15,11 +18,8 @@ import StyleFeed from './pages/StyleFeed';
 import StylistProfile from './pages/StylistProfile';
 import Stylists from './pages/Stylists';
 import Subscription from './pages/Subscription';
-import Wardrobe from './pages/Wardrobe';
-import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
-import CookiePolicy from './pages/CookiePolicy';
-import LegalNotice from './pages/LegalNotice';
+import Wardrobe from './pages/Wardrobe';
 import __Layout from './Layout.jsx';
 
 
@@ -28,10 +28,13 @@ export const PAGES = {
     "BrandPartnerships": BrandPartnerships,
     "Checkout": Checkout,
     "Closet": Closet,
+    "CookiePolicy": CookiePolicy,
     "CreatorOnboarding": CreatorOnboarding,
     "Gallery": Gallery,
     "JewelryBox": JewelryBox,
+    "LegalNotice": LegalNotice,
     "Lookbook": Lookbook,
+    "PrivacyPolicy": PrivacyPolicy,
     "ProductDetail": ProductDetail,
     "Profile": Profile,
     "SearchResults": SearchResults,
@@ -41,11 +44,8 @@ export const PAGES = {
     "StylistProfile": StylistProfile,
     "Stylists": Stylists,
     "Subscription": Subscription,
-    "Wardrobe": Wardrobe,
-    "PrivacyPolicy": PrivacyPolicy,
     "TermsOfService": TermsOfService,
-    "CookiePolicy": CookiePolicy,
-    "LegalNotice": LegalNotice,
+    "Wardrobe": Wardrobe,
 }
 
 export const pagesConfig = {
