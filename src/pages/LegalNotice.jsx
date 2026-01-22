@@ -77,7 +77,7 @@ export default function LegalNotice() {
               <h2 className="text-xl font-serif text-neutral-900 mb-4">Conception et Développement</h2>
               <div className="text-neutral-600 space-y-2">
                 <p><strong>Conception :</strong> L'Écrin Virtuel</p>
-                <p><strong>Développement technique :</strong> Base44 Platform & Inferencevision.store</p>
+                <p><strong>Développement technique :</strong> Inferencevision.store</p>
                 <p><strong>Technologies utilisées :</strong> React, TailwindCSS, Supabase, OpenAI</p>
               </div>
             </div>
