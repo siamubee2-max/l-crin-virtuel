@@ -1,4 +1,3 @@
-import AdminPartnerships from './pages/AdminPartnerships';
 import BrandPartnerships from './pages/BrandPartnerships';
 import Checkout from './pages/Checkout';
 import Closet from './pages/Closet';
@@ -26,7 +25,6 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "AdminPartnerships": AdminPartnerships,
     "BrandPartnerships": BrandPartnerships,
     "Checkout": Checkout,
     "Closet": Closet,

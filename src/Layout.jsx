@@ -35,9 +35,7 @@ function LayoutContent({ children }) {
       { label: "Abonnement", icon: Star, path: "/Subscription" },
         ];
 
-        if (currentUser?.role === 'admin') {
-          navItems.push({ label: "Partnerships", icon: Star, path: "/AdminPartnerships" });
-      }
+
 
   const languages = [
     { code: 'fr', label: 'Français', flag: '🇫🇷' },
