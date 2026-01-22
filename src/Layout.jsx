@@ -1,5 +1,5 @@
 import React from 'react';
-import { base44 } from '@/api/apiClient';
+import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
