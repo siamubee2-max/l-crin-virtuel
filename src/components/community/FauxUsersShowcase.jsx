@@ -75,7 +75,6 @@ export default function FauxUsersShowcase() {
                 <div className="w-full h-full flex items-center justify-center">
                   <Sparkles className="w-12 h-12 text-neutral-300" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent" />
                 <div className="absolute top-3 left-3">
                   <Badge className="bg-white/90 text-neutral-800">{o.user}</Badge>
                 </div>
@@ -103,7 +102,6 @@ export default function FauxUsersShowcase() {
                 <div className="w-full h-full flex items-center justify-center">
                   <Sparkles className="w-12 h-12 text-neutral-300" />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent" />
                 <div className="absolute top-3 left-3">
                   <Badge className="bg-white/90 text-neutral-800">{j.user}</Badge>
                 </div>
