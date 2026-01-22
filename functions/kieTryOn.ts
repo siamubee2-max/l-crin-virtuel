@@ -4,7 +4,7 @@ import { z } from "npm:zod";
 // KIE.ai API Configuration
 const KIE_API_URL = 'https://api.kie.ai/api/v1/jobs/createTask';
 const KIE_STATUS_URL = 'https://api.kie.ai/api/v1/jobs/recordInfo';
-const JEWELRY_MODEL = 'openai/gpt-4o-image'; // Best price at $0.03/image
+const JEWELRY_MODEL = 'black-forest-labs/flux-1.1-pro';
 
 const MAX_POLLING_ATTEMPTS = 60;
 const POLLING_INTERVAL = 2000;
