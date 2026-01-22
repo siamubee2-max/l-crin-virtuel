@@ -117,7 +117,7 @@ export default function BrandPartnerships() {
                 </div>
                 <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-medium text-amber-900 mb-2">Gestion Partenariats</h3>
+                    <h3 className="font-medium text-amber-900 mb-2">Partnerships</h3>
                     <p className="text-xs text-amber-700/80 mb-3">
                       Contact administratif pour la gestion des marques et partenariats.
                     </p>
