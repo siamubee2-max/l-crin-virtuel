@@ -72,11 +72,9 @@ export default function FauxUsersShowcase() {
           {outfits.map((o, i) => (
             <Card key={i} className="overflow-hidden group">
               <div className="relative aspect-[3/4] bg-neutral-100">
-                <img
-                  src={o.image}
-                  alt={o.caption}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                <div className="w-full h-full flex items-center justify-center">
+                  <Sparkles className="w-12 h-12 text-neutral-300" />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute top-3 left-3">
                   <Badge className="bg-white/90 text-neutral-800">{o.user}</Badge>
@@ -102,16 +100,9 @@ export default function FauxUsersShowcase() {
           {jewelry.map((j, i) => (
             <Card key={i} className="overflow-hidden group">
               <div className="relative aspect-[3/4] bg-neutral-100">
-                <img
-                  src={j.image}
-                  alt={j.caption}
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%239ca3af" font-size="24">Aperçu indisponible</text></svg>';
-                  }}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                <div className="w-full h-full flex items-center justify-center">
+                  <Sparkles className="w-12 h-12 text-neutral-300" />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute top-3 left-3">
                   <Badge className="bg-white/90 text-neutral-800">{j.user}</Badge>
