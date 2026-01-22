@@ -2,12 +2,15 @@ import AdminPartnerships from './pages/AdminPartnerships';
 import BrandPartnerships from './pages/BrandPartnerships';
 import Checkout from './pages/Checkout';
 import Closet from './pages/Closet';
+import Community from './pages/Community';
 import CookiePolicy from './pages/CookiePolicy';
 import CreatorOnboarding from './pages/CreatorOnboarding';
+import FAQ from './pages/FAQ';
 import Gallery from './pages/Gallery';
 import JewelryBox from './pages/JewelryBox';
 import LegalNotice from './pages/LegalNotice';
 import Lookbook from './pages/Lookbook';
+import MyLooks from './pages/MyLooks';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ProductDetail from './pages/ProductDetail';
 import Profile from './pages/Profile';
@@ -20,9 +23,6 @@ import Stylists from './pages/Stylists';
 import Subscription from './pages/Subscription';
 import TermsOfService from './pages/TermsOfService';
 import Wardrobe from './pages/Wardrobe';
-import FAQ from './pages/FAQ';
-import MyLooks from './pages/MyLooks';
-import Community from './pages/Community';
 import __Layout from './Layout.jsx';
 
 
@@ -31,12 +31,15 @@ export const PAGES = {
     "BrandPartnerships": BrandPartnerships,
     "Checkout": Checkout,
     "Closet": Closet,
+    "Community": Community,
     "CookiePolicy": CookiePolicy,
     "CreatorOnboarding": CreatorOnboarding,
+    "FAQ": FAQ,
     "Gallery": Gallery,
     "JewelryBox": JewelryBox,
     "LegalNotice": LegalNotice,
     "Lookbook": Lookbook,
+    "MyLooks": MyLooks,
     "PrivacyPolicy": PrivacyPolicy,
     "ProductDetail": ProductDetail,
     "Profile": Profile,
@@ -49,9 +52,6 @@ export const PAGES = {
     "Subscription": Subscription,
     "TermsOfService": TermsOfService,
     "Wardrobe": Wardrobe,
-    "FAQ": FAQ,
-    "MyLooks": MyLooks,
-    "Community": Community,
 }
 
 export const pagesConfig = {

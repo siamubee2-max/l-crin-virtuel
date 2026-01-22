@@ -329,7 +329,7 @@ export default function Community() {
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-100 to-purple-100 flex items-center justify-center mx-auto mb-2">
                       <Users className="w-8 h-8 text-amber-600" />
                     </div>
-                    <p className="font-medium text-sm truncate">{creator.full_name || 'Anonyme'}</p>
+                    <p className="font-medium text-sm truncate">{creator.full_name || 'Erine'}</p>
                     <p className="text-xs text-neutral-500">{creator.looksCount} looks</p>
                     <Button
                       size="sm"
