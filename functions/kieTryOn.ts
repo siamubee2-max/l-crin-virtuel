@@ -1,10 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { z } from "npm:zod";
 
-// KIE.ai API Configuration
-const KIE_API_URL = 'https://api.kie.ai/api/v1/jobs/createTask';
-const KIE_STATUS_URL = 'https://api.kie.ai/api/v1/jobs/recordInfo';
-const JEWELRY_MODEL = 'google/imagen4-fast';
+// KIE.ai API Configuration (GPT-4o Image)
+const KIE_API_URL = 'https://api.kie.ai/api/v1/gpt4o-image/generate';
+const KIE_STATUS_URL = 'https://api.kie.ai/api/v1/gpt4o-image/get-details'; 
 
 const MAX_POLLING_ATTEMPTS = 60;
 const POLLING_INTERVAL = 2000;
@@ -47,17 +46,25 @@ async function pollTaskStatus(taskId, apiKey) {
             }
 
             const result = await response.json();
-
-            if (result.data?.status === 'completed' && result.data.output && result.data.output.length > 0) {
-                return result.data.output[0];
+            
+            // Check for success (data.info.result_urls exists)
+            if (result.data?.info?.result_urls?.length > 0) {
+                return result.data.info.result_urls[0];
+            }
+            
+            // Also check for 'completed' or 'success' status if available in this specific endpoint
+            if (result.data?.status === 'success' && result.data?.resultUrls?.length > 0) {
+                 return result.data.resultUrls[0];
             }
 
-            if (result.data?.status === 'failed') {
-                throw new Error(result.data.error || 'Le traitement a échoué');
+            if (result.data?.status === 'failed' || result.data?.failCode) {
+                throw new Error(result.data?.failMsg || 'Le traitement a échoué');
             }
+            
+            // If waiting/processing, continue polling
         } catch (error) {
             console.warn('[KIE Backend] Poll error:', error);
-            if (error.message === 'Le traitement a échoué') throw error;
+            if (error.message && error.message.includes('échoué')) throw error;
         }
     }
     throw new Error('Le traitement a pris trop de temps.');
