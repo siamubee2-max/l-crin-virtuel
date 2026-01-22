@@ -26,6 +26,7 @@ function LayoutContent({ children }) {
     { label: t.nav.feed, icon: Compass, path: "/StyleFeed" },
     { label: t.nav.gallery, icon: Gem, path: "/" },
     { label: t.nav.studio, icon: Sparkles, path: "/Studio" },
+    { label: "Mes Looks", icon: Sparkles, path: "/MyLooks" },
     { label: t.nav.wardrobe, icon: User, path: "/Wardrobe" },
     { label: t.nav.closet, icon: Shirt, path: "/Closet" },
     { label: t.nav.jewelryBox, icon: Box, path: "/JewelryBox" },

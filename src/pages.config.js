@@ -21,6 +21,7 @@ import Subscription from './pages/Subscription';
 import TermsOfService from './pages/TermsOfService';
 import Wardrobe from './pages/Wardrobe';
 import FAQ from './pages/FAQ';
+import MyLooks from './pages/MyLooks';
 import __Layout from './Layout.jsx';
 
 
@@ -48,6 +49,7 @@ export const PAGES = {
     "TermsOfService": TermsOfService,
     "Wardrobe": Wardrobe,
     "FAQ": FAQ,
+    "MyLooks": MyLooks,
 }
 
 export const pagesConfig = {
