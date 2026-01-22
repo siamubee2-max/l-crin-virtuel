@@ -16,7 +16,6 @@ export default function BrandPartnerships() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("featured");
-  const [showManagement, setShowManagement] = useState(false);
 
   // Fetch data
   const { data: brands, isLoading: brandsLoading } = useQuery({
@@ -105,53 +104,36 @@ export default function BrandPartnerships() {
       {/* Featured Brands Carousel */}
       {(featuredBrands.length > 0 || currentUser?.role === 'admin') &&
       <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-serif flex items-center gap-2">
-              <Crown className="w-6 h-6 text-amber-500" /> {t.brands.featuredPartners}
-            </h2>
+          <h2 className="text-2xl font-serif mb-6 flex items-center gap-2">
+            <Crown className="w-6 h-6 text-amber-500" /> {t.brands.featuredPartners}
+          </h2>
+          <div className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
+            
+            {/* Admin Management Card */}
             {currentUser?.role === 'admin' && (
-              <Button 
-                variant={showManagement ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowManagement(!showManagement)}
-                className="gap-2"
-              >
-                <Settings className="w-4 h-4" />
-                Gestion
-              </Button>
-            )}
-          </div>
-
-          {/* Admin Management Panel */}
-          {showManagement && currentUser?.role === 'admin' && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-amber-50/50 rounded-2xl border border-amber-100 p-6 mb-8"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Crown className="w-5 h-5 text-amber-600" />
+              <div className="flex-shrink-0 w-64 bg-amber-50 rounded-2xl border border-amber-100 hover:shadow-xl transition-all flex flex-col">
+                <div className="h-24 bg-amber-100/50 rounded-t-2xl flex items-center justify-center p-4">
+                  <Settings className="w-8 h-8 text-amber-600" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Partnership Management</h3>
-                  <p className="text-neutral-600 mb-4">
-                    Pour toute demande de partenariat ou pour gérer les partenaires existants, veuillez contacter l'équipe dédiée :
-                  </p>
+                <div className="p-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-medium text-amber-900 mb-2">Gestion Partenariats</h3>
+                    <p className="text-xs text-amber-700/80 mb-3">
+                      Contact administratif pour la gestion des marques et partenariats.
+                    </p>
+                  </div>
                   <a 
-                    href="mailto:inferencevision@inferencevision.store" 
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-amber-200 text-amber-800 font-medium hover:bg-amber-50 transition-colors"
+                    href="mailto:inferencevision@inferencevision.store"
+                    className="w-full"
                   >
-                    <Settings className="w-4 h-4" />
-                    inferencevision@inferencevision.store
+                    <Button size="sm" className="w-full bg-amber-600 hover:bg-amber-700 text-white text-xs">
+                      Contacter l'équipe
+                    </Button>
                   </a>
                 </div>
               </div>
-            </motion.div>
-          )}
+            )}
 
-          <div className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
             {featuredBrands.map((brand, idx) =>
           <motion.div
             key={brand.id}
