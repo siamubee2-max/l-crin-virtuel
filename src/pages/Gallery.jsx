@@ -92,7 +92,7 @@ export default function Gallery() {
       <section className="relative rounded-3xl overflow-hidden bg-neutral-900 text-white p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=2075&auto=format&fit=crop')] bg-cover bg-center" />
         <div className="relative z-10 max-w-xl space-y-6">
-          <h1 className="text-4xl md:text-5xl font-serif leading-tight">
+          <h1 className="text-3xl md:text-5xl font-serif leading-tight">
             {t.gallery.hero.title} <br />
             <span className="text-amber-400 italic">{t.gallery.hero.subtitle}</span>
           </h1>
@@ -189,7 +189,7 @@ export default function Gallery() {
                     className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-neutral-100 flex flex-col"
                   >
                     {/* Image Container */}
-                    <div className="relative aspect-square overflow-hidden bg-neutral-100">
+                    <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100">
                       <img 
                         src={creation.result_image_url} 
                         alt="Creation result"
