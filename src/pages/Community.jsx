@@ -300,9 +300,9 @@ export default function Community() {
                     className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group"
                     onClick={() => setSelectedLook(look)}
                   >
-                    {creation?.result_image_url && (
-                      <img src={creation.result_image_url} alt={look.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    )}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                                  <Sparkles className="w-10 h-10 text-neutral-300" />
+                                  </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2">
                       <div className="flex items-center gap-1 text-white text-xs">
                         <Heart className="w-3 h-3 fill-white" />
@@ -398,20 +398,10 @@ export default function Community() {
                   <Card className="overflow-hidden hover:shadow-xl transition-shadow group">
                     {/* Image */}
                     <div 
-                      className="relative h-80 bg-neutral-100 cursor-pointer"
+                      className="relative h-80 bg-neutral-100 cursor-pointer flex items-center justify-center"
                       onClick={() => setSelectedLook(look)}
                     >
-                      {creation?.result_image_url ? (
-                        <img
-                          src={creation.result_image_url}
-                          alt={look.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Sparkles className="w-12 h-12 text-neutral-300" />
-                        </div>
-                      )}
+                      <Sparkles className="w-12 h-12 text-neutral-300" />
                     </div>
 
                     {/* Content */}
@@ -660,13 +650,9 @@ export default function Community() {
             <div className="grid md:grid-cols-2 gap-6">
               {/* Image Side */}
               <div className="rounded-lg overflow-hidden bg-neutral-100">
-                {getCreation(selectedLook.main_creation_id)?.result_image_url && (
-                  <img
-                    src={getCreation(selectedLook.main_creation_id).result_image_url}
-                    alt={selectedLook.title}
-                    className="w-full h-full object-cover"
-                  />
-                )}
+                <div className="w-full h-full flex items-center justify-center py-10">
+                  <Sparkles className="w-12 h-12 text-neutral-300" />
+                </div>
               </div>
 
               {/* Details Side */}
