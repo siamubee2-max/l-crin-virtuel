@@ -13,6 +13,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/components/LanguageProvider';
 import ARLiveTryOn from '@/components/studio/ARLiveTryOn';
 import TryOnEditor from '@/components/studio/TryOnEditor';
+import AIStyleRecommendations from '@/components/studio/AIStyleRecommendations';
 import { Pencil } from 'lucide-react';
 import SEO from '@/components/common/SEO';
 
@@ -586,60 +587,14 @@ export default function Studio() {
                       </div>
                     </div>
 
-                    {/* AI Stylist Section */}
-                    <div className="mt-8 border-t border-neutral-100 pt-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-serif flex items-center gap-2 text-neutral-800">
-                          <Wand2 className="w-5 h-5 text-amber-500" />
-                          {t.stylist.title}
-                        </h3>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleStylistAnalysis}
-                          disabled={analyzingStyle || !selectedBodyPartId}
-                          className="border-amber-200 text-amber-700 hover:bg-amber-50"
-                        >
-                          {analyzingStyle ? (
-                            <><Loader2 className="w-3 h-3 mr-2 animate-spin" /> {t.stylist.analyzing}</>
-                          ) : !isPremium ? (
-                            <><Lock className="w-3 h-3 mr-2" /> Débloquer le Styliste</>
-                          ) : (
-                            <><Lightbulb className="w-3 h-3 mr-2" /> {t.stylist.analyzeBtn}</>
-                          )}
-                        </Button>
-                      </div>
-
-                      <AnimatePresence>
-                        {stylistData && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="bg-neutral-50 rounded-xl p-5 space-y-4 border border-neutral-100 text-sm"
-                          >
-                            <div>
-                              <p className="font-medium text-amber-700 mb-1">{t.stylist.suggestions}</p>
-                              <p className="text-neutral-600 leading-relaxed">{stylistData.suggestions}</p>
-                            </div>
-                            <div>
-                              <p className="font-medium text-amber-700 mb-1">{t.stylist.advice}</p>
-                              <p className="text-neutral-600 leading-relaxed">{stylistData.advice}</p>
-                            </div>
-                            <div>
-                              <p className="font-medium text-amber-700 mb-2">{t.stylist.compatible}</p>
-                              <div className="flex flex-wrap gap-2">
-                                {stylistData.compatible_items?.map((item, idx) => (
-                                  <span key={idx} className="bg-white border border-neutral-200 px-3 py-1 rounded-full text-neutral-600 text-xs shadow-sm">
-                                    {item}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+                    {/* Enhanced AI Style Recommendations */}
+                    <AIStyleRecommendations 
+                      jewelryImage={jewelryImage}
+                      jewelryType={jewelryType}
+                      bodyPartImage={selectedBodyPartId ? bodyParts?.find(p => p.id === selectedBodyPartId)?.image_url : null}
+                      bodyPartType={selectedBodyPartId ? bodyParts?.find(p => p.id === selectedBodyPartId)?.type : null}
+                      user={user}
+                    />
                   </motion.div>
                 )}
 
