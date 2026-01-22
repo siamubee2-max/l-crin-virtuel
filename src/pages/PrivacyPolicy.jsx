@@ -249,7 +249,7 @@ export default function PrivacyPolicy() {
           <h2 className="text-xl font-serif text-neutral-900 mb-3">Nous Contacter</h2>
           <div className="text-neutral-600 space-y-3">
             <p><strong>Responsable du traitement des données :</strong> L'Écrin Virtuel</p>
-            <p><strong>Email :</strong> <a href="mailto:privacy@lecrinvirtuel.com" className="text-purple-600 hover:text-purple-700 underline">privacy@lecrinvirtuel.com</a></p>
+            <p><strong>Email :</strong> <a href="mailto:inferencevision@inferencevision.store" className="text-purple-600 hover:text-purple-700 underline">inferencevision@inferencevision.store</a></p>
             
             <div className="border-t border-purple-200 pt-3 mt-3 space-y-2 text-sm">
               <p><strong>🇪🇺 Pour les résidents de l'UE :</strong></p>

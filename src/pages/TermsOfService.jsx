@@ -299,7 +299,7 @@ export default function TermsOfService() {
           <h2 className="text-xl font-serif text-neutral-900 mb-3">Contact</h2>
           <div className="text-neutral-600 space-y-2">
             <p>Pour toute question concernant ces CGU :</p>
-            <p><strong>Email :</strong> <a href="mailto:legal@lecrinvirtuel.com" className="text-blue-600 hover:text-blue-700 underline">legal@lecrinvirtuel.com</a></p>
+            <p><strong>Email :</strong> <a href="mailto:inferencevision@inferencevision.store" className="text-blue-600 hover:text-blue-700 underline">inferencevision@inferencevision.store</a></p>
           </div>
         </section>
 

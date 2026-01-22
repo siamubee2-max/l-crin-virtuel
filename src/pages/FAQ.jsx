@@ -71,7 +71,7 @@ export default function FAQ() {
         },
         {
           q: "Puis-je obtenir un remboursement ?",
-          a: "Conformément au droit européen, vous disposez de 14 jours de rétractation pour l'abonnement Premium. Contactez-nous à support@lecrinvirtuel.com."
+          a: "Conformément au droit européen, vous disposez de 14 jours de rétractation pour l'abonnement Premium. Contactez-nous à inferencevision@inferencevision.store."
         }
       ]
     },
@@ -103,15 +103,15 @@ export default function FAQ() {
       questions: [
         {
           q: "Comment contacter le support client ?",
-          a: "Envoyez-nous un email à support@lecrinvirtuel.com. Les abonnés Premium bénéficient d'un support prioritaire avec réponse sous 24h."
+          a: "Envoyez-nous un email à inferencevision@inferencevision.store. Les abonnés Premium bénéficient d'un support prioritaire avec réponse sous 24h."
         },
         {
           q: "J'ai une suggestion de fonctionnalité, où puis-je la partager ?",
-          a: "Nous adorons les retours ! Envoyez vos suggestions à feedback@lecrinvirtuel.com. Nous lisons toutes les suggestions et les intégrons dans notre roadmap."
+          a: "Nous adorons les retours ! Envoyez vos suggestions à inferencevision@inferencevision.store. Nous lisons toutes les suggestions et les intégrons dans notre roadmap."
         },
         {
           q: "Puis-je devenir partenaire créateur ?",
-          a: "Oui ! Nous recherchons des créateurs de contenu et stylistes. Consultez notre page Créateurs ou contactez-nous à partners@lecrinvirtuel.com."
+          a: "Oui ! Nous recherchons des créateurs de contenu et stylistes. Consultez notre page Créateurs ou contactez-nous à inferencevision@inferencevision.store."
         }
       ]
     }
@@ -264,7 +264,7 @@ export default function FAQ() {
         <h3 className="text-xl font-serif text-neutral-900 mb-2">Vous ne trouvez pas votre réponse ?</h3>
         <p className="text-neutral-600 mb-4">Notre équipe est là pour vous aider</p>
         <a 
-          href="mailto:support@lecrinvirtuel.com"
+          href="mailto:inferencevision@inferencevision.store"
           className="inline-block bg-amber-600 text-white px-6 py-3 rounded-full font-medium hover:bg-amber-700 transition-colors"
         >
           Nous Contacter
