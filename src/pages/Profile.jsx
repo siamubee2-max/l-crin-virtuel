@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, User, Heart, Clock, Save, Gem, Bookmark } from "lucide-react";
+import { Loader2, User, Heart, Clock, Save, Gem, Bookmark, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import StyleProfileEditor from '@/components/profile/StyleProfileEditor';
@@ -57,6 +57,12 @@ export default function Profile() {
   const { data: creations, isLoading: creationsLoading } = useQuery({
     queryKey: ['myCreations'],
     queryFn: () => base44.entities.Creation.list('-created_date', 20), // Last 20 creations
+  });
+
+  // Fetch User Looks
+  const { data: looks } = useQuery({
+    queryKey: ['myLooks'],
+    queryFn: () => base44.entities.Look.list('-created_date'),
   });
 
   // Fetch Wishlist
@@ -166,6 +172,9 @@ export default function Profile() {
           <TabsTrigger value="style" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
             <Heart className="w-4 h-4 mr-2" /> {t.profile.stylePrefs}
           </TabsTrigger>
+          <TabsTrigger value="looks" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
+            <Sparkles className="w-4 h-4 mr-2" /> Looks
+          </TabsTrigger>
           <TabsTrigger value="history" className="rounded-lg data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
             <Clock className="w-4 h-4 mr-2" /> {t.profile.history}
           </TabsTrigger>
@@ -227,6 +236,53 @@ export default function Profile() {
                onSave={handleSave}
                isSaving={isSaving}
              />
+          </motion.div>
+        </TabsContent>
+
+        {/* Looks Tab */}
+        <TabsContent value="looks">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            {!looks || looks.length === 0 ? (
+              <div className="bg-white p-12 rounded-3xl border border-dashed border-neutral-200 text-center">
+                <Sparkles className="w-12 h-12 text-neutral-200 mx-auto mb-4" />
+                <p className="text-neutral-500 mb-4">Vous n'avez pas encore créé de looks.</p>
+                <Link to={createPageUrl("Studio")}>
+                  <Button className="bg-neutral-900 hover:bg-neutral-800">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Créer mon premier look
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-neutral-500">{looks.length} look{looks.length > 1 ? 's' : ''}</p>
+                  <Link to={createPageUrl("MyLooks")}>
+                    <Button variant="outline" size="sm">Voir tous mes looks</Button>
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {looks.slice(0, 8).map((look) => {
+                    const creation = creations?.find(c => c.id === look.main_creation_id);
+                    return (
+                      <div key={look.id} className="group relative aspect-[3/4] bg-neutral-100 rounded-xl overflow-hidden cursor-pointer" onClick={() => window.location.href = createPageUrl('MyLooks')}>
+                        {creation?.result_image_url && (
+                          <img src={creation.result_image_url} alt={look.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                          <p className="text-white text-xs font-medium truncate">{look.title}</p>
+                          {look.occasion && <p className="text-white/80 text-[10px]">{look.occasion}</p>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </motion.div>
         </TabsContent>
 
