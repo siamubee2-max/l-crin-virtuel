@@ -546,7 +546,7 @@ export default function Studio() {
                               }`}
                             >
                               <img src={part.image_url} alt={part.name} className="w-full h-full object-cover" />
-                              <div className="absolute bottom-0 left-0 right-0 p-2 bg-white/90 text-xs font-medium truncate">
+                              <div className="absolute bottom-0 left-0 right-0 p-3 bg-white/95 text-sm font-medium truncate backdrop-blur-sm">
                                 {part.name}
                               </div>
                             </div>

@@ -118,9 +118,9 @@ export default function BrandPartnerships() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex-shrink-0 w-64 bg-white rounded-2xl border hover:shadow-xl transition-all group"
+                    className="flex-shrink-0 w-72 sm:w-80 bg-white rounded-2xl border hover:shadow-xl transition-all group"
                   >
-                    <div className="h-24 bg-gradient-to-br from-neutral-100 to-neutral-50 rounded-t-2xl flex items-center justify-center p-4">
+                    <div className="h-32 bg-gradient-to-br from-neutral-100 to-neutral-50 rounded-t-2xl flex items-center justify-center p-6">
                       {brand.logo_url ? (
                         <img src={brand.logo_url} alt={brand.brand_name} className="max-h-16 object-contain" />
                       ) : (
@@ -129,16 +129,16 @@ export default function BrandPartnerships() {
                     </div>
                     <div className="p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium">{brand.brand_name}</h3>
-                        <Badge variant="secondary" className="text-[10px]">
+                        <h3 className="font-serif text-lg font-medium">{brand.brand_name}</h3>
+                        <Badge variant="secondary" className="text-xs px-2 py-0.5">
                           {brand.tier}
                         </Badge>
                       </div>
-                      <p className="text-xs text-neutral-500 line-clamp-2 mb-3">{brand.description}</p>
+                      <p className="text-sm text-neutral-500 line-clamp-2 mb-4 leading-relaxed">{brand.description}</p>
                       {brand.website_url && (
                         <a href={brand.website_url} target="_blank" rel="noopener noreferrer">
-                          <Button variant="outline" size="sm" className="w-full text-xs">
-                            {t.brands.visitBrand} <ExternalLink className="w-3 h-3 ml-1" />
+                          <Button variant="outline" size="default" className="w-full text-sm h-10">
+                            {t.brands.visitBrand} <ExternalLink className="w-4 h-4 ml-1" />
                           </Button>
                         </a>
                       )}
