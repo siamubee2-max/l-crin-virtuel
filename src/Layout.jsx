@@ -226,6 +226,10 @@ function LayoutContent({ children }) {
               <Link to={createPageUrl("CookiePolicy")} className="hover:text-gold transition-colors">
                 Cookies
               </Link>
+              <span>•</span>
+              <Link to={createPageUrl("FAQ")} className="hover:text-gold transition-colors">
+                FAQ
+              </Link>
             </div>
 
             <p className="text-[10px] text-neutral-400">

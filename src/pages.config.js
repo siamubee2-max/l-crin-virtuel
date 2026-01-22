@@ -20,6 +20,7 @@ import Stylists from './pages/Stylists';
 import Subscription from './pages/Subscription';
 import TermsOfService from './pages/TermsOfService';
 import Wardrobe from './pages/Wardrobe';
+import FAQ from './pages/FAQ';
 import __Layout from './Layout.jsx';
 
 
@@ -46,6 +47,7 @@ export const PAGES = {
     "Subscription": Subscription,
     "TermsOfService": TermsOfService,
     "Wardrobe": Wardrobe,
+    "FAQ": FAQ,
 }
 
 export const pagesConfig = {
