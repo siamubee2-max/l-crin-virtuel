@@ -10,6 +10,7 @@ import ShareButton from "@/components/common/ShareButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '@/components/LanguageProvider';
 import SEO from '@/components/common/SEO';
+import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -124,6 +125,9 @@ export default function Gallery() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
       {/* Gallery Controls & Grid */}
       <section>
