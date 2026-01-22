@@ -4,6 +4,7 @@ import Checkout from './pages/Checkout';
 import Closet from './pages/Closet';
 import CookiePolicy from './pages/CookiePolicy';
 import CreatorOnboarding from './pages/CreatorOnboarding';
+import FAQ from './pages/FAQ';
 import Gallery from './pages/Gallery';
 import JewelryBox from './pages/JewelryBox';
 import LegalNotice from './pages/LegalNotice';
@@ -20,7 +21,7 @@ import Stylists from './pages/Stylists';
 import Subscription from './pages/Subscription';
 import TermsOfService from './pages/TermsOfService';
 import Wardrobe from './pages/Wardrobe';
-import FAQ from './pages/FAQ';
+import Community from './pages/Community';
 import __Layout from './Layout.jsx';
 
 
@@ -31,6 +32,7 @@ export const PAGES = {
     "Closet": Closet,
     "CookiePolicy": CookiePolicy,
     "CreatorOnboarding": CreatorOnboarding,
+    "FAQ": FAQ,
     "Gallery": Gallery,
     "JewelryBox": JewelryBox,
     "LegalNotice": LegalNotice,
@@ -47,7 +49,7 @@ export const PAGES = {
     "Subscription": Subscription,
     "TermsOfService": TermsOfService,
     "Wardrobe": Wardrobe,
-    "FAQ": FAQ,
+    "Community": Community,
 }
 
 export const pagesConfig = {
