@@ -154,7 +154,11 @@ export default function BrandPartnerships() {
           <TabsTrigger value="collections" className="gap-2">
             <Bookmark className="w-4 h-4" /> {t.brands.allCollections}
           </TabsTrigger>
-
+          {currentUser?.role === 'admin' && (
+            <TabsTrigger value="management" className="gap-2">
+              <Settings className="w-4 h-4" /> Gestion
+            </TabsTrigger>
+          )}
         </TabsList>
 
         {/* Featured Looks */}
@@ -346,19 +350,23 @@ export default function BrandPartnerships() {
         </TabsContent>
 
 
+        {/* Partnership Management Tab */}
+        {currentUser?.role === 'admin' && (
+          <TabsContent value="management">
+            <div className="bg-white rounded-2xl border p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-serif">Gestion des Partenariats</h2>
+                <Link to={createPageUrl("AdminPartnerships")}>
+                  <Button className="bg-amber-600 hover:bg-amber-700 text-white">
+                    <Settings className="w-4 h-4 mr-2" /> Ouvrir le panneau complet
+                  </Button>
+                </Link>
+              </div>
+              <p className="text-neutral-500">Accédez au panneau d'administration pour gérer les marques partenaires, les créateurs et les collections.</p>
+            </div>
+          </TabsContent>
+        )}
       </Tabs>
-
-      {/* Mobile-only Admin Link */}
-      {currentUser?.role === 'admin' && (
-        <div className="md:hidden mt-8 pb-8 border-t pt-4">
-          <Link to={createPageUrl("AdminPartnerships")}>
-            <Button variant="outline" className="w-full gap-2 border-dashed">
-              <Settings className="w-4 h-4" />
-              Partnership Management
-            </Button>
-          </Link>
-        </div>
-      )}
     </div>);
 
 }
