@@ -16,6 +16,7 @@ export default function BrandPartnerships() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("featured");
+  const [showManagement, setShowManagement] = useState(false);
 
   // Fetch data
   const { data: brands, isLoading: brandsLoading } = useQuery({
@@ -102,11 +103,54 @@ export default function BrandPartnerships() {
       </div>
 
       {/* Featured Brands Carousel */}
-      {featuredBrands.length > 0 &&
+      {(featuredBrands.length > 0 || currentUser?.role === 'admin') &&
       <section>
-          <h2 className="text-2xl font-serif mb-6 flex items-center gap-2">
-            <Crown className="w-6 h-6 text-amber-500" /> {t.brands.featuredPartners}
-          </h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-serif flex items-center gap-2">
+              <Crown className="w-6 h-6 text-amber-500" /> {t.brands.featuredPartners}
+            </h2>
+            {currentUser?.role === 'admin' && (
+              <Button 
+                variant={showManagement ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowManagement(!showManagement)}
+                className="gap-2"
+              >
+                <Settings className="w-4 h-4" />
+                Gestion
+              </Button>
+            )}
+          </div>
+
+          {/* Admin Management Panel */}
+          {showManagement && currentUser?.role === 'admin' && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="bg-amber-50/50 rounded-2xl border border-amber-100 p-6 mb-8"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Crown className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Partnership Management</h3>
+                  <p className="text-neutral-600 mb-4">
+                    Pour toute demande de partenariat ou pour gérer les partenaires existants, veuillez contacter l'équipe dédiée :
+                  </p>
+                  <a 
+                    href="mailto:inferencevision@inferencevision.store" 
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-amber-200 text-amber-800 font-medium hover:bg-amber-50 transition-colors"
+                  >
+                    <Settings className="w-4 h-4" />
+                    inferencevision@inferencevision.store
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           <div className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
             {featuredBrands.map((brand, idx) =>
           <motion.div
@@ -154,11 +198,6 @@ export default function BrandPartnerships() {
           <TabsTrigger value="collections" className="gap-2">
             <Bookmark className="w-4 h-4" /> {t.brands.allCollections}
           </TabsTrigger>
-          {currentUser?.role === 'admin' && (
-            <TabsTrigger value="management" className="gap-2">
-              <Settings className="w-4 h-4" /> Gestion
-            </TabsTrigger>
-          )}
         </TabsList>
 
         {/* Featured Looks */}
@@ -350,46 +389,6 @@ export default function BrandPartnerships() {
         </TabsContent>
 
 
-        {/* Partnership Management Tab */}
-        {currentUser?.role === 'admin' && (
-          <TabsContent value="management">
-             <div className="max-w-4xl mx-auto space-y-8">
-              <div>
-                <h2 className="text-2xl font-serif flex items-center gap-2">
-                  <Settings className="w-6 h-6 text-amber-600" /> Partnership Management
-                </h2>
-                <p className="text-neutral-500">Informations de contact pour les partenariats</p>
-              </div>
-
-              <div className="bg-white rounded-2xl border p-6">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                      <Crown className="w-6 h-6 text-amber-600" />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-medium">Devenir Partenaire</h2>
-                      <p className="text-neutral-500">Rejoignez notre programme de partenariat</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-neutral-50 rounded-lg p-6 space-y-4">
-                    <p className="text-neutral-700">
-                      Pour toute demande de partenariat, veuillez nous contacter à l'adresse suivante :
-                    </p>
-                    <a 
-                      href="mailto:inferencevision@inferencevision.store" 
-                      className="text-sm font-medium text-amber-800 hover:underline block"
-                    >
-                      inferencevision@inferencevision.store
-                    </a>
-                    <p className="text-sm text-neutral-500">
-                      Notre équipe vous répondra dans les plus brefs délais.
-                    </p>
-                  </div>
-              </div>
-            </div>
-          </TabsContent>
-        )}
       </Tabs>
     </div>);
 
