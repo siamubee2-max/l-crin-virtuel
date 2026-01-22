@@ -11,7 +11,7 @@ const categories = [
   { key: "jacket", label: "Veste", image: "https://source.unsplash.com/featured/600x800?jacket,isolated,white-background" },
   { key: "shoes", label: "Chaussures", image: "https://source.unsplash.com/featured/600x800?shoes,isolated,white-background" },
   { key: "lingerie", label: "Lingerie", image: "https://source.unsplash.com/featured/600x800?lingerie,isolated,white-background" },
-  { key: "tights", label: "Bas", image: "https://source.unsplash.com/featured/600x800?tights,isolated,white-background" },
+  { key: "tights", label: "Collants", image: "https://source.unsplash.com/featured/600x800?tights,isolated,white-background" },
 ];
 
 export default function CategoryPlaceholders() {
