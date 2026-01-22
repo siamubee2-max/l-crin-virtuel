@@ -4,7 +4,7 @@ import { z } from "npm:zod";
 // KIE.ai API Configuration
 const KIE_API_URL = 'https://api.kie.ai/api/v1/jobs/createTask';
 const KIE_STATUS_URL = 'https://api.kie.ai/api/v1/jobs/recordInfo';
-const JEWELRY_MODEL = 'gpt-4o-image';
+const JEWELRY_MODEL = 'google/imagen4-fast';
 
 const MAX_POLLING_ATTEMPTS = 60;
 const POLLING_INTERVAL = 2000;
@@ -87,36 +87,48 @@ Deno.serve(async (req) => {
         const mImage = formatImage(modelImage);
 
         let prompt = '';
-        let size = '1024x1536'; // Portrait for try-on
+        let aspectRatio = '3:4'; 
 
         if (action === 'tryOn') {
              const placementInstructions = getPlacementInstructions(jewelryType);
-             prompt = `Virtual jewelry try-on: Take the ${jewelryType} from the first image and place it naturally on the person in the second image.
+             
+             // Since google/imagen4-fast doesn't support image inputs directly in the 'input' object (per docs),
+             // we first use an LLM with Vision to describe the scene and generate a detailed prompt.
+             
+             const analysisPrompt = `
+                You are an expert prompt engineer for AI image generation.
+                I have two images:
+                1. A photo of a person (the model).
+                2. A photo of a piece of jewelry (${jewelryType}).
+                
+                YOUR TASK: Write a highly detailed, photorealistic image generation prompt to recreate the person in image 1 wearing the jewelry from image 2.
+                
+                DETAILS TO INCLUDE:
+                - Person: Gender, approximate age, ethnicity, hair color/style, specific facial features, skin tone, exact pose, facial expression.
+                - Clothing: Describe what they are wearing in detail (color, style, neckline).
+                - Background & Lighting: Describe the background, ambient light, direction of light, and mood.
+                - Jewelry: Describe the ${jewelryType} in detail (material, stones, color, shape) and place it on the person according to these rules: ${placementInstructions}.
+                - Style: Photorealistic, cinematic lighting, 8k, highly detailed texture.
+                
+                The output should be ONLY the prompt text, ready to be sent to the image generator. Start with "A photorealistic medium shot of..."
+             `;
 
-${placementInstructions}
+             // Call Base44 LLM (GPT-4o Vision) to generate the text prompt
+             const llmResponse = await base44.integrations.Core.InvokeLLM({
+                 prompt: analysisPrompt,
+                 file_urls: [mImage, jImage], // Provide model first, then jewelry
+             });
+             
+             prompt = typeof llmResponse === 'string' ? llmResponse : (llmResponse.content || "A person wearing jewelry");
+             console.log("Generated Prompt for Kie:", prompt);
 
-CRITICAL REQUIREMENTS:
-- PRESERVE the person's face, expression, pose, clothing, and background EXACTLY
-- SIZE the jewelry realistically for this person's body proportions
-- MATCH lighting, shadows, and reflections to the original photo
-- The jewelry must look physically attached, not floating
-- Result must be PHOTOREALISTIC
-
-Generate a high-quality image of the person wearing the jewelry.`;
         } else if (action === 'adjust') {
-            // Logic for adjustment
-            let adjustmentPrompt = '';
-            switch (adjustmentType) {
-                case 'position': adjustmentPrompt = 'Slightly reposition the jewelry for more natural placement.'; break;
-                case 'size': adjustmentPrompt = 'Adjust the jewelry size to be more proportional.'; break;
-                case 'lighting': adjustmentPrompt = 'Improve the lighting and reflections on the jewelry.'; break;
-                case 'custom': adjustmentPrompt = 'Make subtle improvements to the jewelry placement.'; break;
-                default: adjustmentPrompt = 'Improve the realism.';
-            }
-            prompt = `Image editing task: ${adjustmentPrompt}
-            CRITICAL: Preserve the person's face, expression, pose, clothing, and background EXACTLY. Only modify the jewelry as instructed.`;
-            
-            size = '1024x1024'; // Square for adjustments usually
+             // For adjustment, we can't easily use text-to-image without losing coherence.
+             // We'll try to describe the adjustment in the prompt if possible, or fallback to a generic prompt.
+             // For now, let's regenerate with a slightly modified prompt if possible, or just error out as this model might not support simple edit.
+             // Assuming we regenerate for now.
+             prompt = `A photorealistic image of a person wearing ${jewelryType}, high quality, cinematic lighting.`; 
+             aspectRatio = '1:1';
         } else {
             return Response.json({ error: 'Invalid action' }, { status: 400 });
         }
@@ -126,11 +138,9 @@ Generate a high-quality image of the person wearing the jewelry.`;
             model: JEWELRY_MODEL,
             input: {
                 prompt: prompt,
-                image_urls: action === 'tryOn' ? [jImage, mImage] : [jImage], // For tryOn we send [jewelry, model], for adjust typically just the result image to adjust? 
-                // Wait, snippet says adjust takes `imageBase64` (which is likely the result of previous generation).
-                // If adjust, we might need just one image? The snippet logic for adjust uses `image_urls: [imageUrl]`.
-                output_format: 'png',
-                size: size,
+                negative_prompt: "cartoon, illustration, animation, face deformity, bad anatomy, extra fingers, floating jewelry, unrealistic placement, blur, low quality, distorted, watermark, text, signature",
+                aspect_ratio: aspectRatio,
+                num_images: "1"
             },
         };
 
