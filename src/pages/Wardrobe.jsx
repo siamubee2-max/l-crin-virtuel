@@ -12,6 +12,7 @@ import { useLanguage } from '@/components/LanguageProvider';
 
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import CategoryPlaceholders from '@/components/wardrobe/CategoryPlaceholders';
 
 export default function Wardrobe() {
   const navigate = useNavigate();
@@ -205,6 +206,8 @@ export default function Wardrobe() {
         </div>
         </div>
       </div>
+
+      <CategoryPlaceholders />
 
       {isLoading ? (
         <div className="flex items-center justify-center h-64">
