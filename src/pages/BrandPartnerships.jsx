@@ -77,7 +77,7 @@ export default function BrandPartnerships() {
         keywords={["marques luxe", "partenariats", "collections", "mode", "stylistes"]}
       />
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 rounded-3xl p-8 md:p-12 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 rounded-3xl p-6 md:p-12 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 right-10 w-64 h-64 bg-amber-500 rounded-full blur-3xl" />
           <div className="absolute bottom-10 left-10 w-48 h-48 bg-purple-500 rounded-full blur-3xl" />
@@ -87,7 +87,7 @@ export default function BrandPartnerships() {
           <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 mb-4">
             <Crown className="w-3 h-3 mr-1" /> {t.brands.partnerBadge}
           </Badge>
-          <h1 className="text-4xl md:text-5xl font-serif text-white mb-4">
+          <h1 className="text-3xl md:text-5xl font-serif text-white mb-4">
             {t.brands.heroTitle}
           </h1>
           <p className="text-neutral-300 text-lg mb-6">

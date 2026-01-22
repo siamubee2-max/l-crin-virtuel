@@ -342,8 +342,8 @@ export default function Studio() {
           <div className="bg-white rounded-3xl shadow-xl border border-neutral-100 overflow-hidden min-h-[500px] flex flex-col md:flex-row">
             
             {/* Left Side - Progress & Steps */}
-            <div className="w-full md:w-1/3 bg-neutral-50 p-8 border-r border-neutral-100 flex flex-col">
-              <div className="space-y-6">
+            <div className="w-full md:w-1/3 bg-neutral-50 p-4 md:p-8 border-b md:border-b-0 md:border-r border-neutral-100 flex flex-col">
+              <div className="flex md:flex-col gap-4 md:gap-6 overflow-x-auto pb-2 md:pb-0 scrollbar-hide snap-x">
                 {[
                   { id: STEPS.UPLOAD, label: t.studio.steps.upload, icon: "💎" },
                   { id: STEPS.SELECT_BODY, label: t.studio.steps.selectBody, icon: "👤" },
@@ -352,7 +352,7 @@ export default function Studio() {
                 ].map((s) => (
                   <div 
                     key={s.id}
-                    className={`flex items-center gap-4 transition-colors ${
+                    className={`flex items-center gap-2 md:gap-4 transition-colors flex-shrink-0 snap-start ${
                       step === s.id ? "text-amber-600 font-medium" : 
                       step > s.id ? "text-green-600" : "text-neutral-400"
                     }`}
@@ -384,7 +384,7 @@ export default function Studio() {
             </div>
 
             {/* Right Side - Content Area */}
-            <div className="w-full md:w-2/3 p-8 md:p-12 relative">
+            <div className="w-full md:w-2/3 p-4 md:p-12 relative">
               <AnimatePresence mode="wait">
                 
                 {/* STEP 1: UPLOAD JEWELRY */}

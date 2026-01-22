@@ -93,7 +93,7 @@ export default function Gallery() {
       <section className="relative rounded-3xl overflow-hidden bg-neutral-900 text-white p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=2075&auto=format&fit=crop')] bg-cover bg-center" />
         <div className="relative z-10 max-w-xl space-y-6">
-          <h1 className="text-4xl md:text-5xl font-serif leading-tight">
+          <h1 className="text-3xl md:text-5xl font-serif leading-tight">
             {t.gallery.hero.title} <br />
             <span className="text-amber-400 italic">{t.gallery.hero.subtitle}</span>
           </h1>
@@ -133,9 +133,9 @@ export default function Gallery() {
       {/* Gallery Controls & Grid */}
       <section>
         <div className="flex flex-col md:flex-row justify-end items-end gap-4 mb-8">
-          <div className="flex gap-3 w-full md:w-auto">
+          <div className="grid grid-cols-2 gap-3 w-full md:w-auto md:flex">
              <Select value={sortOrder} onValueChange={setSortOrder}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full md:w-[180px]">
                   <Calendar className="w-4 h-4 mr-2" />
                   <SelectValue placeholder={t.gallery.sort} />
                 </SelectTrigger>
@@ -146,7 +146,7 @@ export default function Gallery() {
               </Select>
 
               <Select value={typeFilter} onValueChange={(val) => { setTypeFilter(val); setPage(1); }}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full md:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder={t.gallery.filter} />
                 </SelectTrigger>
