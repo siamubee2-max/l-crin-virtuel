@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import ShareButton from '@/components/common/ShareButton';
+import { createPageUrl } from '@/utils';
 import { Loader2, Wand2, Sparkles } from 'lucide-react';
 
 const CATEGORY_OPTIONS = [
@@ -20,6 +24,8 @@ export default function OutfitGenerator({ clothingItems = [] }) {
   const [selected, setSelected] = useState(['top', 'bottom', 'shoes']);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [userTags, setUserTags] = useState('');
+  const [userComment, setUserComment] = useState('');
 
   const itemsByType = useMemo(() => {
     const map = Object.fromEntries(CATEGORY_OPTIONS.map(c => [c.key, []]));
@@ -117,6 +123,24 @@ Retourne un JSON strictement conforme au schéma fourni.`;
     }
   };
 
+  const computeShareUrl = () => {
+    if (!result) return '#';
+    const mergedTags = [
+      ...(result.style_tags || []),
+      ...userTags.split(',').map(t => t.trim()).filter(Boolean),
+    ].filter((v, i, a) => a.indexOf(v) === i);
+
+    const payload = {
+      title: result.title,
+      description: result.description,
+      user_comment: userComment,
+      tags: mergedTags,
+      items: result.items.map(it => ({ id: it.id, name: it.name, type: it.type, image_url: it.image_url }))
+    };
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    return `${window.location.origin}${createPageUrl(`SharedOutfit?d=${encoded}`)}`;
+  };
+
   return (
     <section className="mt-8">
       <div className="flex items-center gap-2 mb-3">
@@ -154,6 +178,20 @@ Retourne un JSON strictement conforme au schéma fourni.`;
               </div>
             )}
             {result.description && <p className="text-sm text-neutral-600 mt-2">{result.description}</p>}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-2">
+            <div>
+              <label className="text-xs text-neutral-500">Tags (séparés par des virgules)</label>
+              <Input value={userTags} onChange={(e) => setUserTags(e.target.value)} placeholder="ex: chic, minimaliste, neutre" />
+            </div>
+            <div>
+              <label className="text-xs text-neutral-500">Commentaire</label>
+              <Textarea rows={2} value={userComment} onChange={(e) => setUserComment(e.target.value)} placeholder="Décrivez la tenue..." />
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mb-2">
+            <ShareButton url={computeShareUrl()} title={result.title} />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
